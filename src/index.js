@@ -1,9 +1,9 @@
 var ReactDOM = require('react-dom');
 var React = require('react');
 
-var Chat = require('./Chat');
+var Product = require('./Product');
 
 ReactDOM.render(
-  <Chat />,
+  <Product />,
   document.getElementById('app')
 );

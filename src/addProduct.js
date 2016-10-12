@@ -1,10 +1,10 @@
-var React = require('react');
+let React = require('react');
 
 module.exports = React.createClass({
   submit: function(e) {
     e.preventDefault();
 
-    var product = {
+    let product = {
       name: this.refs.name.value,
       price: this.refs.price.value
     }

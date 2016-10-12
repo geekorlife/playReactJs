@@ -28,7 +28,6 @@ module.exports = React.createClass({
         if(this.props.cart && this.props.cart.length > 0){
 
             var datac = this.props.cart.map(function(c,i){
-                console.log('c',c)
                 var product = that.props.product[c.id];
                 return (
                     <li key={i}>
@@ -72,7 +71,6 @@ module.exports = React.createClass({
         return dt;
     },
     render: function(){
-        console.log('CURRENT CART ',this.props.cart);
         var curct = this.curCart();
         var dtCart = this.dataCart();
         return (

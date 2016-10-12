@@ -1,9 +1,9 @@
-var React = require('react');
-var Nav = require('./nav');
-var ProductList = require('./productList');
-var ProductForm = require('./addProduct');
-var AdminModal = require('./adminModal');
-var InfoProduct = require('./infoProduct');
+let React = require('react');
+let Nav = require('./nav');
+let ProductList = require('./productList');
+let ProductForm = require('./addProduct');
+let AdminModal = require('./adminModal');
+let InfoProduct = require('./infoProduct');
 
 import { Provider } from 'react-redux';
 import { createStore } from 'redux';
@@ -11,15 +11,18 @@ import reducer from './reduce';
 
 let store = createStore(reducer);
 
-var adminConnect = false;
+let adminConnect = false;
 
-var adminpass = '1234';
+const adminpass = '1234';
 
-var defaultProduct = [
+const defaultProduct = [
   {id:0, name:'Tshirt Boy - 5year', price:20, desc:'T-shirt blue for a boy', brand:'Catimin', qty:1, img:'img/boyshirt.jpg'},
   {id:1, name:'Tshirt Girl - 4year', price:30, desc:'T-shirt yellow for a girl', brand:'Cater', qty:3, img:'img/girlshirt.jpg'}
 ];
 
+/*
+Dispatch event in the redux store after a type and data object merging
+*/
 const dispatchArticle = (type,ob) => Object.assign({type}, ob);
 
 module.exports = React.createClass({
@@ -33,8 +36,7 @@ module.exports = React.createClass({
   },
 
   createProduct: function(product) {
-    console.log(store.getState());
-    var id = store.getState().length;
+    let id = store.getState().length;
     
     let addProd = {
       id: id,
@@ -48,43 +50,27 @@ module.exports = React.createClass({
 
     store.dispatch(dispatchArticle('ADD_ARTICLE',addProd));
 
-    this.setState({
-      productList: this.state.productList.concat(addProd)
-    });
-
-    console.log(store.getState());
-
   },
 
   removeProduct: function(id){
-    var prodL = this.state.productList;
-    console.log('BEFORE ',this.state.productList);
-    prodL[id].qty--;
-    this.setState({
-      productList: prodL
-    });
-    console.log('AFTER ',this.state.productList);
+    store.dispatch(dispatchArticle('REMOVE_ARTICLE',{id}));
   },
 
   activeAdmin: function(idps){
     this.setState({showAdmin: idps && idps === adminpass});
-    console.log('TRY ADMIN CONNECT WITH PASS:',idps,this.state.showAdmin);
   },
 
   rendAdmin: function(){
-    console.log('ADMIN CONNECTED ? '+this.state.showAdmin);
     return (this.state.showAdmin) ? <ProductForm handleCreate={this.createProduct}/> : undefined;
   },
 
   showProductInfo: function(id){
-    console.log('SHOW ID ',id);
     this.setState({currentView: id});
     $('#prodInf').modal('show');
   },
 
   addProductInCart: function(id){
-    console.log('ADD ID ',id);
-    var cart = [{id:id}];
+    let cart = [{id:id}];
     this.setState({
       currentCart: this.state.currentCart.concat(cart)
     });
@@ -97,12 +83,12 @@ module.exports = React.createClass({
     return (
       <div>
         <div className="main"></div>
-        <Nav cart={this.state.currentCart} product={this.state.productList}/>
+        <Nav cart={this.state.currentCart} product={store.getState()}/>
         <div id="home">
           {this.rendAdmin()}
-          <ProductList produit={this.state.productList} handleInfo={this.showProductInfo} addProductInCart={this.addProductInCart} />
+          <ProductList produit={store.getState()} handleInfo={this.showProductInfo} addProductInCart={this.addProductInCart} />
           <AdminModal handleConnect={this.activeAdmin}/>
-          <InfoProduct product={this.state.productList[this.state.currentView]} addProductInCart={this.addProductInCart}/>
+          <InfoProduct product={store.getState()[this.state.currentView]} addProductInCart={this.addProductInCart}/>
         </div>
       </div>
     );

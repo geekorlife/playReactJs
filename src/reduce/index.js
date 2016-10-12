@@ -3,26 +3,40 @@ let defaultProduct = [
     { id: 1, name: 'Tshirt Girl - 4year', price: 30, desc: 'T-shirt yellow for a girl', brand: 'Cater', qty: 3, img: 'img/girlshirt.jpg' }
 ]
 
+function addArticle(state, prev){
+    return [
+                ...state,
+                { 
+                    id: prev.id, 
+                    name: prev.name, 
+                    price: prev.price, 
+                    desc: prev.desc, 
+                    brand: prev.brand, 
+                    qty: prev.qty, 
+                    img: prev.img 
+                }
+            ]
+}
+
+function removeArticle(state, id){
+    return state.map((a) => {
+                if(a.id == id) {
+                    a.qty--;
+                }
+                return a;
+            })
+}
+
 const articleState = (state = defaultProduct, action) => {
     switch (action.type) {
         case 'ADD_ARTICLE':
-            return [
-                ...state,
-                { 
-                    id: action.id, 
-                    name: action.name, 
-                    price: action.price, 
-                    desc: action.desc, 
-                    brand: action.brand, 
-                    qty: action.qty, 
-                    img: action.img 
-                }
-            ]
+            return  addArticle(state,action);
         case 'REMOVE_ARTICLE':
-            return state.filter((a) => a.id !== action.id);
-
+            return removeArticle(state,action.id);
+        case 'INIT_ARTICLE':
+            return state;
         default:
-            return state
+            return state;
     }
 }
 export default articleState;

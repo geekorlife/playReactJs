@@ -1,6 +1,6 @@
-var React = require('react');
+let React = require('react');
 
-var RendCol = React.createClass({
+let RendCol = React.createClass({
     getInitialState: function() {
         return {
             widthTitle: 0,
@@ -25,7 +25,6 @@ var RendCol = React.createClass({
         this.props.handleInfo(id);
     },
     addProductInCart: function(){
-        console.log('ADD PRODUCTTT',this.props.r);
         addProductInCart(this.props.r.id);
     },
     render: function(){
@@ -47,11 +46,10 @@ var RendCol = React.createClass({
     }
 })
 
-var ColProducts = React.createClass({
-
+let ColProducts = React.createClass({
   render: function(){
-    var handleInf = this.props.handleInfo;
-    var dt = this.props.dataRow.map(function(r, i){
+    let handleInf = this.props.handleInfo;
+    let dt = this.props.dataRow.map(function(r, i){
         var rd;
         if(r.qty > 0) rd = <RendCol key={i} r={r} handleInfo={handleInf}/>;
         return rd;
@@ -61,7 +59,7 @@ var ColProducts = React.createClass({
 
 });
 
-var addProductInCart;
+let addProductInCart;
 
 module.exports = React.createClass({
   chunks: function(arr, size) {
@@ -73,17 +71,17 @@ module.exports = React.createClass({
       throw new TypeError('Size should be a Number');
     }
 
-    var result = [];
-    for (var i = 0; i < arr.length; i += size) {
+    let result = [];
+    for (let i = 0; i < arr.length; i += size) {
       result.push(arr.slice(i, size + i));
     }
     return result;
   },
   render: function (){
     addProductInCart = this.props.addProductInCart;
-    var rows = this.chunks(this.props.produit, 2);
-    var handleInf = this.props.handleInfo;
-    var c = rows.map(function(row, i){
+    let rows = this.chunks(this.props.produit, 2);
+    let handleInf = this.props.handleInfo;
+    let c = rows.map(function(row, i){
       return (
         <div className="row" key={i}>
           <ColProducts key={i} dataRow={row} handleInfo={handleInf}/>

@@ -5,11 +5,18 @@ var ProductForm = require('./addProduct');
 var AdminModal = require('./adminModal');
 var InfoProduct = require('./infoProduct');
 
+import { Provider } from 'react-redux';
+import { createStore } from 'redux';
+import reducer from './reduce';
+
+let store = createStore(reducer);
+
 var adminConnect = false;
+
 var adminpass = '1234';
 
 var defaultProduct = [
-  {id:0, name:'Tshirt Boy - 6year', price:20, desc:'T-shirt blue for a boy', brand:'Catimin', qty:1, img:'img/boyshirt.jpg'},
+  {id:0, name:'Tshirt Boy - 5year', price:20, desc:'T-shirt blue for a boy', brand:'Catimin', qty:1, img:'img/boyshirt.jpg'},
   {id:1, name:'Tshirt Girl - 4year', price:30, desc:'T-shirt yellow for a girl', brand:'Cater', qty:3, img:'img/girlshirt.jpg'}
 ]
 

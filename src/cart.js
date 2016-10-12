@@ -64,6 +64,7 @@ module.exports = React.createClass({
             dt = (
                 <ul className="dropdown-menu cartMenu">
                     <li className="alinEmpty">Empty cart...</li>
+                    <hr/>
                     {checkOut}
                 </ul>
             );

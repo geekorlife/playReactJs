@@ -18,7 +18,9 @@ var adminpass = '1234';
 var defaultProduct = [
   {id:0, name:'Tshirt Boy - 5year', price:20, desc:'T-shirt blue for a boy', brand:'Catimin', qty:1, img:'img/boyshirt.jpg'},
   {id:1, name:'Tshirt Girl - 4year', price:30, desc:'T-shirt yellow for a girl', brand:'Cater', qty:3, img:'img/girlshirt.jpg'}
-]
+];
+
+const dispatchArticle = (type,ob) => Object.assign({type}, ob);
 
 module.exports = React.createClass({
   getInitialState: function() {
@@ -31,9 +33,27 @@ module.exports = React.createClass({
   },
 
   createProduct: function(product) {
+    console.log(store.getState());
+    var id = store.getState().length;
+    
+    let addProd = {
+      id: id,
+      name: product.name || 'Empty name',
+      price: product.price || 0,
+      desc: product.desc || 'Empty description',
+      brand: product.brand || 'No brand',
+      qty: product.qty || 1,
+      img: product.img || 'img/boyshirt.jpg'
+    }
+
+    store.dispatch(dispatchArticle('ADD_ARTICLE',addProd));
+
     this.setState({
-      productList: this.state.productList.concat(product)
+      productList: this.state.productList.concat(addProd)
     });
+
+    console.log(store.getState());
+
   },
 
   removeProduct: function(id){

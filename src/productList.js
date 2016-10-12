@@ -1,10 +1,47 @@
 var React = require('react');
 
 var RendCol = React.createClass({
+    getInitialState: function() {
+        return {
+            widthTitle: 0,
+            widthCol: 0
+        };
+    },
+    componentDidMount: function() {
+        this.setState({
+            widthTitle: this.refs.child.clientWidth,
+            widthcol: this.refs.col.clientWidth
+        });
+    },
+    prtWidth: function(){
+        return {width: this.state.widthTitle+'px'};
+    },
+
+    colHeight: function(){
+        return {height: this.state.widthcol+'px'};
+    },
+    clickProd: function(){
+        var id = this.props.r.id;
+        this.props.handleInfo(id);
+    },
+    addProductInCart: function(){
+        console.log('ADD PRODUCTTT',this.props.r);
+        addProductInCart(this.props.r.id);
+    },
     render: function(){
         return(
-            <div className="col-md-6" key={this.props.i}>
-                Name:{this.props.r.name} Price:{this.props.r.price}
+            <div className="col-md-6" ref="col" style={this.colHeight()}>
+                <div className="product">
+                <img src={this.props.r.img} ref="child"/>
+                <div className="titleProduct">{this.props.r.name}</div>
+                <div className="menuProduct">
+                    <span className="priceMenu">${this.props.r.price}</span>
+                    <button className="btn btn-primary infobutton cartadd" onClick={this.addProductInCart}>Add to cart <span className="glyphicon glyphicon-shopping-cart" aria-hidden="true"></span></button>
+                    <button className="btn btn-primary infobutton inf" onClick={this.clickProd}>
+                    More informations
+                    </button>
+                </div>
+                </div>
             </div>
         )
     }
@@ -13,15 +50,18 @@ var RendCol = React.createClass({
 var ColProducts = React.createClass({
 
   render: function(){
-      
+    var handleInf = this.props.handleInfo;
     var dt = this.props.dataRow.map(function(r, i){
-        return <RendCol i={i} r={r}/>
+        var rd;
+        if(r.qty > 0) rd = <RendCol key={i} r={r} handleInfo={handleInf}/>;
+        return rd;
     });
-    console.log(dt);
     return <div>{dt}</div>;
   }
 
 });
+
+var addProductInCart;
 
 module.exports = React.createClass({
   chunks: function(arr, size) {
@@ -40,16 +80,17 @@ module.exports = React.createClass({
     return result;
   },
   render: function (){
+    addProductInCart = this.props.addProductInCart;
     var rows = this.chunks(this.props.produit, 2);
-    console.log(rows);
+    var handleInf = this.props.handleInfo;
     var c = rows.map(function(row, i){
       return (
         <div className="row" key={i}>
-          <ColProducts dataRow={row}/>
+          <ColProducts key={i} dataRow={row} handleInfo={handleInf}/>
         </div>
       )
     })
-    console.log(c);
-    return <div>{c}</div>;
+    
+    return <div className="eachDiv">{c}</div>;
   }
 });

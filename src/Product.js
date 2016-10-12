@@ -2,14 +2,24 @@ var React = require('react');
 var Nav = require('./nav');
 var ProductList = require('./productList');
 var ProductForm = require('./addProduct');
+var AdminModal = require('./adminModal');
+var InfoProduct = require('./infoProduct');
+
+var adminConnect = false;
+var adminpass = '1234';
+
+var defaultProduct = [
+  {id:0, name:'Tshirt Boy - 6year', price:20, desc:'T-shirt blue for a boy', brand:'Catimin', qty:1, img:'img/boyshirt.jpg'},
+  {id:1, name:'Tshirt Girl - 4year', price:30, desc:'T-shirt yellow for a girl', brand:'Cater', qty:3, img:'img/girlshirt.jpg'}
+]
 
 module.exports = React.createClass({
   getInitialState: function() {
     return {
-      productList: [
-        {name:'test1', price:20},
-        {name:'test2', price:30}
-      ]
+      productList: defaultProduct,
+      showAdmin: false,
+      currentView: 0,
+      currentCart: []
     };
   },
 
@@ -19,12 +29,54 @@ module.exports = React.createClass({
     });
   },
 
+  removeProduct: function(id){
+    var prodL = this.state.productList;
+    console.log('BEFORE ',this.state.productList);
+    prodL[id].qty--;
+    this.setState({
+      productList: prodL
+    });
+    console.log('AFTER ',this.state.productList);
+  },
+
+  activeAdmin: function(idps){
+    this.setState({showAdmin: idps && idps === adminpass});
+    console.log('TRY ADMIN CONNECT WITH PASS:',idps,this.state.showAdmin);
+  },
+
+  rendAdmin: function(){
+    console.log('ADMIN CONNECTED ? '+this.state.showAdmin);
+    return (this.state.showAdmin) ? <ProductForm handleCreate={this.createProduct}/> : undefined;
+  },
+
+  showProductInfo: function(id){
+    console.log('SHOW ID ',id);
+    this.setState({currentView: id});
+    $('#prodInf').modal('show');
+  },
+
+  addProductInCart: function(id){
+    console.log('ADD ID ',id);
+    var cart = [{id:id}];
+    this.setState({
+      currentCart: this.state.currentCart.concat(cart)
+    });
+    // Remove article
+    this.removeProduct(id);
+    $('#prodInf').modal('hide');
+  },
+
   render: function() {
     return (
       <div>
-        <Nav />
-        <ProductForm handleCreate={this.createProduct}/>
-        <ProductList produit={this.state.productList} />
+        <div className="main"></div>
+        <Nav cart={this.state.currentCart} product={this.state.productList}/>
+        <div id="home">
+          {this.rendAdmin()}
+          <ProductList produit={this.state.productList} handleInfo={this.showProductInfo} addProductInCart={this.addProductInCart} />
+          <AdminModal handleConnect={this.activeAdmin}/>
+          <InfoProduct product={this.state.productList[this.state.currentView]} addProductInCart={this.addProductInCart}/>
+        </div>
       </div>
     );
   }

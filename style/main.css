@@ -4,12 +4,194 @@ body {
   padding: 0;
 }
 
+#home {
+  width: 90%;
+  margin: auto;
+}
+
+.mainNav {
+    position: absolute !important;
+    top: 0;
+    width: 100%;
+    background: none !important;
+    box-shadow: none !important;
+    border: none !important;
+}
+
 .main {
-  padding: 5px;
+    padding: 0px;
+    background: url(../img/kidclothes.jpg) no-repeat;
+    background-size: cover;
+    width: 100%;
+    height: 480px;
+}
+
+.eachDiv {
+    padding: 5px;
+    margin-top: 15px;
+    border-radius: 5px;
 }
 
 .myForm {
   position: absolute;
   width: 100%;
   bottom: 10px;
+}
+
+.col-md-6{
+  padding: 5px !important;
+}
+
+.col-md-6 img {
+    height: 90%;
+    position: absolute;
+    left: 0;
+    right: 0;
+    margin-left: auto;
+    margin-right: auto;
+}
+
+.product{
+    margin: 5px;
+    height: 100%;
+    background: rgba(0,0,0,0.05);
+}
+
+.titleProduct{
+    position:absolute;
+    left:0;
+    right:0;
+    margin-left:auto;
+    margin-right:auto;
+    top: 0;
+    background: rgba(0,0,0,0.5);
+    color: white;
+    width: 96%;
+    padding-left: 5px;
+}
+.menuProduct{
+    position:absolute;
+    left:0;
+    right:0;
+    margin-left:auto;
+    margin-right:auto;
+    bottom: 0;
+    background: rgba(0,0,0,0.5);
+    color: white;
+    width: 96%;
+    padding: 5px;
+}
+
+.priceMenu {
+  font-size: 1.4em;
+  display: inline-block;
+  vertical-align: middle;
+  line-height: 7px;
+}
+
+.infobutton{
+    float: right;
+    margin-right: 5px;
+    text-shadow: none !important;
+    color: #555 !important;
+    background: rgba(0,0,0,0) !important;
+    box-shadow: none !important;
+    border: none !important
+}
+.inf{
+  color: white !important;
+}
+.infobutton:hover{
+    background: #eee !important;
+    color: #555 !important;
+}
+.infobutton:active{
+    background: #ddd !important;
+    outline: none !important;
+    outline-offset: 0px !important;
+    color: #555 !important;
+}
+.cartadd {
+    background: white !important;
+}
+
+.cartaddInf {
+    background: #eee !important;
+    color: #555 !important;
+    position: absolute;
+    bottom: 25px;
+    right: 20px;
+    width: 50%;
+}
+.cartaddInf:hover {
+    background: #aaa !important;
+}
+
+
+/*Modal product*/
+.modal-body table tr {
+  width: 100%;
+}
+.modal-body td {
+  width: 50%;
+}
+.modal-body td>img {
+  width: 100%;
+}
+
+/* My Cart style */
+#myCart {
+  margin-top: 0px;
+  cursor: pointer;
+}
+
+#curCart {
+    position: absolute;
+    top: 3px;
+    left: 0px;
+    background: rgba(193,33,39,0.8);
+    border-radius: 100%;
+    width: 20px;
+    text-align: center;
+    color: white;
+}
+
+.cartMenu {
+  width: 300px !important;
+}
+
+.tableProduct {
+  width: 100%;
+}
+.cartPprice {
+  width: auto !important;
+}
+.cartPprice {
+  width: 45px !important;
+}
+.tableProduct td>img {
+  height: 45px;
+}
+.cartButton {
+    float: right;
+    margin-right: 5px;
+    text-shadow: none !important;
+    color: #fff !important;
+    box-shadow: none !important;
+    border: none !important
+}
+.checkout{
+  background: #4fbc70 !important;
+}
+.checkout:hover {
+  background: #278945 !important;
+}
+.cancel{
+  background: #f26868 !important;
+}
+.cancel:hover {
+  background: #ba3b3b !important;
+}
+.alinEmpty{
+  text-align: center;
 }

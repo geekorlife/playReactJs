@@ -3,7 +3,6 @@ var React = require('react');
 module.exports = React.createClass({
   submit: function(e) {
     e.preventDefault();
-    //alert('Name: ' + this.refs.name.value + " - $" + this.refs.price.value);
 
     var product = {
       name: this.refs.name.value,
@@ -17,11 +16,14 @@ module.exports = React.createClass({
   },
   render: function(){
     return (
-      <form>
-        <input type='text' placeholder='Name' ref='name'/>
-        <input type='text' placeholder='Price' ref='price'/>
-        <button onClick={this.submit}>Create new product</button>
-      </form>
+        <div className="eachDiv">
+            <h3>Add a new product:</h3>
+            <form>
+                <input type='text' placeholder='Name' ref='name'/>
+                <input type='text' placeholder='Price' ref='price'/>
+                <button onClick={this.submit}>Create new product</button>
+            </form>
+        </div>
     )
   }
 })

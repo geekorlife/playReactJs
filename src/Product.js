@@ -5,6 +5,8 @@ let ProductForm = require('./addProduct');
 let AdminModal = require('./adminModal');
 let InfoProduct = require('./infoProduct');
 
+import AdminBar from './adminBar';
+
 
 const adminpass = '1234';
 
@@ -13,14 +15,12 @@ const defaultProduct = [
   {id:1, name:'Tshirt Girl - 4year', price:30, desc:'T-shirt yellow for a girl', brand:'Cater', qty:3, img:'img/girlshirt.jpg'}
 ];
 
-
-
 class MainProduct extends React.Component{
   constructor(props) {
     super(props);
     this.state = {
       productList: defaultProduct,
-      showAdmin: true, // Admin is connected or not
+      showAdmin: false, // Admin is connected or not
       currentView: 0,
       currentCart: []
     };
@@ -29,6 +29,7 @@ class MainProduct extends React.Component{
     this.activeAdmin = this.activeAdmin.bind(this);
     this.rendAdmin = this.rendAdmin.bind(this);
     this.addProductInCart = this.addProductInCart.bind(this);
+    this.showProductInfo = this.showProductInfo.bind(this);
   }
 
   createProduct(product) {
@@ -63,7 +64,7 @@ class MainProduct extends React.Component{
   }
 
   rendAdmin(){
-    return (this.state.showAdmin) ? <ProductForm handleCreate={this.createProduct}/> : undefined;
+    return (this.state.showAdmin) ? <AdminBar handleCreate={this.createProduct}/> : undefined;
   }
 
   showProductInfo(id){

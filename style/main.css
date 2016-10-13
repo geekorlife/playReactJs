@@ -198,7 +198,7 @@ body {
 
 /* Add Product menu */
 .previewImg {
-  width: 300px;
+  width: 238px;
   float: left;
 }
 .fileInput {
@@ -224,4 +224,31 @@ body {
 .desc {
   width: 615px;
   height: 210px;
+}
+
+/* Manage product */
+.imgAdp{
+  float: left;
+  width: 20%;
+}
+.imgAdp img {
+  width: 150px;
+}
+.descAdp{
+  float: right;
+  width: 80%;
+}
+.descAdp input{
+  width: 25%;
+}
+.descAdp textarea{
+  width: 100%;
+}
+.eachDivProd {
+    padding: 5px;
+    margin-top: 15px;
+    border-radius: 5px;
+}
+.eachDivProd tr {
+  margin-bottom: 10px;
 }

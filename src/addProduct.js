@@ -1,16 +1,20 @@
-let React = require('react');
+import React from 'react';
 
 import ImgUpload from './imgUpload';
 
-module.exports = React.createClass({
-  getInitialState: function(){
-    return {
+class addProduct extends React.Component{
+  constructor(){
+    super();
+    this.state = {
       img: ''
-    };
-  },
-  submit: function(e) {
-    e.preventDefault();
+    }
 
+    this.submit = this.submit.bind(this);
+    this.addImg = this.addImg.bind(this);
+  }
+
+  submit(e){
+    e.preventDefault();
     let product = {
       name: this.refs.name.value,
       price: this.refs.price.value,
@@ -27,16 +31,15 @@ module.exports = React.createClass({
     this.refs.brand.value = "";
     this.refs.qty.value = "";
     this.refs.desc.value = "";
-  },
+  }
 
-  addImg: function(img){
+  addImg(img){
       this.setState({img:img});
-  },
+  }
 
-  render: function(){
+  render(){
     return (
         <div className="eachDiv">
-            <h3>Add a new product:</h3>
             <form>
                 <ImgUpload addImg={this.addImg}/>
                 <div>
@@ -59,4 +62,6 @@ module.exports = React.createClass({
         </div>
     )
   }
-})
+}
+
+export default addProduct;

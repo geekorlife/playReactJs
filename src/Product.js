@@ -1,17 +1,10 @@
-let React = require('react');
+import React from 'react';
 let Nav = require('./nav');
 let ProductList = require('./productList');
 let ProductForm = require('./addProduct');
 let AdminModal = require('./adminModal');
 let InfoProduct = require('./infoProduct');
 
-import { Provider } from 'react-redux';
-import { createStore } from 'redux';
-import reducer from './reduce';
-
-let store = createStore(reducer);
-
-let adminConnect = false;
 
 const adminpass = '1234';
 
@@ -20,56 +13,65 @@ const defaultProduct = [
   {id:1, name:'Tshirt Girl - 4year', price:30, desc:'T-shirt yellow for a girl', brand:'Cater', qty:3, img:'img/girlshirt.jpg'}
 ];
 
-/*
-Dispatch event in the redux store after a type and data object merging
-*/
-const dispatchArticle = (type,ob) => Object.assign({type}, ob);
 
-module.exports = React.createClass({
-  getInitialState: function() {
-    return {
+
+class MainProduct extends React.Component{
+  constructor(props) {
+    super(props);
+    this.state = {
       productList: defaultProduct,
-      showAdmin: false,
+      showAdmin: true, // Admin is connected or not
       currentView: 0,
       currentCart: []
     };
-  },
+    this.createProduct = this.createProduct.bind(this);
+    this.removeProduct = this.removeProduct.bind(this);
+    this.activeAdmin = this.activeAdmin.bind(this);
+    this.rendAdmin = this.rendAdmin.bind(this);
+    this.addProductInCart = this.addProductInCart.bind(this);
+  }
 
-  createProduct: function(product) {
-    let id = store.getState().length;
+  createProduct(product) {
+    let id = this.props.store.getState().length;
     
+    console.log('CREATE NEW PRODUCT/',product);
+
     let addProd = {
       id: id,
       name: product.name || 'Empty name',
-      price: product.price || 0,
+      price: Number(product.price) || 0,
       desc: product.desc || 'Empty description',
       brand: product.brand || 'No brand',
-      qty: product.qty || 1,
+      qty: Number(product.qty) || 1,
       img: product.img || 'img/boyshirt.jpg'
-    }
+    };
 
-    store.dispatch(dispatchArticle('ADD_ARTICLE',addProd));
+    this.props.addArt(addProd);
+    //store.dispatch(dispatchArticle('ADD_ARTICLE',addProd));
 
-  },
+    console.log(this.props.store.getState());
 
-  removeProduct: function(id){
-    store.dispatch(dispatchArticle('REMOVE_ARTICLE',{id}));
-  },
+  }
 
-  activeAdmin: function(idps){
+  removeProduct(id){
+    this.props.remArt(id);
+    //store.dispatch(dispatchArticle('REMOVE_ARTICLE',{id}));
+  }
+
+  activeAdmin(idps){
     this.setState({showAdmin: idps && idps === adminpass});
-  },
+  }
 
-  rendAdmin: function(){
+  rendAdmin(){
     return (this.state.showAdmin) ? <ProductForm handleCreate={this.createProduct}/> : undefined;
-  },
+  }
 
-  showProductInfo: function(id){
+  showProductInfo(id){
     this.setState({currentView: id});
     $('#prodInf').modal('show');
-  },
+  }
 
-  addProductInCart: function(id){
+  addProductInCart(id){
     let cart = [{id:id}];
     this.setState({
       currentCart: this.state.currentCart.concat(cart)
@@ -77,20 +79,24 @@ module.exports = React.createClass({
     // Remove article
     this.removeProduct(id);
     $('#prodInf').modal('hide');
-  },
+  }
 
-  render: function() {
+  render() {
     return (
       <div>
         <div className="main"></div>
-        <Nav cart={this.state.currentCart} product={store.getState()}/>
+        <Nav cart={this.state.currentCart} product={this.props.store.getState()}/>
         <div id="home">
           {this.rendAdmin()}
-          <ProductList produit={store.getState()} handleInfo={this.showProductInfo} addProductInCart={this.addProductInCart} />
+          <ProductList produit={this.props.store.getState()} handleInfo={this.showProductInfo} addProductInCart={this.addProductInCart} />
           <AdminModal handleConnect={this.activeAdmin}/>
-          <InfoProduct product={store.getState()[this.state.currentView]} addProductInCart={this.addProductInCart}/>
+          <InfoProduct product={this.props.store.getState()[this.state.currentView]} addProductInCart={this.addProductInCart}/>
         </div>
       </div>
     );
   }
-});
+};
+
+
+//export default connect(mapStateToProps)(MainProduct);
+export default MainProduct;

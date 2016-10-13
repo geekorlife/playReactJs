@@ -194,3 +194,34 @@ body {
   text-align: center;
   margin-top: 15px;
 }
+
+
+/* Add Product menu */
+.previewImg {
+  width: 300px;
+  float: left;
+}
+.fileInput {
+  width: 230px;
+}
+
+.imgPreview {
+  height: 229px;
+}
+.imgPreview img {
+  height: 229px;
+}
+
+.inputProd{
+  margin-bottom: 10px;
+}
+.inputProd input, label{
+  width: 150px;
+  margin-right: 5px;
+  height: 27px;
+}
+
+.desc {
+  width: 615px;
+  height: 210px;
+}

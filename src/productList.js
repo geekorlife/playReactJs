@@ -70,18 +70,23 @@ module.exports = React.createClass({
     if (typeof size !== 'number') {
       throw new TypeError('Size should be a Number');
     }
+    let validArray = arr.filter((ar) => {
+        return ar.qty > 0;
+    })
 
     let result = [];
-    for (let i = 0; i < arr.length; i += size) {
-      result.push(arr.slice(i, size + i));
+    for (let i = 0; i < validArray.length; i += size) {
+      result.push(validArray.slice(i, size + i));
     }
     return result;
   },
   render: function (){
     addProductInCart = this.props.addProductInCart;
     let rows = this.chunks(this.props.produit, 2);
+    console.log('ROWS',rows);
     let handleInf = this.props.handleInfo;
     let c = rows.map(function(row, i){
+        console.log('COL',row);
       return (
         <div className="row" key={i}>
           <ColProducts key={i} dataRow={row} handleInfo={handleInf}/>

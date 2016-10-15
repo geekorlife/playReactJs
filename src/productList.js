@@ -29,7 +29,7 @@ let RendCol = React.createClass({
     },
     render: function(){
         return(
-            <div className="col-md-6" ref="col" style={this.colHeight()}>
+            <div className="col-md-4" ref="col" style={this.colHeight()}>
                 <div className="product">
                 <img src={this.props.r.img} ref="child"/>
                 <div className="titleProduct">{this.props.r.name}</div>
@@ -82,11 +82,9 @@ module.exports = React.createClass({
   },
   render: function (){
     addProductInCart = this.props.addProductInCart;
-    let rows = this.chunks(this.props.produit, 2);
-    console.log('ROWS',rows);
+    let rows = this.chunks(this.props.produit, 3);
     let handleInf = this.props.handleInfo;
     let c = rows.map(function(row, i){
-        console.log('COL',row);
       return (
         <div className="row" key={i}>
           <ColProducts key={i} dataRow={row} handleInfo={handleInf}/>

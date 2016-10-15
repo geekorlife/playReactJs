@@ -57,6 +57,9 @@ body {
     background: rgba(255,255,255,0.05);
     box-shadow: rgba(0,0,0,0.5) 3px 3px 9px 0px;
 }
+.product img {
+  height: 100%;
+}
 
 .titleProduct{
     position: absolute;
@@ -68,16 +71,21 @@ body {
     padding-left: 5px;
 }
 .menuProduct{
-    position:absolute;
-    left:0;
-    right:0;
-    margin-left:auto;
-    margin-right:auto;
-    bottom: 0;
+    position: relative;
+    left: 0;
+    right: 0;
+    margin-left: auto;
+    margin-right: auto;
+    bottom: 42px;
     background: rgba(0,0,0,0.5);
     color: white;
-    width: 96%;
+    width: 100%;
     padding: 5px;
+    height: 42px;
+}
+
+.row {
+    padding-bottom: 35px;
 }
 
 .priceMenu {

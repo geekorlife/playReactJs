@@ -1,8 +1,8 @@
-var React = require('react');
-var Cart = require('./cart.js');
+import React from 'react';
+import Cart from './cart.js';
 
-module.exports = React.createClass({
-  render: function() {
+class navBar extends React.Component{
+  render() {
     return (
       <nav className="navbar navbar-default mainNav">
         <div className="container-fluid">
@@ -36,4 +36,6 @@ module.exports = React.createClass({
       </nav>
     );
   }
-});
+};
+
+export default navBar;

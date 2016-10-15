@@ -1,9 +1,10 @@
 import React from 'react';
-let Nav = require('./nav');
-let ProductList = require('./productList');
-let ProductForm = require('./addProduct');
-let AdminModal = require('./adminModal');
-let InfoProduct = require('./infoProduct');
+import Nav from './nav';
+import ProductList from './productList';
+import store from './reduce/store';
+import ProductForm from './addProduct';
+import AdminModal from './adminModal';
+import InfoProduct from './infoProduct';
 
 import AdminBar from './adminBar';
 
@@ -33,7 +34,7 @@ class MainProduct extends React.Component{
   }
 
   createProduct(product) {
-    let id = this.props.store.getState().length;
+    let id = store.getState().product.length;
     
     console.log('CREATE NEW PRODUCT/',product);
 
@@ -48,15 +49,13 @@ class MainProduct extends React.Component{
     };
 
     this.props.addArt(addProd);
-    //store.dispatch(dispatchArticle('ADD_ARTICLE',addProd));
 
-    console.log(this.props.store.getState());
+    console.log(store.getState());
 
   }
 
   removeProduct(id){
     this.props.remArt(id);
-    //store.dispatch(dispatchArticle('REMOVE_ARTICLE',{id}));
   }
 
   activeAdmin(idps){
@@ -83,15 +82,17 @@ class MainProduct extends React.Component{
   }
 
   render() {
+    var listProduct = store.getState().product;
+    console.log('store',store.getState());
     return (
       <div>
         <div className="main"></div>
-        <Nav cart={this.state.currentCart} product={this.props.store.getState()}/>
+        <Nav cart={this.state.currentCart} product={listProduct}/>
         <div id="home">
           {this.rendAdmin()}
-          <ProductList produit={this.props.store.getState()} handleInfo={this.showProductInfo} addProductInCart={this.addProductInCart} />
+          <ProductList handleInfo={this.showProductInfo} addProductInCart={this.addProductInCart} />
           <AdminModal handleConnect={this.activeAdmin}/>
-          <InfoProduct product={this.props.store.getState()[this.state.currentView]} addProductInCart={this.addProductInCart}/>
+          <InfoProduct product={listProduct[this.state.currentView]} addProductInCart={this.addProductInCart}/>
         </div>
       </div>
     );

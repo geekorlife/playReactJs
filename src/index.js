@@ -17,13 +17,13 @@ const remArt = (id) => {
 }
 
 render(
-    <Product addArt={addArt} remArt={remArt} store={store}/>,
+    <Product addArt={addArt} remArt={remArt}/>,
     document.getElementById('app')
 )
 
 store.subscribe(function(){
   render(
-    <Product addArt={addArt} remArt={remArt} store={store} />,
+    <Product addArt={addArt} remArt={remArt}/>,
     document.getElementById('app')
 )
 })

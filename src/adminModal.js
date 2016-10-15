@@ -1,11 +1,15 @@
-var React = require('react');
+import React from 'react';
 
-module.exports = React.createClass({
-    tryConnect: function(e){
+class adminModal extends React.Component{
+    constructor(){
+      super();
+      this.tryConnect = this.tryConnect.bind(this);
+    }
+    tryConnect(e){
       e.preventDefault();
       this.props.handleConnect(this.refs.pwd.value);
-    },
-    render: function(){
+    }
+    render(){
         return (
         <div className="modal fade bs-example-modal-sm" tabIndex="-1" role="dialog" aria-labelledby="myModal">
             <div className="modal-dialog modal-sm" role="document">
@@ -32,4 +36,6 @@ module.exports = React.createClass({
         </div>
         )
     }
-})
+};
+
+export default adminModal;

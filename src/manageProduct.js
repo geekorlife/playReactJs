@@ -1,5 +1,5 @@
 import React from 'react';
-import store from './reduce/store'
+import store from './reduce/store';
 
 class manageProduct extends React.Component {
     constructor(){
@@ -13,7 +13,7 @@ class manageProduct extends React.Component {
     }
 
     listProduct(){
-        var article = store.getState();
+        var article = store.getState().product;
         var that = this;
         var ret = article.map((a,i) =>{
             return (
@@ -38,7 +38,6 @@ class manageProduct extends React.Component {
     }
 
     render(){
-        console.log('STORE',store.getState());
         var listP = this.listProduct();
         return (
             <div className="eachDivProd">

@@ -15,7 +15,6 @@ class addProd extends React.Component{
                 return (
                     <ProductForm handleCreate={this.props.handleCreate}/>
                 )
-                break;
             
             case 'viewProducts':
                 this.title = 'Manage products';

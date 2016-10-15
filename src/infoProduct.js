@@ -1,7 +1,11 @@
-var React = require('react');
+import React from 'react';
 
-module.exports = React.createClass({
-    getData: function(product,fn){
+class infoProduct extends React.Component{
+    constructor(){
+        super();
+    }
+
+    getData(product,fn){
         var desc;
         
         if(product && product.img){
@@ -33,8 +37,9 @@ module.exports = React.createClass({
             );
         }
         return desc;
-    },
-    render: function(){
+    }
+
+    render(){
         var product = this.props.product;
         var desc = this.getData(product,this.props.addProductInCart);
         return (
@@ -53,4 +58,6 @@ module.exports = React.createClass({
             </div>
         )
     }
-})
+};
+
+export default infoProduct;

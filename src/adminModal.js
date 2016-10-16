@@ -11,7 +11,7 @@ class adminModal extends React.Component{
     }
     render(){
         return (
-        <div className="modal fade bs-example-modal-sm" tabIndex="-1" role="dialog" aria-labelledby="myModal">
+        <div className="modal fade bs-example-modal-sm" tabIndex="-1" role="dialog" aria-labelledby="myModal" id="adminConnect">
             <div className="modal-dialog modal-sm" role="document">
               <div className="modal-content">
                 <div className="modal-header">

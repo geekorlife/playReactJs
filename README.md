@@ -1,16 +1,17 @@
 # playReactJs
 Play with reactjs
+
 Create a basic ecommerce website with some administration tools.
 
 ##Full stack JS
-Front end Stack:
-Reactjs, Bootstrap, Jquery, Redux
+Main Front end stack:
+Reactjs, Redux, Bootstrap, Jquery
 
-Back end stack:
-Node.js
+Main Back end stack:
+Node, Express
 
-Db:
-MongoDB
+Main Db:
+MongoDB, Mongoose
 
 Build:
 Webpack with Babel and es2015

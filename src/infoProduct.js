@@ -42,6 +42,9 @@ class infoProduct extends React.Component{
     render(){
         var product = this.props.product;
         var desc = this.getData(product,this.props.addProductInCart);
+        if(!product) return (
+            <div className="modal fade bs-example-modal-lg" tabIndex="-1" role="dialog" aria-labelledby="myModal" id="prodInf"></div>
+        )
         return (
             <div className="modal fade bs-example-modal-lg" tabIndex="-1" role="dialog" aria-labelledby="myModal" id="prodInf">
                 <div className="modal-dialog modal-lg" role="document">

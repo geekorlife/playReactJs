@@ -34,6 +34,12 @@ const findArticle = (art, callBack) => {
 // APP CONFIGURATION
 app.use(bodyParser.urlencoded({ extended: true }));
 app.use(bodyParser.json());
+app.use(function(req, res, next) {
+  res.header("Access-Control-Allow-Origin", "*");
+  res.header("Access-Control-Allow-Headers", "Origin, X-Requested-With, Content-Type, Accept");
+  next();
+});
+
 
 // ROUTES FOR THE API
 var router = require('./controlers/route');
@@ -41,12 +47,10 @@ var router = require('./controlers/route');
 // USE ROUTER IN EXPRESS
 app.use('/api', router);
 
+
 // LAUNCH APP EXPRESS
 app.listen(port);
 console.log("ReactShop server listening on port %d",port);
-
-
-
 
 
 // test route to make sure everything is working (accessed at GET http://localhost:8080/api)
@@ -57,10 +61,11 @@ router.get('/', function(req, res) {
 router.route('/all')
     // Get all article in DB
     .get(function(req, res) {
+        console.log('GET ALL');
         Schema.articles.find(function(err, art) {
             if (err)
                 res.send(err);
-
+            console.log(art);
             res.json(art);
         });
     });

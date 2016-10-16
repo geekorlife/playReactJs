@@ -21,7 +21,7 @@ class MainProduct extends React.Component{
     super(props);
     this.state = {
       productList: defaultProduct,
-      showAdmin: false, // Admin is connected or not
+      showAdmin: true, // Admin is connected or not
       currentView: 0,
       currentCart: []
     };
@@ -35,8 +35,6 @@ class MainProduct extends React.Component{
 
   createProduct(product) {
     let id = store.getState().product.length;
-    
-    console.log('CREATE NEW PRODUCT/',product);
 
     let addProd = {
       id: id,
@@ -47,6 +45,8 @@ class MainProduct extends React.Component{
       qty: Number(product.qty) || 1,
       img: product.img || 'img/boyshirt.jpg'
     };
+
+    console.log('CREATE NEW PRODUCT/',addProd);
 
     this.props.addArt(addProd);
 
@@ -59,6 +59,7 @@ class MainProduct extends React.Component{
   }
 
   activeAdmin(idps){
+    $('#adminConnect').modal('hide');
     this.setState({showAdmin: idps && idps === adminpass});
   }
 

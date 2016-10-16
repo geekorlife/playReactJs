@@ -101,6 +101,12 @@ class ProductList extends React.Component {
         let rows = this.chunks(product, 3);
         let handleInf = this.props.handleInfo;
         
+        if(product.length === 0) {
+            return (
+                <div>Empty list...</div>
+            )
+        }
+
         let c = rows.map(function (row, i) {
             return (
                 <div className="row" key={i}>

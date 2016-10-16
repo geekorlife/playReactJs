@@ -5,9 +5,7 @@ import ImgUpload from './imgUpload';
 class addProduct extends React.Component{
   constructor(){
     super();
-    this.state = {
-      img: ''
-    }
+    this.state = {img: ''};
 
     this.submit = this.submit.bind(this);
     this.addImg = this.addImg.bind(this);
@@ -31,6 +29,7 @@ class addProduct extends React.Component{
     this.refs.brand.value = "";
     this.refs.qty.value = "";
     this.refs.desc.value = "";
+    this.setState({img: ''});
   }
 
   addImg(img){

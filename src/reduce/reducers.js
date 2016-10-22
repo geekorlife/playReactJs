@@ -1,4 +1,14 @@
-import {removeArticle, addArticle, postIsLoading, loadAllArticles, addArticleSuccess} from './action';
+import {
+    removeArticle, 
+    addArticle, 
+    postIsLoading, 
+    loadAllArticles, 
+    addArticleSuccess,
+    addArticleDB,
+    getPageArticle,
+    getPageArticleSuccess,
+    resetPageArticle
+} from './action';
 
 const INITIAL_STATE = {
     post_state : { posts: [], error: null, loading: false , db: false},
@@ -7,7 +17,6 @@ const INITIAL_STATE = {
 
 const actionState = (state = INITIAL_STATE, action) => {
     console.log('articleState ACTION - ',action.type);
-    console.log('state.product AFTER',state);
     switch (action.type) {
         case 'ADD_ARTICLE':
             return  addArticle(state,action);
@@ -17,10 +26,16 @@ const actionState = (state = INITIAL_STATE, action) => {
             return removeArticle(state,action.id);
         case 'REMOVE_ARTICLE_SUCCESS':
             return removeArticle(state,action.id);
+        case 'GET_LIST_ARTICLE':
+            return getPageArticle(state,action);
+        case 'GET_LIST_ARTICLE_SUCCESS':
+            return addArticleDB(state,action.art);
         case 'INIT_ARTICLE':
             return loadAllArticles(state,action.state);
+        case 'RESET_PAGE_ARTICLE':
+            return resetPageArticle(state);
         default:
-            return postIsLoading(state, false);
+            return state;
     }
 };
 

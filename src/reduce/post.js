@@ -17,14 +17,13 @@ export const INIT_ARTICLE = 'INIT_ARTICLE';
 export const ADD_ARTICLE_SUCCESS = 'ADD_ARTICLE_SUCCESS';
 
 
-
-
-const ROOT_URL = location.href.indexOf('localhost') > 0 ? 'http://localhost:8080/api' : '/api';
+const ROOT_URL = location.href.indexOf('localhost') > 0 ? 'http://192.168.2.8:8080/api' : 'http://192.168.2.8:8080/api';
 
 // Get all articles from DB
 export function fetchDB() {
     axios.get(`${ROOT_URL}/all`)
     .then(function (response) {
+        console.log('GET ALL DB FECH',response.data);
         store.dispatch(store.dispatchArticle(INIT_ARTICLE,{state:response.data}));      //   UPDATE STATE AND DOM
     })
     .catch(function (error) {
@@ -36,6 +35,29 @@ export function fetchDB() {
     };
 }
 
+export function fetchPageArticle(fromPage){
+    var configUpload = {
+        responseType: 'arraybuffer',
+        onDownloadProgress: function (e) {
+            console.log("This just in... ", e);
+        }
+    };
+    
+    axios.get(`${ROOT_URL}/page`, {params: fromPage}, configUpload)
+    .then(function (response) {
+        console.log('get page article reponse',response.data);
+        store.dispatch(store.dispatchArticle('GET_LIST_ARTICLE_SUCCESS',{art:response.data}));      //   UPDATE STATE AND DOM
+    })
+    .catch(function (error) {
+        console.log(error);
+    });
+
+    return {
+      type: CREATE_POST
+    };
+}
+
+// Create new article
 export function fetchPutArticle(prev) {
     var prevArt = { 
         id: prev.id, 
@@ -44,11 +66,21 @@ export function fetchPutArticle(prev) {
         desc: prev.desc, 
         brand: prev.brand, 
         qty: prev.qty, 
+        cat: prev.cat,
+        gender: prev.gender,
         img: prev.img 
     };
 
-    axios.post(`${ROOT_URL}/add`, prev)
+    var configUpload = {
+        responseType: 'arraybuffer',
+        onDownloadProgress: function (e) {
+            console.log("This just in... ", e);
+        }
+    };
+
+    axios.post(`${ROOT_URL}/add`, prev, configUpload)
     .then(function (response) {
+        console.log('response',response);
         store.dispatch(store.dispatchArticle(ADD_ARTICLE_SUCCESS,prevArt));      //   UPDATE STATE AND DOM
     })
     .catch(function (error) {

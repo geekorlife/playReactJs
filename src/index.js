@@ -5,7 +5,6 @@ import { Provider } from 'react-redux';
 import store from './reduce/store'
 
 const addArt = (addProd) => {
-  console.log('ADD ARTICEL FROM INDEX');
   store.dispatch(store.dispatchArticle('ADD_ARTICLE',addProd));
 }
 

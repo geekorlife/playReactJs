@@ -36,10 +36,11 @@ class addProd extends React.Component{
     }
 
     render(){
+        //<button onClick={this.showAdd}>Add a new product</button>
+        //<button onClick={this.showProd}>Manage products</button>
         return (
             <div>
-                <button onClick={this.showAdd}>Add a new product</button>
-                <button onClick={this.showProd}>Manage products</button>
+               
                 <AdminAddProd handleCreate={this.createNewProd} currentView={this.currentView} />
             </div>
         )

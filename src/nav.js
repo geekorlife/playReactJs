@@ -2,6 +2,12 @@ import React from 'react';
 import Cart from './cart.js';
 
 class navBar extends React.Component{
+  showAdd(e){
+    e.preventDefault();
+    console.log('SOW MODAL');
+    $('#addProAdm').modal('show');
+  }
+
   render() {
     return (
       <nav className="navbar navbar-default mainNav">
@@ -13,12 +19,14 @@ class navBar extends React.Component{
               <span className="icon-bar"></span>
               <span className="icon-bar"></span>
             </button>
-            <a className="navbar-brand" href="#">Stella's Shop</a>
+            <a className="navbar-brand" href="/#">Stella's Shop</a>
           </div>
 
           <div className="collapse navbar-collapse" id="bs-example-navbar-collapse-1">
             <ul className="nav navbar-nav navbar-right">
+              <li><a href="#">Home</a></li>
               <li><a href="#">About</a></li>
+              <li><a href="#" onClick={this.showAdd}>Create an ad</a></li>
               <li className="dropdown">
                 <a href="#" className="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false">Menu <span className="caret"></span></a>
                 <ul className="dropdown-menu">

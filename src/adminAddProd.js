@@ -1,5 +1,6 @@
 import React from 'react'
-import ProductForm from './addProduct';
+import ProductForm from './form/productForm';
+
 import ManageProduct from './manageProduct';
 
 class addProd extends React.Component{

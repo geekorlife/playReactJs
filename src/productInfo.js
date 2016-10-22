@@ -1,8 +1,10 @@
 import React from 'react';
+import store from './reduce/store';
 
-class infoProduct extends React.Component{
+class productInfo extends React.Component{
     constructor(){
         super();
+        this.productList = store.getState().product;
     }
 
     getData(product,fn){
@@ -40,28 +42,19 @@ class infoProduct extends React.Component{
     }
 
     render(){
-        console.log('MODAL',this.props);
-        var product = this.props.product;
+        console.log('this.props',this.props.location.query);
+        var product = store.getState().product[parseInt(this.props.params.id)];
         var desc = this.getData(product,this.props.addProductInCart);
         if(!product) return (
-            <div className="modal fade bs-example-modal-lg" tabIndex="-1" role="dialog" aria-labelledby="myModal" id="prodInf"></div>
+            <div>LOADING AD</div>
         )
         return (
-            <div className="modal fade bs-example-modal-lg" tabIndex="-1" role="dialog" aria-labelledby="myModal" id="prodInf">
-                <div className="modal-dialog modal-lg" role="document">
-                <div className="modal-content">
-                    <div className="modal-header">
-                        <button type="button" className="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">×</span></button>
-                        <h4 className="modal-title">{product.name}</h4>
-                    </div>
-                    <div className="modal-body">
-                        {desc}
-                    </div>
-                </div>
-                </div>
+            <div>
+                <h4 className="modal-title">{product.name}</h4>
+                {desc}
             </div>
         )
     }
 };
 
-export default infoProduct;
+export default productInfo;

@@ -1,21 +1,46 @@
 body {
-  border: none;
-  margin: 0;
-  padding: 0;
+    border: none;
+    margin: 0;
+    padding: 0;
+
+    background: -webkit-radial-gradient(rgb(255,255,255) 15%, rgba(0,0,0,0) 16%), -webkit-radial-gradient(rgb(255,255,255) 15%, rgba(0,0,0,0) 16%), rgba(148, 148, 148, 0.05) !important;
+    background: -moz-radial-gradient(rgb(255,255,255) 15%, rgba(0,0,0,0) 16%), -moz-radial-gradient(rgb(255,255,255) 15%, rgba(0,0,0,0) 16%), rgba(148, 148, 148, 0.05) !important;
+    background: radial-gradient(rgb(255,255,255) 15%, rgba(0,0,0,0) 16%), radial-gradient(rgb(255,255,255) 15%, rgba(0,0,0,0) 16%), rgba(148, 148, 148, 0.05) !important;
+    background-position: 0 0, 30px 30px !important;
+    -webkit-background-origin: padding-box !important;
+    background-origin: padding-box !important;
+    -webkit-background-clip: border-box !important;
+    background-clip: border-box !important;
+    -webkit-background-size: 60px 60px !important;
+    background-size: 60px 60px !important;
+
 }
 
+
 #home {
-  width: 90%;
-  margin: auto;
+    width: 90%;
+    margin: 4em auto 0px auto;
 }
 
 .mainNav {
-    position: absolute !important;
+    position: fixed !important;
+    z-index: 1;
     top: 0;
     width: 100%;
-    background: none !important;
-    box-shadow: none !important;
+    background: #dd127b!important;
+    box-shadow: 0px 1px 14px rgba(0,0,0,0.5) !important;
     border: none !important;
+    border-bottom: 4px solid #D0E9E9 !important;
+    border-radius: 0px !important;
+}
+
+.navbar-default .navbar-nav>li>a {
+    color: white !important;
+}
+
+.navbar-brand {
+    color: white !important;
+    text-shadow: 1px 1px 1px rgba(0,0,0,0) !important;
 }
 
 .main {
@@ -26,20 +51,102 @@ body {
     height: 480px;
 }
 
+/* Home Category */
+.bg-gray-dark{
+    background: white;
+    border: 1px solid #eee;
+    border-radius: 0.25em;
+    padding: 0.3em 0.3em 0.3em 0.3em;
+    margin-bottom: 1.5em;
+    cursor: pointer;
+}
+.bg-gray-dark:hover {
+    background: rgba(0,0,0,0.5);
+}
+
+.bg-gray-dark img {
+    max-width: 100%;
+    max-height: 225px;
+    width: auto;
+    height: auto;
+    margin: auto;
+}
+@media screen and (max-width: 600px) {
+  
+    .bg-gray-dark h3{
+        text-align: center;
+        top: 50px;
+        position: relative !important;
+    }
+}
+
+
+.bg-gray-dark > h3 span{
+    float: right;
+    font-size: 0.7em;
+    padding-top: 5px;
+}
+
+.main-category {
+    border: none;
+    background: rgba(0,0,0,0);
+}
+.main-category img {
+    border: 1px solid rgba(0,0,0,0.1);
+    padding: 3px;
+    border-radius: 5px;
+}
+.main-category:hover{
+  background: none;
+}
+.main-category img:hover {
+    background:#dd127b;
+}
+
+.bg-gray-dark p {
+  margin-top: 10px;
+}
+
+.chooseCat{
+    border: 1px solid rgba(0,0,0,0.05);
+    min-height: 6em;
+    margin: 1em;
+    cursor: pointer;
+}
+.chooseCat:hover{
+    background: rgba(0,0,0,0.05);
+}
+.chooseCat img {
+    position: initial !important;
+    height: 284px !important;
+    width: 426px !important;
+}
+
+/* Product list */
 .eachDiv {
     padding: 5px;
     margin-top: 15px;
     border-radius: 5px;
 }
+.nextPrev{
+    background: #4fbc70 !important;
+    border: none !important;
+    margin-left: 2em;
+    min-width: 100px;
+    margin-right: 2em;
+}
+.nextPrev:hover {
+    background: #278945 !important;
+}
 
 .myForm {
-  position: absolute;
-  width: 100%;
-  bottom: 10px;
+    position: absolute;
+    width: 100%;
+    bottom: 10px;
 }
 
 .col-md-6{
-  padding: 5px !important;
+    padding: 5px !important;
 }
 
 .col-md-6 img {
@@ -52,13 +159,14 @@ body {
 }
 
 .product{
-    margin: 5px;
     height: 100%;
     background: rgba(255,255,255,0.05);
-    box-shadow: rgba(0,0,0,0.5) 3px 3px 9px 0px;
+    box-shadow: rgba(0,0,0,0.3) 0px 1px 3px 1px;
+    text-align: center;
 }
 .product img {
-  height: 100%;
+    max-height: 100%;
+    max-width: 100%;
 }
 
 .titleProduct{
@@ -66,7 +174,7 @@ body {
     left: 20px;
     margin-left: auto;
     margin-right: auto;
-    bottom: 44px;
+    bottom: 29px;
     color: white;
     padding-left: 5px;
     text-shadow: none;
@@ -74,15 +182,15 @@ body {
     letter-spacing: 1px;
 }
 .menuProduct{
-    position: relative;
+    position: absolute;
     left: 0;
     right: 0;
     margin-left: auto;
     margin-right: auto;
-    bottom: 72px;
+    bottom: -20px;
     background: rgba(0,0,0,0.5);
     color: white;
-    width: 100%;
+    width: 90%;
     padding: 30px 5px 5px 5px;
     height: 72px;
 }
@@ -112,7 +220,7 @@ body {
     color: #555 !important;
 }
 .inf{
-  color: white !important;
+    color: white !important;
 }
 .infobutton:hover{
     background: #eee !important;
@@ -143,19 +251,19 @@ body {
 
 /*Modal product*/
 .modal-body table tr {
-  width: 100%;
+    width: 100%;
 }
 .modal-body td {
-  width: 50%;
+    width: 50%;
 }
 .modal-body td>img {
-  width: 100%;
+    width: 100%;
 }
 
 /* My Cart style */
 #myCart {
-  margin-top: 0px;
-  cursor: pointer;
+    margin-top: 0px;
+    cursor: pointer;
 }
 
 #curCart {
@@ -170,20 +278,20 @@ body {
 }
 
 .cartMenu {
-  width: 300px !important;
+    width: 300px !important;
 }
 
 .tableProduct {
-  width: 100%;
+    width: 100%;
 }
 .cartPprice {
-  width: auto !important;
+    width: auto !important;
 }
 .cartPprice {
-  width: 45px !important;
+    width: 45px !important;
 }
 .tableProduct td>img {
-  height: 45px;
+    height: 45px;
 }
 .cartButton {
     float: right;
@@ -193,71 +301,140 @@ body {
     box-shadow: none !important;
     border: none !important
 }
+
 .checkout{
-  background: #4fbc70 !important;
+    background: #4fbc70 !important;
 }
 .checkout:hover {
-  background: #278945 !important;
+    background: #278945 !important;
 }
 .cancel{
-  background: #f26868 !important;
+    background: #f26868 !important;
 }
 .cancel:hover {
-  background: #ba3b3b !important;
+    background: #ba3b3b !important;
 }
 .alinEmpty{
-  text-align: center;
-  margin-top: 15px;
+    text-align: center;
+    margin-top: 15px;
 }
 
 
 /* Add Product menu */
 .previewImg {
-  width: 238px;
-  float: left;
+    width: 238px;
+    float: left;
 }
 .fileInput {
-  width: 230px;
+    width: 230px;
 }
 
 .imgPreview {
-  height: 229px;
+    height: 229px;
+    width: 230px;
 }
 .imgPreview img {
-  height: 229px;
+    height: auto;
+    max-width: 100%;
+    max-height: 100%;
+    width: auto;
+}
+.imgAdded{
+    width: 230px;
+    height: 30px;
+}
+.imgPrevAdded{
+    width: 40px;
+    height: 40px;
+    margin: 4px 4px 0px 0px;
+    background: white;
+    background-size: contain;
+    background-repeat: no-repeat;
+    background-position: center;
+    display: inline;
+    float: left;
+    text-align: center;
+    border: 1px solid #999;
+    cursor: pointer;
+}
+.hiddenRem{
+  width: 40px;
+  height: 40px;
+  position: relative;
+  top: 0px;
+  transition: ease-in-out 0.1s !important;
+  background: url('../img/close.png'),rgba(0,0,0,0.5);
+  background-size: cover;
+  opacity: 0;
+}
+.hiddenRem:hover{
+  opacity: 1; 
+}
+
+.imgAdded img{
+    height: auto;
+    max-width: 100%;
+    max-height: 100%;
+    width: auto;
 }
 
 .inputProd{
-  margin-bottom: 10px;
+    margin-bottom: 10px;
 }
 .inputProd input, label{
-  width: 150px;
-  margin-right: 5px;
-  height: 27px;
+    width: 150px;
+    margin-right: 5px;
+    height: 27px;
 }
 
+.firstLineForm {
+  width: 100%;
+}
+
+.form-control{
+    width: 160px !important;
+    display: inline !important;
+    height: 25px !important;
+    border-radius: 0% !important;
+}
+.labelRegular{
+    height: 20px;
+    margin-bottom: 0px;
+}
+.genderLabel{
+    width: 45px !important;
+    margin: 0px 0px 0px 6px !important;
+}
+.genderRadio{
+    width: 45px !important;
+    margin: 0px 0px 0px 6px !important;
+}
+.spaceForm{
+    width: 100%;
+    height: 1px;
+}
 .desc {
-  width: 615px;
-  height: 210px;
+    width: 100%;
+    height: 210px;
 }
 
 /* Manage product */
 .imgAdp{
-  float: left;
-  width: 20%;
+    float: left;
+    width: 20%;
 }
 .imgAdp img {
-  width: 150px;
+    width: 150px;
 }
 .descAdp{
-  float: right;
-  width: 80%;
+    float: right;
+    width: 80%;
 }
 .descAdp input{
-  width: 25%;
+    width: 25%;
 }
 .descAdp textarea{
-  width: 100%;
+    width: 100%;
 }
 .eachDivProd {
     padding: 5px;
@@ -265,5 +442,5 @@ body {
     border-radius: 5px;
 }
 .eachDivProd tr {
-  margin-bottom: 10px;
+    margin-bottom: 10px;
 }

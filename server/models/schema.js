@@ -11,8 +11,10 @@ const articleSchema = new Schema({
     desc: String,
     price: Number,
     img: String,
+    cat: Number,
+    gender: Number,
     qty: Number
-});
+}, {timestamps: true} );
 
 const userSchema = new Schema({
     id: Number,

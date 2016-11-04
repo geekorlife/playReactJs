@@ -1,6 +1,7 @@
 import React from 'react';
+import Slider from 'nuka-carousel';
 import store from './reduce/store';
-import {Link} from 'react-router';
+import { Link } from 'react-router';
 
 class RendCol extends React.Component {
     constructor(props) {
@@ -9,14 +10,100 @@ class RendCol extends React.Component {
         this.clickProd = this.clickProd.bind(this);
     }
 
+    addProductInCart() {
+        addProductInCart(this.props.r._id);
+    }
     clickProd() {
-        console.log('CLICK PROD',this.props);
-        //var id = this.props.r.id;
-        //this.props.handleInfo(id);
+            var id = this.props.r._id;
+            this.props.handleInfo(id);
     }
 
-    addProductInCart() {
-        addProductInCart(this.props.r.id);
+    rendCarousel() {
+        var displayAr = this.props.r.img.length > 1 ? 'block' : 'none';
+        const Decorators = [
+            {
+                component: React.createClass({
+                    render() {
+                        return (
+                            <button
+                                style={this.getButtonStyles(this.props.currentSlide === 0)}
+                                onClick={this.props.previousSlide}>
+                                <span className="glyphicon glyphicon-chevron-left" aria-hidden="true"></span>
+                            </button>
+                        );
+                    },
+                    getButtonStyles(disabled) {
+                        return {
+                            border: 0,
+                            background: 'rgba(0,0,0,0.4)',
+                            color: 'white',
+                            padding: 10,
+                            outline: 0,
+                            opacity: disabled ? 0.2 : 0.7,
+                            cursor: 'pointer',
+                        };
+                    },
+                }),
+                style: {
+                    display: displayAr
+                },
+                position: 'CenterLeft',
+            },
+            {
+                component: React.createClass({
+                    render() {
+                        return (
+                            <button
+                                style={this.getButtonStyles(this.props.currentSlide + this.props.slidesToScroll >= this.props.slideCount)}
+                                onClick={this.props.nextSlide}>
+                                <span className="glyphicon glyphicon-chevron-right" aria-hidden="true"></span>
+                            </button>
+                        );
+                    },
+                    getButtonStyles(disabled) {
+                        return {
+                            border: 0,
+                            background: 'rgba(0,0,0,0.4)',
+                            color: 'white',
+                            padding: 10,
+                            outline: 0,
+                            opacity: disabled ? 0.2 : 0.7,
+                            cursor: 'pointer',
+                        };
+                    },
+                }),
+                style: {
+                    display: displayAr
+                },
+                position: 'CenterRight',
+            },
+        ];
+        var images = this.props.r.img.map((img, index) => {
+                        const srci = img ? "img/adImg/" + img : "img/default.jpg";
+                        return (
+                            <img 
+                                src={srci} 
+                                key={index} 
+                                className="img-responsive img-thumb" 
+                                onClick={this.clickProd} 
+                                onLoad={() => {window.dispatchEvent(new Event('resize'));}}
+                            />
+                        );
+                    });
+        if(this.props.r.img.length == 0) {
+            images = (
+                <img    src="img/default.jpg"
+                        className="img-responsive img-thumb" 
+                        onClick={this.clickProd} 
+                        onLoad={() => {window.dispatchEvent(new Event('resize'));}}
+                />
+            )
+        }
+        return (
+            <Slider ref="slider" decorators={Decorators} style={{minHeight:'220px'}}>
+                {images}
+            </Slider>
+        )
     }
 
     render() {
@@ -32,28 +119,28 @@ class RendCol extends React.Component {
         }
         const pStl = {
             position: 'absolute',
-            bottom: '23px'
+            top: '0px',
+            marginLeft: '5px',
+            zIndex: '5'
         }
 
-        const clickProd = () => {
-            console.log('CLICK PROD',this.props.r);
-            var id = this.props.r._id;
-            this.props.handleInfo(id);
-        }
         const f = new Date(this.props.r.updatedAt).toString().split(' ');
-        const dateP = [f[1],f[2]].join(' ');
+        const dateP = [f[1], f[2]].join(' ');
+        const imgRendSrc = this.rendCarousel();
+
+        //<button className="btn btn-primary infobutton cartadd" onClick={this.addProductInCart}>Add to cart <span className="glyphicon glyphicon-shopping-cart" aria-hidden="true"></span></button>
         return (
             <div className="col-md-4" ref="col" >
-                <div className="bg-gray-dark" style={bgStl} onClick={clickProd}>
-                    <h3 style={stl}>{this.props.r.name} <span>{dateP}</span></h3>
-                
-                    <img src={this.props.r.img} alt={this.props.r.name} className="img-responsive img-thumb" />
+                <div className="bg-gray-dark" style={bgStl}>
                     <p style={pStl}>
                         <span className="priceMenu" >${this.props.r.price}</span>
-                        <button className="btn btn-primary infobutton cartadd" onClick={this.addProductInCart}>Add to cart <span className="glyphicon glyphicon-shopping-cart" aria-hidden="true"></span></button>
                     </p>
+
+                    {imgRendSrc}
+                    <h3 style={stl}>{this.props.r.name} <span>{dateP}</span></h3>
+
                 </div>
-                
+
             </div>
         )
     }
@@ -67,7 +154,7 @@ class ColProducts extends React.Component {
         let handleInf = this.props.handleInfo;
         let dt = this.props.dataRow.map(function (r, i) {
             var rd;
-            if (r.qty > 0) rd = <RendCol key={i} r={r} handleInfo={handleInf}/>;
+            if (r.qty > 0) rd = <RendCol key={i} r={r} handleInfo={handleInf} />;
             return rd;
         });
         return <div>{dt}</div>;
@@ -77,7 +164,7 @@ class ColProducts extends React.Component {
 let addProductInCart;
 
 class ProductList extends React.Component {
-    constructor(props){
+    constructor(props) {
         super(props);
         this.productList = [];
         this.productState = [];
@@ -85,12 +172,15 @@ class ProductList extends React.Component {
         this.currentPage = 0;
         this.state = {
             currentPage: this.currentPage,
-            _id:null,
+            _id: null,
             catId: null
         }
-        this.loadPage = this.loadPage.bind(this);
+        this.geo = {
+            geoPos: null,
+            dist: null
+        }
     }
-    
+
     chunks(arr, size) {
         if (!Array.isArray(arr)) {
             throw new TypeError('Input should be Array');
@@ -110,32 +200,46 @@ class ProductList extends React.Component {
         return result;
     }
 
-    componentWillMount(){
-        this.productList = [];   
+    componentWillMount() {
+        this.productList = [];
     }
 
-    loadPage(){
-        if( !this.state.catId || this.state.catId && this.props.catId != this.state.catId) {
-            console.log('GET PAGE');
-            this.productList = [];
-            this.setState({catId: this.props.catId});
-            store.dispatch(store.dispatchArticle('GET_LIST_ARTICLE',{catId:this.props.catId}));
-        }
-    }
-
-    componentDidMount(){
-        console.log('COMPONENT  DID MOUNT - CAT:', this.props.catId);
-        this.loadPage();
-    }
-
-    changePage(updown){
-        if(updown == 1) {
-            this.currentPage = this.currentPage + 1;
-            if(this.haveToPopulateList()){
-                store.dispatch(store.dispatchArticle('GET_LIST_ARTICLE',{_id:this.productState[this.productState.length-1]._id, catId:this.props.catId}));
+    componentDidMount() {
+        const stFlux = store.getState();
+        if(!this.geo.geoPos || !this.geo.dist) {
+            console.log('UPDATE ZIP LIST');
+            this.geo = {
+                geoPos: stFlux.zip && stFlux.zip.code ? stFlux.zip.code.pos : null,
+                dist: stFlux.zip && stFlux.zip.dist ? stFlux.zip.dist : null
             }
         }
-        else if(this.currentPage - 1 > -1){
+        
+        if (!this.state.catId || this.state.catId && this.props.catId != this.state.catId) {
+            this.productList = [];
+            this.setState({ catId: this.props.catId });
+
+            store.dispatch(store.dispatchArticle('GET_LIST_ARTICLE', { 
+                catId: this.props.catId, 
+                dist: this.geo.dist, 
+                geo: this.geo.geoPos 
+            }));
+        }
+    }
+
+    changePage(updown) {
+        console.log('CLICK CHANGE PAGE');
+        if (updown == 1) {
+            this.currentPage = this.currentPage + 1;
+
+            store.dispatch(store.dispatchArticle('GET_LIST_ARTICLE', { 
+                _id: this.productState[this.productState.length - 1]._id, 
+                catId: this.props.catId, 
+                dist: this.geo.dist, 
+                geo: this.geo.geoPos 
+            }));
+        }
+        else if (this.currentPage - 1 > -1) {
+            console.log('PREVIOUS');
             this.currentPage = this.currentPage - 1;
             this.haveToPopulateList();
         }
@@ -148,40 +252,51 @@ class ProductList extends React.Component {
         })
     }
 
-    butNxtPrv(){
+    butNxtPrv(st) {
         const changeUp = () => {
-            this.changePage(1);
+            if(this.state.currentPage*9 + 9 <  store.getState().count) 
+                this.changePage(1);
         }
         const changeDown = () => {
-            this.changePage(0);
+            console.log('CHANGE DOWN', this.state.currentPage);
+            if(this.state.currentPage > 0)
+                this.changePage(0);
         }
+        console.log(this.state.currentPage+'* 9 + 9 <'+  store.getState().count);
+        const stl = st ? { paddingTop: '20px' } : {};
+        const pad = { paddingTop: '1px' };
+        const classPrev = this.state.currentPage === 0 ? 'btn btn-primary noPrev' : 'btn btn-primary nextPrev';
+        const classNextPrev = this.state.currentPage*9 + 9 <  store.getState().count ? 'btn btn-primary nextPrev' : 'btn btn-primary noPrev';
         return (
-            <div className="text-center">
-                <button className="btn btn-primary nextPrev" onClick={changeDown} >Previous</button>
-                <button className="btn btn-primary nextPrev" onClick={changeUp} >Next</button>
+            <div className="text-center" style={stl}>
+                <button className={classPrev} onClick={changeDown} >
+                    <span className="glyphicon glyphicon-chevron-left float-left" style={pad} aria-hidden="true"></span>
+                    Previous
+                </button>
+                <button className={classNextPrev} onClick={changeUp} >
+                    Next
+                    <span className="glyphicon glyphicon-chevron-right float-right" style={pad} aria-hidden="true"></span>
+                </button>
             </div>
         )
     }
 
-    haveToPopulateList(){
-        console.log('haveToPopulateList');
+    haveToPopulateList() {
         this.productState = store.getState().product;
         let that = this;
-        console.log('haveToPopulateList',this.productState);
-        console.log('if('+this.productState.length+' >= ('+this.currentPage*this.numberArticlePerPage+')+'+this.numberArticlePerPage+')');
-        if(this.productState.length < 9){
-            this.productList = this.productState.filter((p,i) => {
-                console.log('p.cat',p.cat,'that.props.cat',that.props.cat);
+        const activeCountArticle = this.currentPage * this.numberArticlePerPage;
+        if (this.productState.length < 9) {
+            this.productList = this.productState.filter((p, i) => {
                 return p.cat == that.props.catId;
             });
             return false;
         }
-        else if(this.productState.length >= (this.currentPage*this.numberArticlePerPage)+this.numberArticlePerPage){
-            console.log('SECOND TRUE');
-            let idFrom = (this.currentPage*this.numberArticlePerPage);
-            let idTo = idFrom + this.numberArticlePerPage;
+        else if (this.productState.length >= activeCountArticle) {
             
-            this.productList = this.productState.filter((p,i) => {
+            let idFrom = activeCountArticle;
+            let idTo = idFrom + this.numberArticlePerPage;
+
+            this.productList = this.productState.filter((p, i) => {
                 return (i >= idFrom && i < idTo && p.cat == that.props.catId);
             });
             return false;
@@ -190,23 +305,21 @@ class ProductList extends React.Component {
     }
 
     render() {
-        console.log('component render',this.productList);
         this.haveToPopulateList();
-        console.log('component render after',this.productList);
-        
+
         addProductInCart = this.props.addProductInCart;
 
         let product = this.productList;
         let rows = this.chunks(product, 3);
         let handleInf = this.props.handleInfo;
-        
-        if(product.length === 0) {
+
+        if (product.length === 0) {
             var stl = {
                 marginTop: '100px'
             }
             return (
                 <div className="text-center">
-                <h3 style={stl}>Empty list...</h3>
+                    <h3 style={stl}>Empty list...</h3>
                 </div>
             )
         }
@@ -214,16 +327,16 @@ class ProductList extends React.Component {
         let c = rows.map(function (row, i) {
             return (
                 <div className="row" key={i}>
-                    <ColProducts key={i} dataRow={row} handleInfo={handleInf}/>
+                    <ColProducts key={i} dataRow={row} handleInfo={handleInf} />
                 </div>
             )
         })
 
         return (
             <div>
-            {this.butNxtPrv()}
-            <div className="eachDiv">{c}</div>
-            {this.butNxtPrv()}
+                {this.butNxtPrv(true)}
+                <div className="eachDiv">{c}</div>
+                {this.butNxtPrv()}
             </div>
         )
     }

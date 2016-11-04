@@ -1,0 +1,13 @@
+US	94041	Mountain View	California	CA	Santa Clara	085			37.3893	-122.0783	4
+US	94042	Mountain View	California	CA	Santa Clara	085			37.3861	-122.0839	4
+US	94043	Mountain View	California	CA	Santa Clara	085			37.4056	-122.0775	4
+US	94085	Sunnyvale	California	CA	Santa Clara	085			37.3886	-122.0177	4
+US	94086	Sunnyvale	California	CA	Santa Clara	085			37.3764	-122.0238	4
+US	94087	Sunnyvale	California	CA	Santa Clara	085			37.3502	-122.0349	4
+US	94088	Sunnyvale	California	CA	Santa Clara	085			37.3688	-122.0363	4
+US	94089	Sunnyvale	California	CA	Santa Clara	085			37.3983	-122.0006	4
+US	94301	Palo Alto	California	CA	Santa Clara	085			37.4443	-122.1497	4
+US	94302	Palo Alto	California	CA	Santa Clara	085			37.4419	-122.143	4
+US	94304	Palo Alto	California	CA	Santa Clara	085			37.4334	-122.1842	4
+US	94305	Stanford	California	CA	Santa Clara	085			37.4236	-122.1619	4
+US	94306	Palo Alto	California	CA	Santa Clara	085			37.418	-122.1274	4

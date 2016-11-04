@@ -35,7 +35,7 @@ class addProduct extends React.Component{
         const but = butArray.map((m) => {
             return this.buttonRend(m);
         })
-        console.log(but);
+        
         return (
             <div>
             {but}
@@ -62,9 +62,12 @@ class addProduct extends React.Component{
 
     render(){
         var rd = this.ctxRender();
+        const stl = {
+            marginTop: '80px'
+        }
         return (
-            <div className="well center-block"> 
-                {rd}
+            <div className="well center-block" style={stl}> 
+                <ProductForm handleCreate={this.props.handleCreate}/>
             </div>
         )
     }

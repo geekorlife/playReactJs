@@ -1,14 +1,21 @@
+"use strict"
+
 import React from 'react';
 import Nav from './nav';
 import store from './reduce/store';
 import AdminModal from './adminModal';
-import InfoProduct from './infoProduct';        // MODAL info
-import ProducInfo from './productinfo';         // Page info
-import HomeCategory from './homeCat';        // MODAL info
-import { Router, Route, hashHistory, IndexRoute } from 'react-router';
+import ProducInfo from './productInfo';         // Page info
+import ManageProd from './manageProd';          // Product Admin
+import HomeCategory from './homeCat';           // Home cat
+import Aboutus from './about';                    // About
+import Home from './home';                      // Home
+import PersonalShop from './personalShop';      // Personal shop page
+import { Router, Route, hashHistory, browserHistory, IndexRoute } from 'react-router';
 import AddProduct from './form/AddProduct';
 import AdminBar from './adminBar';
 import AppRoute from './route';
+
+
 
 
 const adminpass = '1234';
@@ -22,7 +29,8 @@ class MainProduct extends React.Component {
     this.state = {
       showAdmin: true, // Admin is connected or not
       currentView: 0,
-      currentCart: []
+      currentCart: [],
+      zipCode: null
     };
     this.createProduct = this.createProduct.bind(this);
     this.removeProduct = this.removeProduct.bind(this);
@@ -35,18 +43,23 @@ class MainProduct extends React.Component {
     this.addAnAd = this.addAnAd.bind(this);
 
     this.rte = (
-        <Route path="/" component={AppRoute}>
-          <IndexRoute component={this.homeCategory} />
-          <Route path='productid' name="InfoProduct" component={ProducInfo} />
-          <Route path='productlist' name="Productlist" component={this.homeCategoryProd} />
-          <Route path='addProduct' name="addProduct" component={this.addAnAd} />
-          <Route path='*' name="404" component={NotFound} />
-        </Route>
+      <Route path="/" component={AppRoute}>
+        <IndexRoute component={this.homeCategory} />
+        <Route path='productid' name="InfoProduct" component={ProducInfo} />
+        <Route path='about' name="About us" component={Aboutus} />
+        <Route path='personalShop' name="My shop" component={PersonalShop} />
+        <Route path='manageProd' name="Manage Product" component={ManageProd} />
+        <Route path='productlist' name="Productlist" component={this.homeCategoryProd} />
+        <Route path='addProduct' name="addProduct" component={this.addAnAd} />
+        <Route path='/:zip' name="Homezip" component={this.homeCategory} />
+        <Route path='*' name="404" component={NotFound} />
+      </Route>
     )
   }
 
-  componentDidMount() {
-    console.log('pros product',this.props)
+  componentWillMount() {
+    store.dispatch(store.dispatchArticle('GET_LOCAL_ZIP'));
+    
   }
 
   createProduct(product) {
@@ -56,19 +69,19 @@ class MainProduct extends React.Component {
       id: id,
       cat: product.cat || 1,
       gender: product.gender || 1,
+      email: product.email || 'empty@empty.com',
       name: product.name || 'Empty name',
       price: Number(product.price) || 0,
       desc: product.desc || 'Empty description',
       brand: product.brand || 'No brand',
       qty: 1,
+      shpnme: product.shpnme || false,
+      zip: product.zip,
       img: product.img || 'img/boyshirt.jpg'
     };
 
-    console.log('CREATE NEW PRODUCT/', addProd);
-    
-    this.props.addArt(addProd);
 
-    console.log(store.getState());
+    this.props.addArt(addProd);
 
   }
 
@@ -77,7 +90,7 @@ class MainProduct extends React.Component {
   }
 
   activeAdmin(idps) {
-    $('#adminConnect').modal('hide');
+    $('#adminConnect').modal('show');
     this.setState({ showAdmin: idps && idps === adminpass });
   }
 
@@ -86,9 +99,8 @@ class MainProduct extends React.Component {
   }
 
   showProductInfo(id) {
-    console.log('SHOW MODAL',id);
     this.setState({ currentView: id });
-    $('#prodInf').modal('show');
+    window.location = '#/productid?_id=' + id;
   }
 
   addProductInCart(id) {
@@ -101,42 +113,45 @@ class MainProduct extends React.Component {
     $('#prodInf').modal('hide');
   }
 
-  listProductHome(){
+  listProductHome() {
     return (
-       <ProductList handleInfo={this.showProductInfo} addProductInCart={this.addProductInCart} />
+      <ProductList handleInfo={this.showProductInfo} addProductInCart={this.addProductInCart} />
     )
   }
 
-  homeCategory(){
+  homeCategory() {
     return (
-       <HomeCategory handleInfo={this.showProductInfo} addProductInCart={this.addProductInCart} />
+      <HomeCategory handleInfo={this.showProductInfo} addProductInCart={this.addProductInCart} />
     )
   }
 
-  homeCategoryProd(props){
+  homeCategoryProd(props) {
     return (
-       <HomeCategory {...props} handleInfo={this.showProductInfo} addProductInCart={this.addProductInCart} prodList={true} />
+      <HomeCategory {...props} handleInfo={this.showProductInfo} addProductInCart={this.addProductInCart} prodList={true} />
     )
   }
 
-  addAnAd(){
+  addAnAd() {
     return (
-       <AddProduct handleCreate={this.createProduct} />
+      <AddProduct handleCreate={this.createProduct} />
     )
   }
 
   render() {
-    var listProduct = store.getState().product;
+    const stFlux = store.getState();
+    
+    const listProduct = stFlux.product;
+    const zipData = stFlux.zip;
     var viewProduct;
-    if(this.state.currentView){
-      for(let i=0; i<listProduct.length; i++) {
-        if(listProduct[i]._id === this.state.currentView) {
+    if (this.state.currentView) {
+      for (let i = 0; i < listProduct.length; i++) {
+        if (listProduct[i]._id === this.state.currentView) {
           viewProduct = listProduct[i];
           break;
         }
       }
     }
-    console.log('store', store.getState());
+    
     return (
       <div>
         <Nav cart={this.state.currentCart} product={listProduct} />
@@ -145,9 +160,8 @@ class MainProduct extends React.Component {
           <Router history={hashHistory}>
             {this.rte}
           </Router>
-          
+
           <AdminModal handleConnect={this.activeAdmin} />
-          <InfoProduct product={viewProduct} addProductInCart={this.addProductInCart} />
         </div>
       </div>
     );

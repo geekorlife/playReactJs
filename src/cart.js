@@ -19,7 +19,6 @@ module.exports = React.createClass({
         var dt, that = this;
         var checkOut = (
                 <li>
-                    <button className="btn btn-primary cartButton checkout">Checkout</button>
                     <button className="btn btn-primary cartButton cancel">Cancel</button>
                 </li>
             );
@@ -62,7 +61,7 @@ module.exports = React.createClass({
 
             dt = (
                 <ul className="dropdown-menu cartMenu">
-                    <li className="alinEmpty">Empty cart...</li>
+                    <li className="alinEmpty">Empty Wish list...</li>
                     <hr/>
                     {checkOut}
                 </ul>
@@ -76,8 +75,8 @@ module.exports = React.createClass({
         return (
             <li id="myCart">
                 <a href="#" className="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false">
-                    <span className="glyphicon glyphicon-shopping-cart" aria-hidden="true"></span>
-                    &nbsp;<span>My cart</span>
+                    <span className="glyphicon glyphicon-heart" aria-hidden="true"></span>
+                    &nbsp;<span>Wish list</span>
                 </a>
                 {curct}
                 {dtCart}

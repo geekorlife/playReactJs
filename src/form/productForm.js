@@ -1,163 +1,510 @@
-import React from 'react';
+import React, { Component } from 'react';
+import store from '../reduce/store';
+import Addimg from './addImg';
+import {
+	Step,
+	Stepper,
+	StepLabel,
+} from 'material-ui/Stepper';
+import TextField from 'material-ui/TextField';
+import SelectField from 'material-ui/SelectField';
+import MenuItem from 'material-ui/MenuItem';
+import FlatButton from 'material-ui/FlatButton';
+import FontIcon from 'material-ui/FontIcon';
+import CircularProgress from 'material-ui/CircularProgress';
+import AutoCompletion from '../autoCompletion';
+import Checkbox from 'material-ui/Checkbox';
 
-import ImgUpload from './imgUpload';
+import injectTapEventPlugin from 'react-tap-event-plugin';
+injectTapEventPlugin();
 
 class ProductForm extends React.Component {
-  constructor() {
-    super();
-    this.state = { 
-      img: '', 
-      readyToSubmit: {
-        price: false,
-        desc: false
-      }
-    };
+	constructor() {
+		super();
+		this.state = {
+			img: '',
+			readyToSubmit: {
+				price: false,
+				email: false
+			},
+			stateCreate: 0,
+			createdAdId: null,
+			product: {
+				cat: 1,
+				gender: 1,
+				name: null,
+				price: null,
+				brand: null,
+				desc: null,
+				img: null
+			},
+			finished: false,
+			stepIndex: 0,
+			email_error_text: '',
+			email: '',
+			inMyShop: false,
+			zip: null
+		};
 
-    this.submit = this.submit.bind(this);
-    this.addImg = this.addImg.bind(this);
-    this.showSubmit = false;
-  }
+		this.submit = this.submit.bind(this);
+		this.submitNoImg = this.submitNoImg.bind(this);
+		this.toggleStep = this.toggleStep.bind(this);
+		this.uploadFile = this.uploadFile.bind(this);
+		this.checkEmail = this.checkEmail.bind(this);
+		this.getZip = this.getZip.bind(this);
+		this.handleZip = this.handleZip.bind(this);
+		this.createAd = this.createAd.bind(this);
 
-  submit(e) {
-    e.preventDefault();
-    console.log(this.refs.cat.value);
-    let product = {
-      cat: Number(this.refs.cat.value),
-      gender: Number(this.refs.gender.value),
-      name: this.refs.name.value,
-      price: this.refs.price.value,
-      brand: this.refs.brand.value,
-      desc: this.refs.desc.value,
-      img: this.state.img
-    }
+		this.catValue = 1;
+		this.gendValue = 1;
+		this.addShop = 1;
+		this.id_connect = null;
+		this._id = null;
+		this.mainStore = null;
+	}
 
-    this.props.handleCreate(product);
+	createAd() {
+		let product = {
+			cat: Number(this.state.product.cat),
+			gender: Number(this.state.product.gender),
+			email: this.refs.email.getValue(),
+			name: this.refs.name.getValue(),
+			price: this.refs.price.getValue(),
+			brand: this.refs.brand.getValue(),
+			desc: this.refs.desc.value,
+			zip: this.state.zip,
+			shpnme: this.state.inMyShop ? this.mainStore.user.shpnme : null,
+			img: null
+		}
+		const that = this;
+		setTimeout(function () { that.props.handleCreate(product) }, 2000);
+		return product;
+	}
 
-    this.refs.name.value = "";
-    this.refs.price.value = "";
-    this.refs.brand.value = "";
-    this.refs.desc.value = "";
-    this.setState({ img: '' });
-  }
+	submitNoImg(e) {
+		e.preventDefault();
+		const product = this.createAd();
+		// Continue to the final step
+		this.setState({
+			stateCreate: 2,
+			stepIndex: 2,
+			finished: true,
+			product: product,
+		})
+	}
 
-  addImg(img) {
-    this.setState({ img: img });
-  }
+	submit(e) {
+		e.preventDefault();
+		const product = this.createAd();
 
-  selectCategory() {
-    return (
-      <select ref='cat' className="form-control">
-        <option value="1">Clothes</option>
-        <option value="2">Shoes</option>
-        <option value="3">Childcare</option>
-        <option value="4">Child furnitures</option>
-        <option value="5">Toys</option>
-        <option value="6">Outdoor</option>
-        <option value="7">Other</option>
-      </select>
-    )
-  }
+		// Continue to the next step UPLOAD IMG
+		this.setState({
+			stateCreate: 1,
+			stepIndex: 1,
+			product: product,
+		})
 
-  selectGender() {
-    return (
-      <select ref='gender' className="form-control">
-        <option value="1">Unisex</option>
-        <option value="2">Boy</option>
-        <option value="3">Girl</option>
-      </select>
-    )
-  }
+	}
 
-  labelRender() {
-    var stl = {padding: '0px 5px 0px 5px'};
-    return (
-      <div>
-        <div className="col-md-4" style={stl}>
-          <label className="labelRegular" >Name:</label>
-          <input type='text' placeholder='Name' ref='name' />
-        </div>
-        <div className="col-md-4" style={stl}>
-          <label className="labelRegular" >Brand:</label>
-          <input type='text' placeholder='Brand' ref='brand' />
-        </div>
-        <div className="col-md-4" style={stl}>
-          <label className="labelRegular" >Price:</label>
-          <input type='text' placeholder='Price' ref='price' onChange={this.handleChange.bind(this, 'price')}/>
-        </div>
-      </div>
-    )
-  }
+	handleZip(e) {
+		if (e && e.length == 1) {
+			this.setState({
+				zip: e[0]
+			});
+		}
+	}
 
-  handleChange(name, e){
-    var nameValue = this.refs.price.value;
-    console.log('name',name,' value',nameValue,'  :', !isNaN(this.refs.price.value),parseInt(this.refs.price.value));
-    if(name === 'price' && !isNaN(this.refs.price.value) && parseInt(this.refs.price.value) > -1 ) {
-      this.setState({
-        readyToSubmit: Object.assign(this.state.readyToSubmit,{price: true})
-      })
-    }
-    else {
-      
-    }
-    if(this.state.readyToSubmit.price){
-      this.showSubmit = true;
-    }
-    else {
-      this.showSubmit = false;
-    }
-  }
+	uploadFile(formdata) {
+		formdata.append("_id", this._id);
+		this.setState({
+			stateCreate: 2
+		})
+		let that = this;
+		$.ajax({
+			url: 'http://192.168.2.8:8080/api/addImg',
+			data: formdata,
+			processData: false,
+			contentType: false,
+			type: 'POST',
+			success: function (data) {
+				setTimeout(function () {
+					that.setState({
+						stepIndex: 2,
+						stateCreate: 3
+					})
+				}, 1000)
 
-  subMitRend(){
-    return (
-      <button onClick={this.submit}>Create new product</button>
-    )
-  };
-  render() {
-    let rendSubmit;
-    if(this.showSubmit) {
-      rendSubmit = this.subMitRend();
-    }
+			}
+		});
+	}
 
-    return (
-      <div className="eachDiv">
-        <form>
-          <div className="row">
+	checkEmail(e) {
+		console.log('check email');
+		const value = e.target.value;
+		const err = !/^[A-Z0-9._%+-]+@[A-Z0-9.-]+\.[A-Z]{2,4}$/i.test(value) ? 'Invalide email address' : '';
+		if (err != '') {
+			this.setState({
+				readyToSubmit: Object.assign(this.state.readyToSubmit, { email: false })
+			})
+		}
+		else {
+			this.setState({
+				readyToSubmit: Object.assign(this.state.readyToSubmit, { email: true })
+			})
+		}
 
-            <div className="col-md-4">
-              <ImgUpload addImg={this.addImg} />
-            </div>
+		this.setState({
+			email_error_text: err,
+			email: value
+		});
+	}
 
-            <div className="col-md-8">
-              <div className="row">
-                <div className="col-md-6">
-                  <label>Category:</label>
-                  {this.selectCategory()}
-                </div>
-                <div className="col-md-6">
-                  <label>Gender:</label>
-                  {this.selectGender()}
-                </div>
-              </div>
-              <div className="row">
-                {this.labelRender()}
-              </div>
-              <div className="row">
-                <div className="col-md-12" style={{paddingLeft:'5px'}}>
-                  <label>Description:</label>
-                  <textarea className="desc" placeholder="Description" ref='desc' />
-                </div>
-              </div>
-            </div>
+	checkBox(e){
+		console.log('check box',e);
+		if(e && !this.state.email) {
+			//Usr not connected
+			$('#adminConnect').modal('show');
+		}
+		else {
+			this.setState({
+				inMyShop: e
+			})
+		}
+	}
 
-            {rendSubmit}
+	selectCategory() {
+		const that = this;
+		const handleChangeS = (event, index, value) => {
+			this.catValue = value;
+			const nwPrd = Object.assign({}, this.state.product, { cat: value });
+			this.setState({ product: nwPrd });
+		}
+		return (
+			<SelectField
+				floatingLabelText="Category"
+				value={this.catValue}
+				onChange={handleChangeS}
+				>
+				<MenuItem value={1} primaryText="Clothes" />
+				<MenuItem value={2} primaryText="Shoes" />
+				<MenuItem value={3} primaryText="Childcare" />
+				<MenuItem value={4} primaryText="Child furnitures" />
+				<MenuItem value={5} primaryText="Toys" />
+				<MenuItem value={6} primaryText="Outdoor" />
+				<MenuItem value={7} primaryText="Other" />
+			</SelectField>
+		)
+	}
 
-          </div>
-          
-        </form>
+	addInShop() {
+		const that = this;
+		const handleChangeS = (event, index, value) => {
+			this.addShop = value;
+			const nwPrd = Object.assign({}, this.state.product, { inShop: value });
+			this.setState({ product: nwPrd });
+		}
+		return (
+			<SelectField
+				floatingLabelText="Add in my shop"
+				value={this.addShop}
+				onChange={handleChangeS}
+				>
+				<MenuItem value={1} primaryText="Yes" />
+				<MenuItem value={2} primaryText="No" />
+			</SelectField>
+		)
+	}
 
-      </div>
-    )
-  }
+	selectGender() {
+		let curVal = 1;
+		const handleChangeS = (event, index, value) => {
+			this.gendValue = value;
+			const nwPrd = Object.assign({}, this.state.product, { gender: value });
+			this.setState({ product: nwPrd });
+		}
+		return (
+			<SelectField
+				floatingLabelText="Gender"
+				value={this.gendValue}
+				onChange={handleChangeS}
+				>
+				<MenuItem value={1} primaryText="Unisex" />
+				<MenuItem value={2} primaryText="Boy" />
+				<MenuItem value={3} primaryText="Girl" />
+			</SelectField>
+		)
+	}
+
+	labelRender() {
+		var stl = { padding: '0px 5px 0px 5px' };
+		return (
+			<div>
+				<div className="col-md-4" style={stl}>
+					<TextField
+						hintText="Enter a product name"
+						floatingLabelText="Product Name"
+						ref='name'
+						/>
+				</div>
+				<div className="col-md-4" style={stl}>
+					<TextField
+						hintText="Enter maker"
+						floatingLabelText="Maker"
+						ref='brand'
+						/>
+				</div>
+				<div className="col-md-4" style={stl}>
+					<TextField
+						hintText="Enter price"
+						floatingLabelText="Price"
+						ref='price'
+						onChange={this.handleChange.bind(this, 'price')}
+						/>
+				</div>
+			</div>
+		)
+	}
+
+	handleChange(name, e) {
+		var nameValue = this.refs.price.getValue();
+
+		if (name === 'price' && !isNaN(this.refs.price.getValue()) && parseInt(this.refs.price.getValue()) > -1) {
+			this.setState({
+				readyToSubmit: Object.assign(this.state.readyToSubmit, { price: true })
+			})
+		}
+	}
+
+	toggleStep() {
+		this.setState({
+			stepIndex: 0,
+			stateCreate: 0
+		})
+	}
+
+	stepperRend() {
+		const stl = {
+			background: '#ffffff',
+			borderRadius: '5px',
+			marginTop: '-15px',
+			marginBottom: '25px',
+			marginLeft: 'auto',
+			marginRight: 'auto',
+			height: '50px'
+		}
+		return (
+			<div className="stepper">
+				<Stepper activeStep={this.state.stepIndex} style={stl} className="stepper">
+					<Step>
+						<StepLabel onClick={this.toggleStep} style={{ cursor: 'pointer' }}>Fill the form</StepLabel>
+					</Step>
+					<Step>
+						<StepLabel>Upload images</StepLabel>
+					</Step>
+					<Step>
+						<StepLabel>Done !</StepLabel>
+					</Step>
+				</Stepper>
+			</div>
+		)
+	}
+
+	subMitRend() {
+		return (
+			<div>
+				<FlatButton
+					label="Upload images"
+					backgroundColor="#00BCD4"
+					labelPosition="before"
+					labelStyle={{ color: 'white', width: '100%' }}
+					icon={<FontIcon className="material-icons" color={'#ffffff'}></FontIcon>}
+					style={{ float: 'right' }}
+					onClick={this.submit}
+					>
+				</FlatButton>
+				<br /><br />
+				<a href="" onClick={this.submitNoImg} style={{ float: 'right' }}>Proceed without images</a>
+			</div>
+		)
+	}
+
+	componentDidMount() {
+		const stFlux = this.mainStore = store.getState();
+		const zipData = stFlux.zip && stFlux.zip.code ? stFlux.zip.code : null;
+		if (zipData) {
+			this.setState({
+				zip: zipData
+			})
+		}
+	}
+
+	componentDidUpdate() {
+		const stStore = this.mainStore = store.getState();
+		if (stStore.post_state.id_connect) {
+			this.id_connect = stStore.post_state.id_connect;
+			if (this.state.finished && this.state.stateCreate == 2) {
+				this.setState({
+					stateCreate: 3
+				})
+			}
+		}
+
+		if (!this.state.email && stStore.user && stStore.user.email) {
+			this.setState({
+				email: stStore.user && stStore.user.email ? stStore.user.email : '',
+				inMyShop: true,
+				readyToSubmit: Object.assign(this.state.readyToSubmit, { email: !!(stStore.user && stStore.user.email) })
+			})
+		}
+
+	}
+
+	getZip(e) {
+		e.preventDefault();
+		const data = e.target.value;
+		const that = this;
+		$.ajax({
+			url: 'http://192.168.2.8:8080/api/zipCode',
+			data: { type: 'GET_ZIPCODE', _id: data },
+			type: 'GET',
+			success: function (data) {
+				that.setState({
+					zip_error: data.city ? null : 'Invalid zip code',
+					city: data.city ? data.city.nm + ', ' + data.city.st : null
+				});
+			}
+		});
+	}
+	render() {
+		let rendSubmit;
+
+		if (this.state.readyToSubmit.price && this.state.readyToSubmit.email && this.state.zip) {
+			rendSubmit = this.subMitRend();
+		}
+		const stFlux = this.mainStore = store.getState();
+
+		const zipData = stFlux.zip && stFlux.zip.code ? stFlux.zip.code.nm + ', ' + stFlux.zip.code.st : undefined;
+
+		const isChecked = !!stFlux.user.email;
+
+		switch (this.state.stateCreate) {
+			case 0: {
+				const descstl = {
+					color: '#888',
+					fontWeight: '500',
+					fontSize: '0.95em'
+				}
+
+				const stl = { padding: '0px 5px 0px 5px' };
+
+				const zipCity = this.state.zip_error ? this.state.zip_error : this.state.city ? this.state.city : null;
+
+				const stlCty = this.state.city ? { color: '#03b9d2' } : { color: '#d10b04' };
+
+				const checkB = {	
+   	 					marginTop: '25px',
+						padding: '8px 0px 0 12px',
+						background: 'white',
+						borderRadius: '4px'
+				}
+
+				const labelcheck = stFlux.user.email ? 'Add in my shop' : 'Add in my shop (Have to be logged)';
+				
+				return (
+					<div className="eachDiv">
+						{this.stepperRend()}
+						<form>
+							<div className="row">
+
+								<div className="col-md-12">
+									<div className="row">
+										<div className="col-md-4" style={stl}>
+											{this.selectCategory()}
+										</div>
+										<div className="col-md-4" style={stl}>
+											{this.selectGender()}
+										</div>
+										<div className="col-md-4" style={stl}>
+											<TextField
+												hintText="Enter your email"
+												floatingLabelText="Email"
+												errorText={this.state.email_error_text}
+												errorStyle={stlCty}
+												onChange={e => this.checkEmail(e)}
+												value={this.state.email}
+												ref='email'
+											/>
+										</div>
+									</div>
+									<div className="row">
+										{this.labelRender()}
+									</div>
+									<div className="row">
+										<div className="col-md-4" style={stl}>
+											<AutoCompletion handleZip={this.handleZip} zipData={zipData} />
+										</div>
+										<div className="col-md-4" style={stl}>
+											<Checkbox
+												label={labelcheck}
+												labelPosition="left"
+												style={checkB}
+												defaultChecked={isChecked}
+												disabled={!stFlux.user.email}
+												onCheck= {(e,ev) => this.checkBox(ev)}
+											/>
+										</div>
+										<div className="col-md-4"></div>
+									</div>
+									<div className="row">
+										<div className="col-md-12" style={{ paddingLeft: '5px' }}>
+											<label style={descstl}>Description:</label>
+											<textarea className="desc" placeholder="Enter a description" ref='desc' />
+										</div>
+									</div>
+									{rendSubmit}
+								</div>
+							</div>
+
+						</form>
+
+					</div>
+				)
+			}
+			case 1: {
+				this._id = this.mainStore.post_state.createdAdId;
+				this.id_connect = this.mainStore.post_state.id_connect;
+
+				return (
+					<div className="eachDiv">
+						{this.stepperRend()}
+						<Addimg handleCreate={this.props.handleCreate} prevData={this.state.product} uploadFile={this.uploadFile} />
+					</div>
+				)
+			}
+			case 2: {
+				return (
+					<div className="eachDiv text-center">
+						{this.stepperRend()}
+						<h3>Creating your ad...</h3>
+						<CircularProgress size={80} thickness={5} />
+					</div>
+				)
+			}
+			case 3: {
+				const linkManage = document.location.origin + "/#manageProd?id=" + this.id_connect;
+				return (
+					<div className="eachDiv text-center">
+						{this.stepperRend()}
+						<h3>Congrats ! The ad has been created.</h3>
+						<br />
+						<h4>
+							The link to manage your ad: <a href={linkManage}>{linkManage}</a>
+						</h4>
+					</div>
+				)
+			}
+		}
+	}
 }
 
 export default ProductForm;

@@ -2,6 +2,12 @@ import React from 'react';
 import ProductList from './productList';
 import {Link} from 'react-router';
 import {hashHistory} from 'react-router';
+import store from './reduce/store';
+import Home from './home';        // Home
+import AutoCompletion from './autoCompletion';
+import TextField from 'material-ui/TextField';
+import ActionSave from 'material-ui/svg-icons/action/done';
+import RaisedButton from 'material-ui/RaisedButton';
 
 class homeCat extends React.Component {
     constructor(props) {
@@ -56,18 +62,22 @@ class homeCat extends React.Component {
                     this.contextType.router.push('#/productlist?id='+li.id);
 
                 }
+                const res = () => {
+                    store.dispatch(store.dispatchArticle('RESET_PAGE_ARTICLE'));
+                }
                 const lk = 'productlist?id='+li.id;
                 const stl = {
                     position: 'absolute',
                     color: '#fff',
-                    marginLeft: '1em',
+                    left: '50%',
+                    transform: 'translateX(-50%)',
                     fontWeight: '100',
                     letterSpacing: '0.04em',
                     textShadow: '0px 1px 2px rgba(0,0,0,0.3)'
                 }
                 return (
                     <div key={ii} className="col-sm-4">
-                        <Link to={lk}>
+                        <Link to={lk} onClick={res}>
                         <div className="bg-gray-dark main-category">
                             <h3 style={stl} >{li.n}</h3>
                             <img src={li.img} alt={li.n} className="img-responsive img-thumb"/>
@@ -85,13 +95,18 @@ class homeCat extends React.Component {
         })
         return (
             <div>
-            {ln}
+                {ln}
             </div>
         )
     }
 
     mainRender(paramQuery){
-        if(this.props.location && this.props.location.query && this.props.location.query.id) {
+        const stFlux = store.getState();
+        const zipData = stFlux.zip;
+        if(!zipData) {
+            return (<Home/>)
+        }
+        else if(this.props.location && this.props.location.query && this.props.location.query.id) {
 
             return (
                 <div>

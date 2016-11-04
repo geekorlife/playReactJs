@@ -1,4 +1,5 @@
 module.exports = {
+    devtool: 'eval', // or eval
     entry: './src/index.js',
     output: {
         path: './',

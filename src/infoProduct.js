@@ -11,12 +11,13 @@ class infoProduct extends React.Component{
         if(product && product.img){
             var addProduct = function(){
                 fn(product.id);
-            }
+            };
+            const imageProd = 'img/adImg/'+product.img;
             desc = (
                 <table>
                     <tbody>
                     <tr>
-                        <td><img src={product.img}/></td>
+                        <td><img src={imageProd}/></td>
                         <td>
                             <h4>Description:</h4>
                             <p>{product.desc}</p>
@@ -40,7 +41,6 @@ class infoProduct extends React.Component{
     }
 
     render(){
-        console.log('MODAL',this.props);
         var product = this.props.product;
         var desc = this.getData(product,this.props.addProductInCart);
         if(!product) return (

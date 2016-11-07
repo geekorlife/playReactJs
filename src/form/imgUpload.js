@@ -78,7 +78,7 @@ class ImageUpload extends React.Component {
       $imagePreview = (<img src={imagePreviewUrl} />);
       textPreview = "Click to change the image...";
     } else {
-      $imagePreview = (<img src='img/default.jpg' />);
+      $imagePreview = (<img src='/img/default.jpg' />);
     }
     var inlineStyle = { display: 'none' };
     const styles = {

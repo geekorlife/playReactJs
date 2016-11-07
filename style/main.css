@@ -26,9 +26,21 @@ a {
 .selectZip{
     background: white;
     max-width: 290px;
-    min-height: 240px;
     margin: 40px auto 0px auto;
     box-shadow: 0px 7px 23px -9px rgba(0,0,0,0.5);
+    padding: 10px;
+}
+.selectZip > h5 {
+    color: white;
+    background: red;
+    border-radius: 4px;
+    padding: 4px;
+    height: 0px;
+    display: none;
+}
+.showError {
+    height: 40px !important;
+    display: block !important;
 }
 
 /** Main attribut **/
@@ -102,9 +114,25 @@ a {
     color: #333;
     float: right;
     cursor: pointer;
+    opacity: 0.2;
+    font-weight: 100;
+    font-size: 0.9em;
 }
 .closeCity:hover{
     color:#03b9d2;
+}
+.nav_editCity{
+    margin-top: 5px;
+    margin-bottom: 10px;
+    float: left;
+}
+.long_line {
+    position: absolute;
+    width: 100%;
+    height: 1px;
+    background: #ddd;
+    left: 0px;
+    top: 40px;
 }
 
 .navbar-default .navbar-nav>li>a {
@@ -125,13 +153,22 @@ a {
 }
 
 /* Home Category */
+.cat_main{
+    margin-top: 100px;
+}
+.img-Carousel {
+    width: 100% !important;
+    background-repeat: no-repeat;
+    background-size: contain;
+    background-position: center;
+    height: 225px;
+}
 .bg-gray-dark{
     background: white;
     border: 1px solid #eee;
     border-radius: 0.25em;
     padding: 0.3em 0.3em 0.3em 0.3em;
     margin-bottom: 1.5em;
-    cursor: pointer;
 }
 .bg-gray-dark:hover {
     background:white, rgba(0,0,0,0.05);
@@ -149,6 +186,27 @@ a {
     float: right;
     font-size: 0.7em;
     padding-top: 5px;
+}
+
+.bg-gray-dark-list {
+    height: 340px;
+}
+
+.priceAndCity {
+    position: absolute;
+    top: 0px;
+    margin-left: 5px;
+    z-index: 5;
+    cursor: pointer;
+}
+
+.descDate {
+    font-weight: 100;
+    letter-spacing: 0.04em;
+    font-size: 1.4em;
+    margin-top: 8px;
+    margin-left: 6px;
+    cursor: pointer;
 }
 
 .main-category {
@@ -184,6 +242,15 @@ a {
     position: initial !important;
     height: 284px !important;
     width: 426px !important;
+}
+
+/* Perosnal shop */
+.mainPers {
+    background: white;
+    max-width: 290px;
+    margin: 80px auto 0px auto;
+    box-shadow: 0px 7px 23px -9px rgba(0,0,0,0.5);
+    padding: 10px;
 }
 
 /* Product list */
@@ -285,6 +352,16 @@ a {
     background: #DD127B;
     padding: 15px;
     border-radius: 3px 0px 3px 0px;
+}
+.cityMenu {
+    margin: 0px 0px 0px 9px;
+    background: rgba(0,0,0,0.6);
+    color: white;
+    padding: 8.5px;
+    font-size: 1.2em;
+    font-weight: 200;
+    position: relative;
+    top: -2px;
 }
 
 .infobutton{
@@ -601,6 +678,95 @@ a {
     margin-top: 5px;
 }
 
+/**  my shop  **/
+.col-fixed {
+    height: 80px;
+}
+.avt {
+    float: left;
+    width: 100px;
+    height: 100px;
+    margin: 0px 0px 13px 0px;
+    transform: translateX(-50%);
+    position: relative;
+    border-radius: 50%;
+    box-shadow: 0 3px 11px -2px rgba(0,0,0,0.5);
+    cursor: pointer;
+}
+.avt:hover{
+    box-shadow: 0 3px 11px 0px rgba(0,0,0,0.5);
+}
+.avt-men {
+    background: url('../img/usrAv/men.jpg') no-repeat;
+    background-size: cover;
+    left: 36%;
+}
+.avt-men:hover{
+    border: 2px solid #03b9d2;
+}
+.avt-women {
+    background: url('../img/usrAv/women.jpg') no-repeat;
+    background-size: cover;
+    left: 27%;
+}
+.avt-women:hover{
+    border: 2px solid #dd127b;
+}
+
+.avt-men-sel{
+    border: 2px solid #03b9d2;
+    box-shadow: 0 3px 11px 0px rgba(0,0,0,0.5);
+}
+
+.avt-women-sel{
+    border: 2px solid #dd127b;
+    box-shadow: 0 3px 11px 0px rgba(0,0,0,0.5);
+}
+.opDesc {
+    font-weight: 200;
+    font-size: 0.9em;
+    margin-left: -43px;
+}
+.opTxtdesc {
+    width: 100%;
+    height: 30px;
+    border: 1px solid rgba(0,0,0,0.1);
+    transition: all 0.3s;
+}
+.opTxtdesc:focus {
+    height: 210px;
+}
+
+.titleShop {
+    background: lightgrey;
+    border-radius: 70px;
+    width: 300px;
+    height: 43px;
+    margin: auto;
+    text-align: right;
+    padding: 0px 13px 21px 0px;
+}
+.imgWelc{
+    height: 43px !important;
+    border-radius: 50%;
+    float: left;
+    border: 3px solid lightgrey;
+}
+.welcTitle {
+    float: right;
+    margin: 12px 30px 0px 0px;
+    color: #555;
+}
+.descShop {
+    max-width: 700px;
+    margin: 20px auto 0px auto;
+    padding: 9px;
+}
+.descShop-edit{
+    background: #ddd;
+    border-radius: 4px;
+}
+
 @media screen and (max-width: 991px) {
     .navEdit > .row > .col-md-3 {
         padding: 0px 40px 0px 40px;
@@ -630,6 +796,9 @@ a {
 }
 
 @media screen and (max-width: 767px) {
+    .cat_main{
+        margin-top: 0px;
+    }
     .city-nav {
         margin-top: -2.7em;
         margin-left: 10em;

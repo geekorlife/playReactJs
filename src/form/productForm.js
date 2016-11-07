@@ -54,6 +54,7 @@ class ProductForm extends React.Component {
 		this.getZip = this.getZip.bind(this);
 		this.handleZip = this.handleZip.bind(this);
 		this.createAd = this.createAd.bind(this);
+		this.showLog = this.showLog.bind(this);
 
 		this.catValue = 1;
 		this.gendValue = 1;
@@ -121,7 +122,7 @@ class ProductForm extends React.Component {
 		})
 		let that = this;
 		$.ajax({
-			url: 'http://192.168.2.8:8080/api/addImg',
+			url: 'http://138.68.31.97:8080/api/addImg',
 			data: formdata,
 			processData: false,
 			contentType: false,
@@ -161,7 +162,7 @@ class ProductForm extends React.Component {
 
 	checkBox(e){
 		console.log('check box',e);
-		if(e && !this.state.email) {
+		if(!this.state.email) {
 			//Usr not connected
 			$('#adminConnect').modal('show');
 		}
@@ -169,6 +170,13 @@ class ProductForm extends React.Component {
 			this.setState({
 				inMyShop: e
 			})
+		}
+	}
+
+	showLog(){
+		if(e && !this.state.email) {
+			//Usr not connected
+			$('#adminConnect').modal('show');
 		}
 	}
 
@@ -255,8 +263,8 @@ class ProductForm extends React.Component {
 				</div>
 				<div className="col-md-4" style={stl}>
 					<TextField
-						hintText="Enter price"
-						floatingLabelText="Price"
+						hintText="Enter the price"
+						floatingLabelText="Price ($)"
 						ref='price'
 						onChange={this.handleChange.bind(this, 'price')}
 						/>
@@ -364,7 +372,7 @@ class ProductForm extends React.Component {
 		const data = e.target.value;
 		const that = this;
 		$.ajax({
-			url: 'http://192.168.2.8:8080/api/zipCode',
+			url: 'http://138.68.31.97:8080/api/zipCode',
 			data: { type: 'GET_ZIPCODE', _id: data },
 			type: 'GET',
 			success: function (data) {
@@ -408,7 +416,7 @@ class ProductForm extends React.Component {
 						borderRadius: '4px'
 				}
 
-				const labelcheck = stFlux.user.email ? 'Add in my shop' : 'Add in my shop (Have to be logged)';
+				const labelcheck = stFlux.user.email ? 'Add in my shop' : 'Add in my shop (must be logged)';
 				
 				return (
 					<div className="eachDiv">
@@ -449,7 +457,6 @@ class ProductForm extends React.Component {
 												labelPosition="left"
 												style={checkB}
 												defaultChecked={isChecked}
-												disabled={!stFlux.user.email}
 												onCheck= {(e,ev) => this.checkBox(ev)}
 											/>
 										</div>
@@ -491,14 +498,14 @@ class ProductForm extends React.Component {
 				)
 			}
 			case 3: {
-				const linkManage = document.location.origin + "/#manageProd?id=" + this.id_connect;
+				const linkManage = document.location.origin + "/manageProd?id=" + this.id_connect;
 				return (
 					<div className="eachDiv text-center">
 						{this.stepperRend()}
 						<h3>Congrats ! The ad has been created.</h3>
 						<br />
 						<h4>
-							The link to manage your ad: <a href={linkManage}>{linkManage}</a>
+							Manage your ads: <a href={linkManage}>HERE</a>
 						</h4>
 					</div>
 				)

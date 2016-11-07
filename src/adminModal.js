@@ -3,6 +3,7 @@ import store from './reduce/store';
 import RaisedButton from 'material-ui/RaisedButton';
 import TextField from 'material-ui/TextField';
 import ActionSave from 'material-ui/svg-icons/action/done';
+import AddAvatar from './addAvatar';
 
 class adminModal extends React.Component {
 	constructor() {
@@ -13,12 +14,17 @@ class adminModal extends React.Component {
 		this.dataJsx = this.dataJsx.bind(this);
 		this.updateIsLoggin = this.updateIsLoggin.bind(this);
 		this.checkEmail = this.checkEmail.bind(this);
+		this.selectAv = this.selectAv.bind(this);
+
 		this.state = {
 			isLogin: false,
 			isCreateAccount: false,
 			email_error_text: '',
-			shop_error_text: ''
+			shop_error_text: '',
+			img: null,
+			av: null
 		}
+
 		this.welcometxt = 'WELCOME BACK!';
 	}
 
@@ -105,11 +111,20 @@ class adminModal extends React.Component {
 		if(type == 'PUSH') {
 			typeEvent = 'PUSH_USER';
 			account.shpnme = this.refs.shpnme.getValue();
+			account.avatar = typeof this.state.av === 'number' ? this.state.av : 0;
+			account.desc = this.refs.descOp.value;
 		}
 		this.setState({
 			shop_error_text: ''
 		});
 		store.dispatch(store.dispatchArticle(typeEvent, { account }));
+	}
+
+	selectAv(avt){
+		console.log('CLICK AVATATR',avt);
+		this.setState({
+			av: avt
+		})
 	}
 
 	dataJsx() {
@@ -121,9 +136,39 @@ class adminModal extends React.Component {
 			const errorTitle = this.state.shop_error_text ? (
 				<h5 style={{color:'red', textAlign:'center'}}>{this.state.shop_error_text}</h5>
 				) : null;
+			
+			const addAnAvatar = () => {
+				if(!this.proAccount) {
+					
+					const selectedAv = {
+						men: this.state.av === 1 ? ' avt-men-sel' : '',
+						wom: this.state.av === 0 ? ' avt-women-sel' : ''
+					}
+					console.log('this.state.av',this.state.av, selectedAv);
+					const classW = "avt avt-women"+selectedAv.wom;
+					const classM = "avt avt-men"+selectedAv.men;
+					return (
+						<div>
+							<h6>Choose an avatar</h6>
+							<div className={classW} onClick={() => this.selectAv(0)}></div>
+							<div className={classM} onClick={() => this.selectAv(1)}></div>
+						</div>
+					)
+				}
+					
 
+				return <AddAvatar />
+			}
+			const descstl = {
+					color: '#888',
+					fontWeight: '500',
+					fontSize: '0.95em'
+				}
 			firstEntry = (
 				<div>
+					<h5>
+						Create an account and get your own free personal shop !
+					</h5>
 					{errorTitle}
 					<TextField
 						hintText="Enter your email"
@@ -145,7 +190,11 @@ class adminModal extends React.Component {
 						floatingLabelText="Shop name:"
 						ref='shpnme'
 						/>
+					<br/><br/>
+					<label style={descstl}>Shop Description:</label><span className="opDesc">*optional</span>
+					<textarea className="opTxtdesc" placeholder="Enter a description about your shop" ref='descOp' />
 					<br />
+					{addAnAvatar()}
 					<RaisedButton
 						label="Submit"
 						backgroundColor="#03b9d2"
@@ -217,9 +266,11 @@ class adminModal extends React.Component {
 
 	render() {
 		const dataToRend = this.dataJsx();
+		const classModal = this.state.isCreateAccount ? "modal-dialog modal-lm" : "modal-dialog modal-sm";
+		
 		return (
-			<div className="modal fade bs-example-modal-sm" tabIndex="-1" role="dialog" aria-labelledby="myModal" id="adminConnect">
-				<div className="modal-dialog modal-sm" role="document">
+			<div className="modal fade" tabIndex="-1" role="dialog" aria-labelledby="myModal" id="adminConnect">
+				<div className={classModal} role="document">
 					<div className="modal-content">
 						<div className="modal-header">
 							<button type="button" className="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">×</span></button>

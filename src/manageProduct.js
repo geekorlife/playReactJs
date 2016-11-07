@@ -4,7 +4,7 @@ import store from './reduce/store';
 class manageProduct extends React.Component {
     constructor(){
         super();
-        this.test = 'img/default.jpg';
+        this.test = '/img/default.jpg';
         this.listProduct = this.listProduct.bind(this);
     }
 

@@ -1,15 +1,15 @@
 import React from 'react';
 import store from './reduce/store';
 import QuestionProduct from './questionProduct';
-
+import { browserHistory } from 'react-router';
 import FlatButton from 'material-ui/FlatButton';
 import RaisedButton from 'material-ui/RaisedButton';
 import FontIcon from 'material-ui/FontIcon';
 import CircularProgress from 'material-ui/CircularProgress';
 import TextField from 'material-ui/TextField';
 
-class productInfo extends React.Component{
-    constructor(){
+class productInfo extends React.Component {
+    constructor() {
         super();
 
         // Set genderColor and gender to change the border color dynamicaly
@@ -44,15 +44,34 @@ class productInfo extends React.Component{
             }
 
             var divStyle = {
-                backgroundImage: 'url("img/adImg/' + m + '")'
+                backgroundImage: 'url("/img/adImg/' + m + '")'
             };
-            
+
             return (
                 <div key={i} className="imgPrevAdded" style={divStyle} onClick={remImg}>
                 </div>
             )
         })
         return im;
+    }
+
+    myShopButton(prodt) {
+        if (prodt.shopName) {
+            const myshp = '/myshop/' + prodt.shopName;
+            return (
+                <RaisedButton
+                    label="Enter in my Shop"
+                    backgroundColor="#00BCD4"
+                    labelPosition="before"
+                    labelStyle={{ color: 'white', width: '100%' }}
+                    icon={<FontIcon className="material-icons" color={'#ffffff'}></FontIcon>}
+                    className="question"
+                    onClick={(e) => { browserHistory.push(myshp) } }
+                    fullWidth={true}
+                    >
+                </RaisedButton>
+            )
+        }
     }
 
     /**
@@ -64,21 +83,21 @@ class productInfo extends React.Component{
      * 
      * @memberOf productInfo
      */
-    getData(product,fn){
-        var desc;
+    getData(product, fn) {
+        let desc = null;
 
-        if(product && product.img){
-            var addProduct = function(){
+        if (product && product.img) {
+            var addProduct = function () {
                 fn(product.id);
             }
-            var genderAttrib = [null,'Unisex', 'Boy', 'Girl'];
+            var genderAttrib = [null, 'Unisex', 'Boy', 'Girl'];
             desc = (
                 <div className="row">
                     <div className="col-md-4">
                         <div className="imgPreview">
-                            <img src={this.state.img ? 'img/adImg/'+this.state.img : 'img/default.jpg'}/>
+                            <img src={this.state.img ? '/img/adImg/' + this.state.img : '/img/default.jpg'} />
                         </div>
-                        <hr/>
+                        <hr />
                         <div className="wrapper">
                             <div className="wrapper-info">
                                 {this.imgAddedRend(product)}
@@ -88,7 +107,7 @@ class productInfo extends React.Component{
                     <div className="col-md-8">
                         <h4>Description:</h4>
                         <p>{product.desc}</p>
-                            
+
                         <h4>Maker:</h4>
                         <p>{product.brand}</p>
 
@@ -97,9 +116,11 @@ class productInfo extends React.Component{
 
                         <h4>Gender:</h4>
                         <p>{genderAttrib[product.gender]}</p>
-                        
+
+                        {this.myShopButton(product)}
+
                     </div>
-                </div>  
+                </div>
             )
         }
         return desc;
@@ -112,40 +133,40 @@ class productInfo extends React.Component{
      * @memberOf productInfo
      */
     loadPage() {
-        
+
         let _id = null;
-        if(this.props.location && this.props.location.query){
+        if (this.props.location && this.props.location.query) {
             _id = this._id = this.props.location.query._id;
         }
-        
+
         store.dispatch(store.dispatchArticle('GET_ARTICLE', { _id: _id }));
     }
 
-    componentWillMount(){
+    componentWillMount() {
         store.dispatch(store.dispatchArticle('RESET_PAGE_ARTICLE'));
     }
 
-    componentDidUpdate(){
+    componentDidUpdate() {
         var product = store.getState().product[0];
-        if(!this.state.img && product && product.img.length > 0) this.setState({img:product.img[0]});
-        
-        if(product && this.state.gender !== product.gender){
-        
-            if(product.gender == 2) {
+        if (!this.state.img && product && product.img.length > 0) this.setState({ img: product.img[0] });
+
+        if (product && this.state.gender !== product.gender) {
+
+            if (product.gender == 2) {
                 this.setState({
                     genderColor: '1px solid rgba(39,132,219,0.5)',
                     gender: product.gender
                 });
             }
-            else if(product.gender == 3) {
+            else if (product.gender == 3) {
 
                 this.setState({
                     genderColor: '1px solid rgba(221,18,123,0.5)',
                     gender: product.gender
-            });
+                });
             }
         }
-        
+
     }
 
     componentDidMount() {
@@ -157,11 +178,11 @@ class productInfo extends React.Component{
      * 
      * @memberOf productInfo
      */
-    submitQa(){
-        var dataQa =  {qa:this.refs.qaAsk.value};
-        store.dispatch(store.dispatchArticle('ADD_QA',{_id: this._id, qa:dataQa}));
+    submitQa() {
+        var dataQa = { qa: this.refs.qaAsk.value };
+        store.dispatch(store.dispatchArticle('ADD_QA', { _id: this._id, qa: dataQa }));
         this.refs.qaAsk.value = '';
-        $( "div.qq" ).toggleClass( "qa-noshow" );
+        $("div.qq").toggleClass("qa-noshow");
     }
 
     /**
@@ -171,23 +192,23 @@ class productInfo extends React.Component{
      * 
      * @memberOf productInfo
      */
-    submitQap(){
-        if(this.state.email_error_text && this.state.email_error_text.length > 0 || this.refs.emailp.getValue() == '') {
+    submitQap() {
+        if (this.state.email_error_text && this.state.email_error_text.length > 0 || this.refs.emailp.getValue() == '') {
             this.setState({
                 email_error_text: 'Enter a valid address'
             });
             return false;
         }
-        var dataQa =  {_id: this._id, msg:this.refs.qaAskp.value, from:this.refs.emailp.getValue()};
+        var dataQa = { _id: this._id, msg: this.refs.qaAskp.value, from: this.refs.emailp.getValue() };
 
-        store.dispatch(store.dispatchArticle('ADD_QAP',dataQa));
+        store.dispatch(store.dispatchArticle('ADD_QAP', dataQa));
         this.refs.qaAskp.value = '';
-        $( "div.qqp" ).toggleClass( "qap-noshow" );
-        $( "div.qqps" ).removeClass( "qaps-noshow" );
-        setTimeout(function(){$( "div.qqps" ).addClass( "qaps-noshow" )}, 2000);
+        $("div.qqp").toggleClass("qap-noshow");
+        $("div.qqps").removeClass("qaps-noshow");
+        setTimeout(function () { $("div.qqps").addClass("qaps-noshow") }, 2000);
         return true;
     }
-    
+
     /**
      * Check valide email or not and populate local state
      * 
@@ -202,88 +223,88 @@ class productInfo extends React.Component{
             email_error_text: err
         });
     }
-    
-    render(){
+
+    render() {
         // Get the product info form REDUX store
         var product = store.getState().product[0];
-        
+
         const hstl = {
             marginTop: '10px'
         }
-        if(!product) {
+        if (!product) {
             // Load in the store
             return (
-                <div className="infoProd text-center" style={{marginTop: '90px'}}>
+                <div className="infoProd text-center" style={{ marginTop: '90px' }}>
                     <h3 style={hstl}>LOADING AD</h3>
                 </div>
             )
         }
-        else if(product == 'no_exist'){
+        else if (product == 'no_exist') {
             // No product in the store
             return (
-                <div className="infoProd text-center" style={{marginTop: '90px'}}>
+                <div className="infoProd text-center" style={{ marginTop: '90px' }}>
                     <h3 style={hstl}>404. No product available</h3>
                 </div>
             )
         }
 
-        var desc = this.getData(product,this.props.addProductInCart);
+        var desc = this.getData(product, this.props.addProductInCart);
         var stlq = {
-            marginTop:'20px',
+            marginTop: '20px',
             width: '100%',
             backgroundColor: '#dd127b',
             color: 'white'
         }
         var descstl = {
-          color: '#888',
-          fontWeight: '500',
-          fontSize: '0.95em'
+            color: '#888',
+            fontWeight: '500',
+            fontSize: '0.95em'
         }
         var qatest = product.qa;
 
         let tg = () => {
-            $( "div.qq" ).toggleClass( "qa-noshow" );
+            $("div.qq").toggleClass("qa-noshow");
         };
         let tgp = () => {
-            $( "div.qqp" ).toggleClass( "qap-noshow" );
-            $( "div.qqps" ).addClass( "qaps-noshow" );
+            $("div.qqp").toggleClass("qap-noshow");
+            $("div.qqps").addClass("qaps-noshow");
         };
 
         return (
-            <div className="infoProd" style={{marginTop: '90px', border: this.state.genderColor}}>
+            <div className="infoProd" style={{ marginTop: '90px', border: this.state.genderColor }}>
                 <h4 className="modal-title">{product.name}</h4>
                 {desc}
-                
+
                 <div style={stlq}>
-                    
+
                     <div className="row qa-row">
                         <div className="col-md-4">
-                        <h3 style={{float:'left', paddingLeft:'1em'}}>Questions:</h3>
+                            <h3 style={{ float: 'left', paddingLeft: '1em' }}>Questions:</h3>
                         </div>
                         <div className="col-md-4">
                             <RaisedButton
-                                    label="Ask public question to the mom"
-                                    backgroundColor="#00BCD4"
-                                    labelPosition="before"
-                                    labelStyle={{ color: 'white', width: '100%' }}
-                                    icon={<FontIcon className="material-icons" color={'#ffffff'}></FontIcon>}
-                                    className="question"
-                                    onClick={tg}
-                                    fullWidth={true}
-                                    >
+                                label="Ask public question to the mom"
+                                backgroundColor="#00BCD4"
+                                labelPosition="before"
+                                labelStyle={{ color: 'white', width: '100%' }}
+                                icon={<FontIcon className="material-icons" color={'#ffffff'}></FontIcon>}
+                                className="question"
+                                onClick={tg}
+                                fullWidth={true}
+                                >
                             </RaisedButton>
                         </div>
                         <div className="col-md-4">
-                             <RaisedButton
-                                    label="Ask private question to the mom"
-                                    backgroundColor="#00BCD4"
-                                    labelPosition="before"
-                                    labelStyle={{ color: 'white', width: '100%' }}
-                                    icon={<FontIcon className="material-icons" color={'#ffffff'}></FontIcon>}
-                                    className="question"
-                                    onClick={tgp}
-                                    fullWidth={true}
-                                    >
+                            <RaisedButton
+                                label="Ask private question to the mom"
+                                backgroundColor="#00BCD4"
+                                labelPosition="before"
+                                labelStyle={{ color: 'white', width: '100%' }}
+                                icon={<FontIcon className="material-icons" color={'#ffffff'}></FontIcon>}
+                                className="question"
+                                onClick={tgp}
+                                fullWidth={true}
+                                >
                             </RaisedButton>
                         </div>
                     </div>
@@ -291,50 +312,50 @@ class productInfo extends React.Component{
                         <div className="col-md-12">
                             <textarea className="qa-ask" placeholder="Enter your question" ref='qaAsk' />
                             <FlatButton
-                                    label="SEND"
-                                    backgroundColor="#00BCD4"
-                                    labelPosition="before"
-                                    labelStyle={{ color: 'white', width: '100%' }}
-                                    icon={<FontIcon className="material-icons" color={'#ffffff'}></FontIcon>}
-                                    style={{ float: 'right', transform: 'translate(-7%, 50%)'}}
-                                    onClick={this.submitQa}
-                                    >
+                                label="SEND"
+                                backgroundColor="#00BCD4"
+                                labelPosition="before"
+                                labelStyle={{ color: 'white', width: '100%' }}
+                                icon={<FontIcon className="material-icons" color={'#ffffff'}></FontIcon>}
+                                style={{ float: 'right', transform: 'translate(-7%, 50%)' }}
+                                onClick={this.submitQa}
+                                >
                             </FlatButton>
                         </div>
                     </div>
                     <div className="row qqp qap-noshow">
                         <div className="col-md-12">
-                            <h4 className="text-center" style={{color:'black'}}>Send a private email to the owner.</h4>
+                            <h4 className="text-center" style={{ color: 'black' }}>Send a private email to the owner.</h4>
                             <TextField
                                 hintText="Email"
                                 floatingLabelText="Enter your Email"
                                 errorText={this.state.email_error_text}
                                 onChange={e => this.checkEmail(e)}
                                 ref='emailp'
-                                style={{marginLeft: '5px'}}
-                            />
-                            <br/><br/>
+                                style={{ marginLeft: '5px' }}
+                                />
+                            <br /><br />
                             <textarea className="qap-ask" placeholder="Enter your question" ref='qaAskp' />
                             <FlatButton
-                                    label="SEND"
-                                    backgroundColor="#00BCD4"
-                                    labelPosition="before"
-                                    labelStyle={{ color: 'white', width: '100%' }}
-                                    icon={<FontIcon className="material-icons" color={'#ffffff'}></FontIcon>}
-                                    style={{ float: 'right', transform: 'translate(-7%, 50%)'}}
-                                    onClick={this.submitQap}
-                                    >
+                                label="SEND"
+                                backgroundColor="#00BCD4"
+                                labelPosition="before"
+                                labelStyle={{ color: 'white', width: '100%' }}
+                                icon={<FontIcon className="material-icons" color={'#ffffff'}></FontIcon>}
+                                style={{ float: 'right', transform: 'translate(-7%, 50%)' }}
+                                onClick={this.submitQap}
+                                >
                             </FlatButton>
                         </div>
                     </div>
                     <div className="row qqps qaps-noshow">
                         <div className="col-md-12">
-                            <h4 className="text-center" style={{color:'black'}}>Message sent !</h4>
+                            <h4 className="text-center" style={{ color: 'black' }}>Message sent !</h4>
                         </div>
                     </div>
                 </div>
                 <div>
-                    <QuestionProduct qa={qatest}/>
+                    <QuestionProduct qa={qatest} />
                 </div>
             </div>
         )

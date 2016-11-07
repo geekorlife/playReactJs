@@ -95,12 +95,16 @@ exports.log_Usr = (data, res) => {
 exports.addUsr = (data, res) => {
     console.log('data USER', data);
     const id_connect = randomId();
+    const shopNme = data.account.shpnme ? data.account.shpnme.split(' ').join('').toLowerCase() : null;
+   
     let User = new Schema.users({
         id_shop: randomId(),
         credential: randomId(),
-        shopName: data.account.shpnme,
+        shopName: shopNme,
         login: data.account.email,
-        pass: data.account.pass
+        pass: data.account.pass,
+        desc: data.account.desc || null,
+        avatar: data.account.avatar === 0 ? '/img/usrAv/women.jpg' : '/img/usrAv/men.jpg'
     });
 
     User.save((err, resp) => {
@@ -116,16 +120,16 @@ exports.addUsr = (data, res) => {
             return;
         }
         
-        const msg = '<h4>Welcome to CutieDeals.com !</h4>' +
+        const msg = '<h4>Welcome to CutiDeals.com !</h4>' +
             '<br/>' +
             '<p>' +
             'Your personal shop is ready and you can start to create ads' +
             '<br/>'+
-            '<a href="www.cutiesdeals.com">www.cutiesdeals.com</a>'+
+            '<a href="www.CutiDeals.com">www.CutiDeals.com</a>'+
             '</p>';
-        const msgPlain = 'Welcome to CutieDeals.com ! Your personal shop is ready and you can already add ads';
-        sendMail(data.account.email, msg, msgPlain, 'Welcome to CutieDeals.com');
-        res.send({ message: 'usr_added', credential: resp.credential, id_shop: resp.id_shop, shpnme: data.account.shpnme, email:data.account.email });
+        const msgPlain = 'Welcome to CutiDeals.com ! Your personal shop is ready and you can already add ads';
+        sendMail(data.account.email, msg, msgPlain, 'Welcome to CutiDeals.com');
+        res.send({ message: 'usr_added', credential: resp.credential, id_shop: resp.id_shop, shpnme: shopNme, email:data.account.email });
         res.end('');
     });
 }

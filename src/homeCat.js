@@ -15,17 +15,17 @@ class homeCat extends React.Component {
 
         this.category = [
             [
-                {n:'Clothes',id:1, img:'img/categories/clothes-cat.jpg'},
-                {n:'Shoes',id:2, img:'img/categories/shoes-cat.jpeg'},
-                {n:'Childcare',id:3, img:'img/categories/childcare-cat.jpeg'}
+                {n:'Clothes',id:1, img:'/img/categories/clothes-cat.jpg'},
+                {n:'Shoes',id:2, img:'/img/categories/shoes-cat.jpeg'},
+                {n:'Childcare',id:3, img:'/img/categories/childcare-cat.jpeg'}
             ],
             [
-                {n:'Child furnitures',id:4, img:'img/categories/furniture-cat.jpeg'},
-                {n:'Toys',id:5, img:'img/categories/toys-cat.jpg'},
-                {n:'Outdoor',id:6, img:'img/categories/outdoor-cat.jpeg'}
+                {n:'Child furnitures',id:4, img:'/img/categories/furniture-cat.jpeg'},
+                {n:'Toys',id:5, img:'/img/categories/toys-cat.jpg'},
+                {n:'Outdoor',id:6, img:'/img/categories/outdoor-cat.jpeg'}
             ],
             [
-                {n:'Others',id:7, img:'img/categories/other-cat.jpg'}
+                {n:'Others',id:7, img:'/img/categories/other-cat.jpg'}
             ]
         ];
 
@@ -59,8 +59,7 @@ class homeCat extends React.Component {
 
                 const chooseCat = () => {
                     this.setState({"catChoosed": li.id});
-                    this.contextType.router.push('#/productlist?id='+li.id);
-
+                    this.contextType.router.push('/productlist?id='+li.id);
                 }
                 const res = () => {
                     store.dispatch(store.dispatchArticle('RESET_PAGE_ARTICLE'));
@@ -71,7 +70,7 @@ class homeCat extends React.Component {
                     color: '#fff',
                     left: '50%',
                     transform: 'translateX(-50%)',
-                    fontWeight: '100',
+                    fontWeight: '300',
                     letterSpacing: '0.04em',
                     textShadow: '0px 1px 2px rgba(0,0,0,0.3)'
                 }
@@ -107,20 +106,16 @@ class homeCat extends React.Component {
             return (<Home/>)
         }
         else if(this.props.location && this.props.location.query && this.props.location.query.id) {
-
             return (
                 <div>
-                {this.listProductHome(paramQuery)}
+                    {this.listProductHome(paramQuery)}
                 </div>
             )
         }
         else {
-            const stl = {
-                marginTop: '100px'
-            }
             return (
-                <div style={stl}>
-                {this.rendCategory()}
+                <div className="cat_main">
+                    {this.rendCategory()}
                 </div>
             )
         }

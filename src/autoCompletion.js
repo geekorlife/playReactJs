@@ -28,7 +28,7 @@ class autoCompletion extends React.Component{
         const type = !isNaN(data) ? 'zip' : 'name';
 
         $.ajax({
-            url: 'http://192.168.2.8:8080/api/zipCode',
+            url: 'http://138.68.31.97:8080/api/zipCode',
             data: { type: 'GET_ZIPCODE', zip: {code: data, type:type} },
             type: 'GET',
             success: function (data) {

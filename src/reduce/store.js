@@ -8,7 +8,9 @@ const INITIAL_STATE = {
     post_state : { posts: [], error: null, loading: false, id_connect: null },
     product: [],
     zip: null,
-    user: {id_shop: null, credential: null, shpnme: null}
+    user: {id_shop: null, credential: null, shpnme: null},
+    currentShop: {name: null, avatar: null, desc: null},
+    poolRequest : []
 };
 
 const finalCreateStore = compose(applyMiddleware(promise),window.devToolsExtension ? window.devToolsExtension() : f => f)(createStore);

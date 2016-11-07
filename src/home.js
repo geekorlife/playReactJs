@@ -14,15 +14,29 @@ class home extends React.Component {
         this.sendZip = this.sendZip.bind(this);
         this.handleZip = this.handleZip.bind(this);
         this.state = {
-            zip: null
+            zip: null,
+            error_msg: ''
         }
     }
 
     sendZip() {
+        const mxDist = this.refs.dist.getValue();
+        if(!this.state.zip){
+            this.setState({
+                error_msg: 'Error: Type a city name or a zipcode and select a city in the list'
+            });
+            return;
+        }
+        else if(!mxDist) {
+            this.setState({
+                error_msg: 'Error: You have to enter a max distance'
+            });
+            return;
+        }
         
         const zip = {
             code: this.state.zip,
-            dist: this.refs.dist.getValue()
+            dist: mxDist
         }
         
         store.dispatch(store.dispatchArticle('SET_LOCAL_ZIP', zip));
@@ -38,19 +52,20 @@ class home extends React.Component {
     }
     
     render() {
-
+        const classError = this.state.error_msg ? 'showError' : '';
         return (
-            <div className="text-center" style={{width:'80%', margin:'auto'}}>
-                <h2>My moms closet</h2>
-                <p>
-                    Sell and buy in the closet of other moms.
-                </p>
+            <div style={{width:'85%', margin:'80px auto 0px auto'}}>
+                <h4 className="text-center">
+                    Post and see ads about Kid stuff.
+                </h4>
                 <div className="selectZip">
+                    <h5 className={classError}>{this.state.error_msg}</h5>
                     <AutoCompletion handleZip={this.handleZip} />
                     <br/>
                     <TextField
                         hintText="Enter max distance (miles)"
                         floatingLabelText="Max distance:"
+                        type="number"
                         ref='dist'
                     />
                     <br/>
@@ -58,7 +73,7 @@ class home extends React.Component {
                         label="Submit"
                         secondary={true}
                         icon={<ActionSave />}
-                        style={{ transform: 'translateY(50%)' }}
+                        style={{ transform: 'translateY(0%)' }}
                         onClick={this.sendZip}
                     />
                 </div>

@@ -12,7 +12,7 @@ const sendMail = (to,msg,msgplain,subject) => {
     var mailOptions = {
         from: conf.DOMAIN_NAME+' <'+conf.EMAIL_TEXTE+'>', // sender address
         to: to, // list of receivers
-        subject: subject || 'Your ad on '+conf.DOMAIN_NAME_PARAM+' ✔', // Subject line
+        subject: subject || 'Your ads on '+conf.DOMAIN_NAME_PARAM+' ✔', // Subject line
         text: msgplain, // plaintext body
         html: msg // html body
     };

@@ -10,15 +10,12 @@ import HomeCategory from './homeCat';           // Home cat
 import Aboutus from './about';                    // About
 import Home from './home';                      // Home
 import PersonalShop from './personalShop';      // Personal shop page
+import Myshop from './myshop';      // Personal shop page
 import { Router, Route, hashHistory, browserHistory, IndexRoute } from 'react-router';
 import AddProduct from './form/AddProduct';
 import AdminBar from './adminBar';
 import AppRoute from './route';
 
-
-
-
-const adminpass = '1234';
 
 const NotFound = () => (
   <h1>404.. This page is not found!</h1>)
@@ -48,6 +45,7 @@ class MainProduct extends React.Component {
         <Route path='productid' name="InfoProduct" component={ProducInfo} />
         <Route path='about' name="About us" component={Aboutus} />
         <Route path='personalShop' name="My shop" component={PersonalShop} />
+        <Route path='myShop(/:shopname)' name="My shop" component={Myshop} />
         <Route path='manageProd' name="Manage Product" component={ManageProd} />
         <Route path='productlist' name="Productlist" component={this.homeCategoryProd} />
         <Route path='addProduct' name="addProduct" component={this.addAnAd} />
@@ -77,7 +75,7 @@ class MainProduct extends React.Component {
       qty: 1,
       shpnme: product.shpnme || false,
       zip: product.zip,
-      img: product.img || 'img/boyshirt.jpg'
+      img: product.img || '/img/boyshirt.jpg'
     };
 
 
@@ -100,7 +98,7 @@ class MainProduct extends React.Component {
 
   showProductInfo(id) {
     this.setState({ currentView: id });
-    window.location = '#/productid?_id=' + id;
+    browserHistory.push('/productid?_id=' + id);
   }
 
   addProductInCart(id) {
@@ -154,15 +152,9 @@ class MainProduct extends React.Component {
     
     return (
       <div>
-        <Nav cart={this.state.currentCart} product={listProduct} />
-        <div id="home">
-          {this.rendAdmin()}
-          <Router history={hashHistory}>
+        <Router history={browserHistory}>
             {this.rte}
           </Router>
-
-          <AdminModal handleConnect={this.activeAdmin} />
-        </div>
       </div>
     );
   }

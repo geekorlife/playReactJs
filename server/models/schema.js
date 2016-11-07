@@ -43,7 +43,9 @@ const userSchema = new Schema({
     credential: { type: String, required: true },
     shopName:{ type: String, required: true, index: { unique: true } },
     login: { type: String, required: true, index: { unique: true } },
-    pass: { type: String, required: true }
+    pass: { type: String, required: true },
+    desc: String,
+    avatar: {type: String}
 }, {timestamps: true});
 
 //User shcema middleware to encrypt the password

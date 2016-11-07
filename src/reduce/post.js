@@ -16,7 +16,7 @@ export const CREATE_POST = 'CREATE_POST';
 export const INIT_ARTICLE = 'INIT_ARTICLE';
 export const ADD_ARTICLE_SUCCESS = 'ADD_ARTICLE_SUCCESS';
 
-const ROOT_URL = location.href.indexOf('localhost') > 0 ? 'http://192.168.2.8:8080/api' : 'http://192.168.2.8:8080/api';
+const ROOT_URL = 'http://138.68.31.97:8080/api';
 
 // Get all articles from DB
 export function fetchDB() {
@@ -67,6 +67,29 @@ export function fetchPageArticle(fromPage){
     axios.get(`${ROOT_URL}/page`, {params: fromPage}, configUpload)
     .then(function (response) {
         store.dispatch(store.dispatchArticle('GET_LIST_ARTICLE_SUCCESS',{art:response.data}));      //   UPDATE STATE AND DOM
+    })
+    .catch(function (error) {
+        console.log(error);
+    });
+
+    return {
+      type: CREATE_POST
+    };
+}
+
+// Get myShop articles by shop  name 
+export function fetchShopArticle(fromPage){
+    var configUpload = {
+        responseType: 'arraybuffer',
+        onDownloadProgress: function (e) {
+            console.log("This just in... ", e);
+        }
+    };
+    console.log('fromPage',fromPage);
+    axios.get(`${ROOT_URL}/myShop`, {params: fromPage}, configUpload)
+    .then(function (response) {
+        console.log('response myShop',response.data);
+        store.dispatch(store.dispatchArticle('GET_SHOP_SUCCESS_ARTICLE',{art:response.data}));      //   UPDATE STATE AND DOM
     })
     .catch(function (error) {
         console.log(error);
@@ -207,7 +230,7 @@ export function updateArticle(prev){
     };
 }
 
-// Delete article
+// Remove qty article
 export function deleteArticle(prev){
     var configUpload = {
         responseType: 'arraybuffer',
@@ -228,6 +251,29 @@ export function deleteArticle(prev){
         }
     });
 }
+
+// Delete article
+export function deleteShopArticle(prev){
+    var configUpload = {
+        responseType: 'arraybuffer',
+        onDownloadProgress: function (e) {
+            console.log("This just in... ", e);
+        }
+    };
+    console.log('delete article on ',`${ROOT_URL}/deleteArticle`);
+    $.ajax({
+        type: "DELETE",
+        url: `${ROOT_URL}/deleteArticle`,
+        data: prev,
+        crossDomain: true,
+        success: function(s){
+            if(s.message && s.message === 'article_deleted'){
+                store.dispatch(store.dispatchArticle('DELETE_ARTICLE_SUCCESS',s));      //   UPDATE STATE AND DOM
+            }
+        }
+    });
+}
+
 
 // Add QA article
 export function fetchPutQAArticle(prev) {

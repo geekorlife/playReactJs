@@ -3,42 +3,44 @@ import React from 'react';
 class about extends React.Component {
     render(){
         return(
-            <div>
-                <h3>Bienvenue sur "Les armoires de nos Loustics", un site dédié aux parents pour nos enfants !</h3>
+            <div style={{marginTop:'90px'}}>
+                <h3>Welcome on "CutiDeals.com", a place dedicated to the parents !</h3>
                 <p>
-                    Vendez et achetez des articles d’occasions pour vos enfants : des vêtements, des chaussures, 
-                    de la puériculture, du mobilier, .. le tout en un seul site !
+                    Sell and buy used articles for your child: Clothes, shoes, child care, furnitures etc ... 
+                    Everything with just one click.
                 </p>
+                <article>
+                     invite you to join us in this great adventure full of discoveries, shine your eyes by browsing 
+                     our pages and cultivate all these beautiful values:
+
+                     <h4>Sharing:</h4>
+                     It is sometimes difficult to separate objects that were selected carefully to our little love ... 
+                     it can become easier when we know that our little treasures hidden in our cabinets can marvel another family, right?
+
+                     <h4>Caring:</h4>
+                     A desire? a need? Who has not wanted to have some fun on the announcement of her pregnancy? 
+                     But sometimes reality catches up our finances, which is better placed than another parent to 
+                     make available this purchase?
+
+                     <h4>Metissage:</h4>
+                     From different cultures and countries, what a pleasure to unearth a few gems to evader.
+
+                     <h4>Good deal:</h4>
+                     Selling or buying, but earn money. Either you enjoy a low price or you empty your closets, 
+                     in both cases you are winners!
+
+                </article>
                 <p>
-                    Je vous invite a nous rejoindre dans cette belle aventure pleine de découvertes, faire briller 
-                    vos yeux en parcourant nos pages et cultiver ensemble ces belles valeurs :
+                    Categorized, you buyers you have a click to do to find your must have!
+                    Easy to use and without registration you seller, you just have to post your ad 
+                    in the right category so that it is visible to all!
                 </p>
 
-                <h4>Partage :</h4>
                 <p>
-                    Il est parfois difficile de se séparer d’objets que l’ont a choisi avec soin pour notre petit amour… 
-                    cela peut devenir plus facile quand on sait que nos petits trésors cachés dans nos armoires peuvent 
-                    émerveiller une autre famille, non?
-                </p>
-
-                <h4>Entraide :</h4>
-                <p>
-                    Une envie? un besoin? Qui n’a jamais eu envie de se faire plaisir des l’annonce de sa grossesse ? 
-                    Mais parfois la réalité de nos finances nous rattrape, qui est mieux placée qu’un autre parent 
-                    pour rendre cet achat accessible?
-                </p>
-
-                <h4>Bonne affaire :</h4>
-                <p>
-                    Vendez ou achetez, mais gagnez de l’argent. Soit vous profitez d’un petit prix, soit vous videz 
-                    vos placards, dans les deux cas vous êtes gagnants!
-                </p>
-                <p>
-                    Classées par catégories, vous acheteurs vous n’avez qu’un clic a faire pour trouver votre must have!<br/>
-                    Facile d’utilisation et sans inscription, vous vendeur, vous n’avez qu’a poster votre annonce dans 
-                    la bonne categorie pour qu’elle soit visible de tous!
+                Have a question ? Contact us at <a href="mailto:hello@cutideals.com?Subject=Hello" target="_top">hello@cutiedeals.com</a>
                 </p>
             </div>
+
         )
     }
 }

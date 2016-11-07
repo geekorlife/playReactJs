@@ -2,7 +2,32 @@ import {updateObject, updateItemInArray} from './dispatchObj';
 
 import * as post from './post';
 
-const addArticleSuccess = (state, prev) => {
+const postIsLoading = (state, db) => {
+    if(!db) {
+        post.fetchDB(); 
+    }        
+    return updateObject(state,{post_state:{ posts: [], error: null, loading: true, db: db, createdAdId: null}});
+}
+
+const poolingRequest = [];
+
+const action = {};
+
+action.addPoolRequest = (meth, action) => {
+    poolingRequest.push({nam: meth, data: JSON.stringify(action)});
+}
+
+action.getPoolRequest = (meth, action) => {
+    return poolingRequest.length > 0 ? poolingRequest[poolingRequest.length-1] : null;
+}
+
+action.runPoolRequest = (state) => {
+    if(poolingRequest.length === 0) return;
+    const lastPool = poolingRequest[poolingRequest.length-1];
+    action[lastPool.nam](state, JSON.parse(lastPool.data));
+}
+
+action.addArticleSuccess = (state, prev) => {
     var newPostState = { 
         posts: [], 
         error: null, 
@@ -29,79 +54,85 @@ const addArticleSuccess = (state, prev) => {
     return ob;
 };
 
-const addArticle = (state, prev) => {
+action.addArticle = (state, prev) => {
     post.fetchPutArticle(prev);
     return postIsLoading(state, true);
 };
 
-const updateArticle = (state, prev) => {
+action.updateArticle = (state, prev) => {
     console.log('prev',prev);
     post.updateArticle(prev);
     return postIsLoading(state, true);
 }
 
-const addQA = (state, prev) => {
+action.addQA = (state, prev) => {
     post.fetchPutQAArticle(prev);
     return postIsLoading(state, true);
 };
 
-const addQASuccess = (state, prev) => {
+action.addQASuccess = (state, prev) => {
     console.log('ADD QA SUCCES',prev);
     var newPostState = { posts: [], error: null, loading: false, db: false, createdAdId: null};
     return updateObject(state, {post_state:newPostState, product: [prev], count:0});
 };
 
-const addQAP = (state, prev) => {
+action.addQAP = (state, prev) => {
     post.fetchPutQAPArticle(prev);
     return postIsLoading(state, true);
 };
 
-const addQAPSuccess = (state, prev) => {
+action.addQAPSuccess = (state, prev) => {
     console.log('ADD QA SUCCES',prev);
     var newPostState = { posts: [], error: null, loading: false, db: false, createdAdId: null};
     return updateObject(state, {post_state:newPostState});
 };
 
-const addUser = (state, prev) => {
+action.addUser = (state, prev) => {
     console.log('ADD USER');
     post.fetchPushUser(prev);
     return postIsLoading(state, true);
 }
 
-const addUsrSuccess = (state, prev) => {
+action.addUsrSuccess = (state, prev) => {
     console.log('ADD USR SUCCESS',prev);
-    return setLocalUsr(state, prev);
+    return action.setLocalUsr(state, prev);
 };
 
-const getArticle = (state, formPage) => {
+action.getArticle = (state, formPage) => {
     console.log('GET PAGE ARTICLE',formPage);
     post.fetchOneArticle(formPage);
     return postIsLoading(state, true);
 }
 
-const getArticleAdmin = (state, formPage) => {
+action.getArticleAdmin = (state, formPage) => {
     console.log('GET PAGE ARTICLE',formPage);
     post.fetchOneArticle(formPage);
     return postIsLoading(state, true);
 }
 
-const getPageArticle = (state, formPage) => {
+action.getPageArticle = (state, formPage) => {
     post.fetchPageArticle(formPage);
     return postIsLoading(state, true);
 }
 
-const getPageArticleSuccess = (state, newProductList) => {
+action.getPageArticleSuccess = (state, newProductList) => {
     console.log('newProductList COUNT', newProductList);
     var newPostState = { posts: [], error: null, loading: false, db: true, createdAdId: null};
     return updateObject(state, {post_state:newPostState, product: newProductList[0].article, count:newProductList[0].length});
 }
 
-const resetPageArticle = (state) => {
+action.getMyShopArticle = (state, formPage) => {
+    post.fetchShopArticle(formPage);
+    var newPostState = { posts: [], error: null, loading: true, db: true, createdAdId: null};
+    return updateObject(state, {post_state:newPostState, product: [], count:0});
+}
+
+action.resetPageArticle = (state) => {
     var newPostState = { posts: [], error: null, loading: false, db: false, createdAdId: null};
     return updateObject(state, {post_state:newPostState, product: [], count:0});
 }
 
-const removeArticle = (state, id) => {
+action.removeArticle = (state, id) => {
     const newProductList = updateItemInArray(state.product, id, item => {
         var newq = item.qty - 1;
         return updateObject(item, {qty : newq});
@@ -110,54 +141,54 @@ const removeArticle = (state, id) => {
     return updateObject(state, {product : newProductList});
 };
 
-const postIsLoading = (state, db) => {
-    if(!db) {
-        post.fetchDB(); 
-    }        
-    return updateObject(state,{post_state:{ posts: [], error: null, loading: true, db: db, createdAdId: null}});
-}
-
-const addArticleDB = (state, newProductList) => {
+action.addArticleDB = (state, newProductList) => {
     var prodt = state.product.concat(newProductList.article);
     console.log('prodt',prodt);
+    console.log('newProductList',newProductList);
+    const currentShop = newProductList.shop ? {name: newProductList.shop.shopName, avatar: newProductList.shop.avatar, desc: newProductList.shop.desc} : {name: null, avatar: null, desc: null};
+    
     if(prodt.length == 0 || prodt[0] == undefined){
         console.log('NO ARTICLE EXIST');
         var newPostState = { posts: [], error: null, loading: false, db: true};
-        return updateObject(state, {post_state:newPostState, product: ['no_exist'], count:newProductList.length, createdAdId: null});
+        return updateObject(state, {post_state:newPostState, product: ['no_exist'], count:newProductList.length, createdAdId: null, currentShop: currentShop});
     }
 
     // Avoid duplicate entry in the store
     var product = prodt.filter((obj, pos, arr) => {
         return arr.map(mapObj => mapObj._id).indexOf(obj._id) === pos;
     });
-    
     var newPostState = { posts: [], error: null, loading: false, db: true};
     
-    return updateObject(state, {post_state:newPostState, product: product, count:newProductList.length, createdAdId: null});
+    return updateObject(state, {post_state:newPostState, product: product, count:newProductList.length, createdAdId: null, currentShop: currentShop});
 }
 
-const deleteArticle = (state, prev) => {
+action.deleteShopArticle = (state, prev) => {
     console.log('prev',prev);
+    post.deleteShopArticle(prev);
+    return postIsLoading(state, true);
+}
+
+action.deleteArticle = (state, prev) => {
     post.deleteArticle(prev);
     return postIsLoading(state, true);
 }
 
-const deleteSuccess = (state, prev) => {
+action.deleteSuccess = (state, prev) => {
     console.log('prev',prev);
     return postIsLoading(state, false);
 }
 
-const loadAllArticles = (state, newProductList) => {
+action.loadAllArticles = (state, newProductList) => {
     var newPostState = { posts: [], error: null, loading: false, db: true, createdAdId: null};
     return updateObject(state, {post_state:newPostState, product: newProductList});
 }
 
-const setLocalZip = (state, zip) => {
+action.setLocalZip = (state, zip) => {
     localStorage.setItem("zipData", JSON.stringify(zip));
     return updateObject(state, {zip: {code: zip.code, dist: zip.dist} });
 }
 
-const setLocalUsr = (state, data) => {
+action.setLocalUsr = (state, data) => {
     const localData = {
         id_shop:data.id_shop, 
         credential: data.credential,
@@ -170,13 +201,13 @@ const setLocalUsr = (state, data) => {
     return updateObject(state, {user: localData }, {post_state:newPostState});
 }
 
-const logUsr = (state, data) => {
+action.logUsr = (state, data) => {
     console.log('data log', data);
     post.fetchUsrLogin({l: data.email, p:data.pass});
     return postIsLoading(state, true);
 }
 
-const logUsrSuccess = (state, data) => {
+action.logUsrSuccess = (state, data) => {
      console.log('data log success', data);
     const newPostState = { posts: [], error: null, loading: false, db: false, createdAdId: null};
 
@@ -185,11 +216,11 @@ const logUsrSuccess = (state, data) => {
         return updateObject(state, {user: {id_shop: null, credential: null}}, {post_state:newPostState});
     }
     else {
-        return setLocalUsr(state, data);
+        return action.setLocalUsr(state, data);
     }
 }
 
-const getUsrData = (state) => {
+action.getUsrData = (state) => {
     const localUsr = localStorage.getItem("usrData");
 
     if(localUsr) {
@@ -200,7 +231,7 @@ const getUsrData = (state) => {
     return state;
 }
 
-const getUsrSuccess = (state, data) => {
+action.getUsrSuccess = (state, data) => {
 
     console.log('getUsrSuccess',data);
     const newPostState = { posts: [], error: 'zut', loading: false, db: false, createdAdId: null};
@@ -222,55 +253,26 @@ const getUsrSuccess = (state, data) => {
     }
 }
 
-const getLocalZip = (state) => {
+action.getLocalZip = (state) => {
     const zip = localStorage.getItem("zipData");
     let nState = null;
     if(!zip) {
         nState = updateObject(state, {zip: null });
     }
     else {
-        var newPostState = { posts: [], error: null, loading: true, db: true, createdAdId: null};
         nState = updateObject(state, {zip: JSON.parse(zip) });
     }
     console.log('nState',nState);
-    return getUsrData(nState);
+    return action.getUsrData(nState);
 }
 
-const resetUsrkey = () => {
+action.resetUsrkey = () => {
     if(localStorage.getItem("usrData"))
         localStorage.removeItem("usrData"); // Reset localsotrage key usrData
 }
 
-const duplicateKey = (state, data) => {
+action.duplicateKey = (state, data) => {
     return updateObject(state,{post_state:{ posts: [], error: data, loading: false, db: null, createdAdId: null}});
 }
 
-export {
-    addArticle,
-    addArticleSuccess,
-    removeArticle,
-    postIsLoading,
-    loadAllArticles,
-    addArticleDB,
-    getPageArticle,
-    getPageArticleSuccess,
-    resetPageArticle,
-    getArticle,
-    addQA,
-    addQASuccess,
-    addQAP,
-    addQAPSuccess,
-    getArticleAdmin,
-    updateArticle,
-    getLocalZip,
-    setLocalZip,
-    deleteArticle,
-    deleteSuccess,
-    addUser,
-    addUsrSuccess,
-    getUsrSuccess,
-    getUsrData,
-    logUsrSuccess,
-    logUsr,
-    duplicateKey
-};
+export default action;

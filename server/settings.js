@@ -8,17 +8,17 @@ const DEV_MONGO = '//127.0.0.1/reactShop';
 
 module.exports = {
 
-    EMAIL_PARAM: 'smtps://geekorlife%40gmail.com:18091979pB@smtp.gmail.com',
+    EMAIL_PARAM: 'smtps://hello%40cutideals.com:18091979pB@smtp.gmail.com',
 
-    EMAIL_TEXTE: 'geekorlife@gmail.com',
+    EMAIL_TEXTE: 'hello@cutideals.com',
 
-    DOMAIN_NAME_PARAM: 'KidsnDeals.com',
+    DOMAIN_NAME_PARAM: 'CutiDeals.com',
 
-    PARAM_DOMAIN: 'http://192.168.2.8',
+    PARAM_DOMAIN: 'http://www.cutideals.com',
 
-    DOMAIN_NAME: 'My moms closet',
+    DOMAIN_NAME: 'CutiDeals',
 
-    MONGO: DEV_MONGO,
+    MONGO: PROD_MONGO,
 
     PORT: '8080',
 

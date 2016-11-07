@@ -140,11 +140,74 @@ router.route('/page')
     });
 
 
+router.route('/myShop')
+    .get(function (req, res) {
+        console.log('req GET MY SHOP', req.query);
+
+        if (req.query.type != 'GET_SHOP_ARTICLE' || !req.query.shopName) {
+            res.json({ message: 'error' });
+            return;
+        }
+        console.log('req.query', req.query);
+        
+        const sortFind = { shopName: req.query.shopName};
+        if(req.query.cat) {
+            sortFind.cat = req.query.cat;
+        }
+        if(req.query.gender) {
+            sortFind.gender = req.query.gender;
+        }
+        const lastNineCmd = Schema.articles.find(sortFind).sort({ _id: -1 });
+
+        lastNineCmd.exec(function (err, art) {
+            if (err) {
+                res.send({'message':err});
+            }
+
+            Schema.articles.count(sortFind, (err, ar) => {
+                console.log('COUNT',ar);
+                
+                
+                Schema.users.findOne({ shopName: req.query.shopName}, (errp, resp) => {
+                    console.log('USER SHOP', resp);
+                    let shopResp = null;
+                    let article_list = null;
+                    if(resp && resp.shopName) {
+                        console.log('SHOP FOUND !!!');
+                        shopResp = {
+                            shopName: resp.shopName,
+                            createdAt: resp.createdAt,
+                            id_shop: resp.id_shop,
+                            desc: resp.desc,
+                            avatar: resp.avatar
+                        }
+                        if(req.query.adminMode && req.query.adminMode === 'true') {
+                            console.log('SEND ID CONENCT ADMIN MODE');
+                            shopResp.id_connect = resp.id_connect;
+                        }
+                        article_list = art.map((ar) => {
+                            
+                            let a = Object.assign({},ar._doc);
+                            if(!req.query.adminMode || req.query.adminMode && req.query.adminMode !== 'true') {
+                                delete a.id_connect;
+                            }
+                            return a;
+                        });
+                        console.log('SEND',shopResp);
+                        console.log('article_list',article_list);
+                    }
+                    res.json({ article: article_list, length: ar, shop: shopResp });
+                })
+            })
+        });
+    });
+
 // ADD img to a new article
 router.route('/addImg')
     // Create a new article (accessed at POST http://localhost:8080/api/add)
     .post(function (req, res) {
         let fullPath = __dirname + '/../../../var/www/kidndeals/img/adImg/';
+        //fullPath = __dirname + '/../img/adImg/'; //DEV server
         let currentId = null;
         let finished = false;
         let fileCnt = 0;
@@ -275,8 +338,9 @@ router.route('/add')
     // Create a new article (accessed at POST http://localhost:8080/api/add)
     .post(function (req, res) {
         const data = req.body;
-        console.log('data', data);
+        
         const id_connect = randomId();
+        const shopNme = data.shpnme != 'false' ? data.shpnme.split(' ').join('').toLowerCase() : null;
         const Article = new Schema.articles({
             id: data.id,
             id_connect: id_connect,
@@ -285,7 +349,7 @@ router.route('/add')
             desc: data.desc,
             price: data.price,
             email: data.email,
-            shopName: data.shpnme,
+            shopName: shopNme,
             img: [],
             gender: data.gender,
             cat: data.cat,
@@ -303,15 +367,13 @@ router.route('/add')
             }
             console.log('ADD ARTICLE', arti);
 
-            console.log('NEW ARTICLE ADDED IN DB');
-
-            const linkManage = conf.PARAM_DOMAIN + '/#manageProd?id=' + id_connect;
+            const linkManage = conf.PARAM_DOMAIN + '/manageProd?id=' + id_connect;
             const msg = '<h3>Congrats ! The ad has been created.</h3>' +
                 '<br/>' +
                 '<h4>' +
                 'The link to manage your ad: <a href="' + linkManage + '">' + linkManage + '</a>' +
                 '</h4>';
-            const msgPlain = 'Congrats ! Your ad on CutieDeals.com has been created. The link to manage your ad: ' + linkManage;
+            const msgPlain = 'Congrats ! Your ad on CutiDeals.com has been created. The link to manage your ad: ' + linkManage;
             sendMail(data.email, msg, msgPlain);
             res.send({ message: 'article_added', _id: arti._id, id_connect: id_connect });
         });
@@ -336,14 +398,34 @@ router.route('/getOne')
 
         Schema.articles.findOne(cmd, (art, existindb) => {
             if (existindb) {
+                let arti = null;
+                if(existindb.desc && existindb.name) {
+                    arti = {
+                        _id: existindb._id,
+                        updatedAt: existindb.updatedAt,
+                        createdAt: existindb.createdAt,
+                        id: existindb.id,
+                        name: existindb.name,
+                        brand: existindb.brand,
+                        desc: existindb.desc,
+                        price: existindb.price,
+                        shopName: existindb.shopName,
+                        gender: existindb.gender,
+                        cat: existindb.cat,
+                        qty: 1,
+                        zip: existindb.zip,
+                        qa: existindb.qa,
+                        img: existindb.img
+                    }
+                }
+
                 res.json({
                     message: 'article_exist',
-                    article: existindb
+                    article: arti
                 });
                 return art;
             }
-            console.log('art', art);
-            console.log('existindb', existindb);
+            
             res.json({ message: 'article_doesnt_exist' });
             res.end("");
         })
@@ -362,7 +444,7 @@ router.route('/getOne')
             else {
                 console.log('SEND OK 200', doc);
 
-                const linkManage = conf.PARAM_DOMAIN + '/#manageProd?id=' + doc.id_connect;
+                const linkManage = conf.PARAM_DOMAIN + '/manageProd?id=' + doc.id_connect;
                 const msg = '<h3>Somebody asks you a question about your ad.</h3>' +
                     '<br/>' +
                     '<h4>' +
@@ -402,7 +484,7 @@ router.route('/sendPrv')
             else {
                 console.log('SEND OK 200', doc);
 
-                const linkManage = conf.PARAM_DOMAIN + "/#manageProd?id=" + doc.id_connect;
+                const linkManage = conf.PARAM_DOMAIN + "/manageProd?id=" + doc.id_connect;
                 const msg = '<h3>From: <a href="mailto:' + data.from + '" target="_top">' + data.from + '</a></h3>' +
                     '<br/>' +
                     '<a style="background:#dd127b; border-radius:5px; color:#ffffff; padding:10px" href="mailto:' + data.from + '" target="_top"> REPLY HERE </a>' +
@@ -411,7 +493,7 @@ router.route('/sendPrv')
                     '<br/><br/>The link to manage your ad and repond to the question: <a href="' + linkManage + '">' + linkManage + '</a>';
 
                 const msgPlain = 'From:' + data.from + ' Msg:' + data.msg;
-                sendMail(doc.email, msg, msgPlain, 'Private question about your ad on KidsnDeals.com...');
+                sendMail(doc.email, msg, msgPlain, 'Private question about your ad on CutiDeals.com...');
 
                 res.send({
                     message: 'qap_added'

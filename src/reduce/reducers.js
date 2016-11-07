@@ -1,101 +1,81 @@
-import {
-    removeArticle, 
-    addArticle, 
-    postIsLoading, 
-    loadAllArticles, 
-    addArticleSuccess,
-    addArticleDB,
-    getPageArticle,
-    getPageArticleSuccess,
-    resetPageArticle,
-    getArticle,
-    addQA,
-    addQASuccess,
-    addQAP,
-    addQAPSuccess,
-    getArticleAdmin,
-    updateArticle,
-    getLocalZip,
-    setLocalZip,
-    deleteArticle,
-    deleteSuccess,
-    addUser,
-    addUsrSuccess,
-    getUsrSuccess,
-    getUsrData,
-    logUsr,
-    logUsrSuccess,
-    duplicateKey
-} from './action';
+import ActionReduce from './action';
 
 const INITIAL_STATE = {
     post_state : { posts: [], error: null, loading: false , db: false, createdAdId: null},
     product: [],
     zip: null,
-    user: {id_shop: null, credential: null, shpnme: null}
+    user: {id_shop: null, credential: null, shpnme: null},
+    currentShop: {name: null, avatar: null, desc: null},
+    poolRequest : []
 };
 
 const actionState = (state = INITIAL_STATE, action) => {
     console.log('ACTION - ',action.type);
     switch (action.type) {
         case 'ADD_ARTICLE':
-            return  addArticle(state,action);
+            return  ActionReduce.addArticle(state,action);
         case 'ADD_ARTICLE_SUCCESS':
-            return  addArticleSuccess(state,action);
+            return  ActionReduce.addArticleSuccess(state,action);
         case 'ADD_QA':
-            return  addQA(state,action);
+            return  ActionReduce.addQA(state,action);
         case 'ADD_QA_SUCCESS':
-            return  addQASuccess(state,action);
+            return  ActionReduce.addQASuccess(state,action);
         case 'ADD_QAP':
-            return  addQAP(state,action);
+            return  ActionReduce.addQAP(state,action);
         case 'ADD_QAP_SUCCESS':
-            return  addQAPSuccess(state,action);
+            return  ActionReduce.addQAPSuccess(state,action);
         case 'REMOVE_ARTICLE':
-            return removeArticle(state,action.id);
+            return ActionReduce.removeArticle(state,action.id);
         case 'REMOVE_ARTICLE_SUCCESS':
-            return removeArticle(state,action.id);
+            return ActionReduce.removeArticle(state,action.id);
         case 'GET_LIST_ARTICLE':
-            return getPageArticle(state,action);
+            return ActionReduce.getPageArticle(state,action);
         case 'GET_ARTICLE':
-            return getArticle(state,action);
+            return ActionReduce.getArticle(state,action);
         case 'GET_ARTICLE_SUCCESS':
-            return addArticleDB(state,action.art);
+            return ActionReduce.addArticleDB(state,action.art);
         case 'GET_ARTICLE_ADMIN':
-            return getArticleAdmin(state,action);
+            return ActionReduce.getArticleAdmin(state,action);
         case 'UPDATE_ARTICLE':
-            return updateArticle(state,action);
+            return ActionReduce.updateArticle(state,action);
         case 'UPDATE_ARTICLE_SUCCESS':
-            return addQASuccess(state,action);
+            return ActionReduce.addQASuccess(state,action);
         case 'DELETE_ARTICLE':
-            return deleteArticle(state,action);
+            return ActionReduce.deleteArticle(state,action);
         case 'DELETE_ARTICLE_SUCCESS':
-            return deleteSuccess(state,action);
+            return ActionReduce.deleteSuccess(state,action);
         case 'GET_LIST_ARTICLE_SUCCESS':
-            return addArticleDB(state,action.art);
+            return ActionReduce.addArticleDB(state,action.art);
         case 'INIT_ARTICLE':
-            return loadAllArticles(state,action.state);
+            return ActionReduce.loadAllArticles(state,action.state);
         case 'RESET_PAGE_ARTICLE':
-            return resetPageArticle(state);
+            return ActionReduce.resetPageArticle(state);
         case 'GET_LOCAL_ZIP':
-            return getLocalZip(state);
+            return ActionReduce.getLocalZip(state);
         case 'SET_LOCAL_ZIP':
-            return setLocalZip(state,action);
+            return ActionReduce.setLocalZip(state,action);
         case 'PUSH_USER':
-            return addUser(state, action);
+            return ActionReduce.addUser(state, action);
         case 'ADD_USER_SUCCESS':
-            return addUsrSuccess(state, action);
+            return ActionReduce.addUsrSuccess(state, action);
         case 'GET_USR_SUCCESS':
-            return getUsrSuccess(state, action);
+            return ActionReduce.getUsrSuccess(state, action);
         case 'GET_USR_DATA':
-            return getUsrData(state, action);
+            return ActionReduce.getUsrData(state, action);
         case 'LOG_USER_SUCCESS':
-            return logUsrSuccess(state, action);
+            return ActionReduce.logUsrSuccess(state, action);
         case 'LOG_USER':
-            return logUsr(state, action.account);
+            return ActionReduce.logUsr(state, action.account);
         case 'DUPLICATE_VALUE':
-            console.log('duplciate ket detected');
-            var d = duplicateKey(state, action);
-            return d;
+            return ActionReduce.duplicateKey(state, action);
+        case 'GET_SHOP_ARTICLE':
+            return ActionReduce.getMyShopArticle(state, action);
+        case 'GET_SHOP_SUCCESS_ARTICLE':
+            return ActionReduce.addArticleDB(state,action.art);
+        case 'DEL_SHOP_ARTICLE':
+            return ActionReduce.deleteShopArticle(state, action);
+        case 'ADD_POOL_REQUEST':
+            return ActionReduce.addPullRequest(state,action);
         default:
             return state;
     }

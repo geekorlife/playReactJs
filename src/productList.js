@@ -79,20 +79,24 @@ class RendCol extends React.Component {
             },
         ];
         var images = this.props.r.img.map((img, index) => {
-                        const srci = img ? "img/adImg/" + img : "img/default.jpg";
+                        const srci = img ? "/img/adImg/" + img : "/img/default.jpg";
+                        const backG = {
+                            backgroundImage: 'url('+srci+')'
+                        }
                         return (
-                            <img 
-                                src={srci} 
+                            <div
                                 key={index} 
-                                className="img-responsive img-thumb" 
+                                className="img-Carousel" 
                                 onClick={this.clickProd} 
                                 onLoad={() => {window.dispatchEvent(new Event('resize'));}}
-                            />
+                                style={backG}
+                            ></div>
+                            
                         );
                     });
         if(this.props.r.img.length == 0) {
             images = (
-                <img    src="img/default.jpg"
+                <img    src="/img/default.jpg"
                         className="img-responsive img-thumb" 
                         onClick={this.clickProd} 
                         onLoad={() => {window.dispatchEvent(new Event('resize'));}}
@@ -107,23 +111,6 @@ class RendCol extends React.Component {
     }
 
     render() {
-        const stl = {
-            fontWeight: '100',
-            letterSpacing: '0.04em',
-            fontSize: '1.4em',
-            marginTop: '8px',
-            marginLeft: '6px'
-        };
-        const bgStl = {
-            height: '340px'
-        }
-        const pStl = {
-            position: 'absolute',
-            top: '0px',
-            marginLeft: '5px',
-            zIndex: '5'
-        }
-
         const f = new Date(this.props.r.updatedAt).toString().split(' ');
         const dateP = [f[1], f[2]].join(' ');
         const imgRendSrc = this.rendCarousel();
@@ -131,13 +118,14 @@ class RendCol extends React.Component {
         //<button className="btn btn-primary infobutton cartadd" onClick={this.addProductInCart}>Add to cart <span className="glyphicon glyphicon-shopping-cart" aria-hidden="true"></span></button>
         return (
             <div className="col-md-4" ref="col" >
-                <div className="bg-gray-dark" style={bgStl}>
-                    <p style={pStl}>
+                <div className="bg-gray-dark bg-gray-dark-list">
+                    <p className="priceAndCity" onClick={this.clickProd}>
                         <span className="priceMenu" >${this.props.r.price}</span>
+                        <span className="cityMenu">{this.props.r.zip.cty}</span>
                     </p>
 
                     {imgRendSrc}
-                    <h3 style={stl}>{this.props.r.name} <span>{dateP}</span></h3>
+                    <h3 onClick={this.clickProd} className="descDate">{this.props.r.name} <span>{dateP}</span></h3>
 
                 </div>
 
@@ -217,7 +205,7 @@ class ProductList extends React.Component {
         if (!this.state.catId || this.state.catId && this.props.catId != this.state.catId) {
             this.productList = [];
             this.setState({ catId: this.props.catId });
-
+            store.dispatch(store.dispatchArticle('RESET_PAGE_ARTICLE'));
             store.dispatch(store.dispatchArticle('GET_LIST_ARTICLE', { 
                 catId: this.props.catId, 
                 dist: this.geo.dist, 

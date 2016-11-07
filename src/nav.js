@@ -5,6 +5,7 @@ import AutoCompletion from './autoCompletion';
 import TextField from 'material-ui/TextField';
 import ActionSave from 'material-ui/svg-icons/action/done';
 import RaisedButton from 'material-ui/RaisedButton';
+import { Link, browserHistory } from 'react-router';
 
 class navBar extends React.Component {
 	constructor() {
@@ -16,9 +17,6 @@ class navBar extends React.Component {
 		this.state = {
 			zip: null
 		}
-		$('.navbar-right a').click(function () {
-			$(".navbar-collapse").collapse('hide');
-		});
 	}
 
 	showAdd(e) {
@@ -36,7 +34,7 @@ class navBar extends React.Component {
 
 		store.dispatch(store.dispatchArticle('SET_LOCAL_ZIP', zip));
 		this.editCity();
-		window.location = '#';
+		browserHistory.push('/');
 	}
 
 	handleZip(e) {
@@ -60,13 +58,12 @@ class navBar extends React.Component {
 
 	login(e) {
 		e.preventDefault();
-		console.log('login');
 		$('#adminConnect').modal('show');
 	}
 
 	logginMenu() {
 		const usrData = store.getState().user;
-		if(!usrData.id_shop && !usrData.credential) {
+		if (!usrData.id_shop && !usrData.credential) {
 			return (
 				<li>
 					<a href="#" onClick={(e) => this.login(e)}>Login</a>
@@ -95,7 +92,7 @@ class navBar extends React.Component {
 				return (
 					<div className="city-nav" onClick={this.editCity}>
 						<span>CITY: </span>{zipData} <span>- MAX  DISTANCE: </span>{stFlux.zip.dist}mi
-        </div>
+        			</div>
 				)
 		}
 
@@ -110,15 +107,17 @@ class navBar extends React.Component {
 								<span className="icon-bar"></span>
 								<span className="icon-bar"></span>
 							</button>
-							<a className="navbar-brand" href="/#">Stella's Shop</a>
+							<Link className="navbar-brand" to="/">CutiDeals</Link>
 						</div>
 						{editCities()}
 						<div className="collapse navbar-collapse" id="bs-example-navbar-collapse-1">
 							<ul className="nav navbar-nav navbar-right">
-								<li><a href="#">Home</a></li>
-								<li><a href="#/about">About</a></li>
-								<li><a href="#/addproduct" >Create an ad</a></li>
-								<li><a href="#/personalShop" >My shop</a></li>
+								<li><Link to="/">Home</Link></li>
+								<li>
+									<Link to="/about">About</Link>
+								</li>
+								<li><Link to="/addproduct" >Create an ad</Link></li>
+								<li><Link to="/personalShop" >My shop</Link></li>
 								{this.logginMenu()}
 							</ul>
 						</div>
@@ -126,8 +125,13 @@ class navBar extends React.Component {
 				</nav>
 				<div className="editCityBack">
 					<div className="editCity">
-						<div className="closeCity" onClick={this.editCity}>X Close</div>
-						<h4 className="text-center">EDIT CITY</h4>
+					
+						<h5 className="nav_editCity">EDIT CITY</h5>
+						<div className="closeCity" onClick={this.editCity}>
+							<span className="glyphicon glyphicon-remove"></span>
+						</div>
+						<br/>
+						<div className="long_line"></div>
 						<AutoCompletion handleZip={this.handleZip} zipData={zipData} />
 						<TextField
 							hintText="Enter max distance"

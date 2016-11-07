@@ -58,7 +58,7 @@ class manageProd extends React.Component{
             }
 
             var divStyle = {
-                backgroundImage: 'url("img/adImg/' + m + '")'
+                backgroundImage: 'url("/img/adImg/' + m + '")'
             };
             
             return (
@@ -228,7 +228,7 @@ class manageProd extends React.Component{
                 <div className="row">
                     <div className="col-md-4">
                         <div className="imgPreview">
-                            <img src={this.state.img ? 'img/adImg/'+this.state.img : 'img/default.jpg'}/>
+                            <img src={this.state.img ? '/img/adImg/'+this.state.img : '/img/default.jpg'}/>
                         </div>
                         <hr/>
                         <div className="wrapper">
@@ -272,8 +272,10 @@ class manageProd extends React.Component{
         var product = store.getState().product[0];
         if(!this.state.img && product && product.img.length > 0) this.setState({img:product.img[0]});
         
-        if(product._id) this._id = product._id;
-        this.defaultCategorie = {gender:product.gender, cat:product.cat};
+        if(product){
+            if(product._id) this._id = product._id;
+            this.defaultCategorie = {gender:product.gender, cat:product.cat};
+        }
         
     }
 

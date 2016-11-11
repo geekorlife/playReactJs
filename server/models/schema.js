@@ -20,6 +20,11 @@ const articleSchema = new Schema({
     price: Number,
     img: Array,
     cat: Number,
+    idSize: Number,
+    idShoes: {
+        who: {type: Number},
+        size: {type: Number}
+    },
     gender: Number,
     qty: Number,
     shopName: String,

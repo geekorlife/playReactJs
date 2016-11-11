@@ -66,6 +66,14 @@ const actionState = (state = INITIAL_STATE, action) => {
             return ActionReduce.logUsrSuccess(state, action);
         case 'LOG_USER':
             return ActionReduce.logUsr(state, action.account);
+        case 'LOG_OUT':
+            return ActionReduce.logOut(state);
+        case 'CHANGE_PASS':
+            return ActionReduce.changePass(state, action);
+        case 'UPDATE_PASS_SUCESS':
+            return ActionReduce.changePassSuccess(state);
+        case 'RESET_PASS_MSG':
+            return ActionReduce.resetPassMsg(state);
         case 'DUPLICATE_VALUE':
             return ActionReduce.duplicateKey(state, action);
         case 'GET_SHOP_ARTICLE':
@@ -74,6 +82,10 @@ const actionState = (state = INITIAL_STATE, action) => {
             return ActionReduce.addArticleDB(state,action.art);
         case 'DEL_SHOP_ARTICLE':
             return ActionReduce.deleteShopArticle(state, action);
+        case 'UPDATE_SHOP_DATA_SUCESS':
+            return ActionReduce.updateShopSuccess(state, action.data);
+        case 'UPDATE_SHOP_DATA':
+            return ActionReduce.updateShop(state, action);
         case 'ADD_POOL_REQUEST':
             return ActionReduce.addPullRequest(state,action);
         default:

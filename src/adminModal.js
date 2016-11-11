@@ -15,12 +15,15 @@ class adminModal extends React.Component {
 		this.updateIsLoggin = this.updateIsLoggin.bind(this);
 		this.checkEmail = this.checkEmail.bind(this);
 		this.selectAv = this.selectAv.bind(this);
+		this.changePassrender = this.changePassrender.bind(this);
+		this.submitPass = this.submitPass.bind(this);
 
 		this.state = {
 			isLogin: false,
 			isCreateAccount: false,
 			email_error_text: '',
 			shop_error_text: '',
+			pass_error: '',
 			img: null,
 			av: null
 		}
@@ -72,6 +75,15 @@ class adminModal extends React.Component {
 				isCreateAccount: false
 			})
 			setTimeout(function () { $('#adminConnect').modal('hide') }, delayAnim);
+		}
+		else if(!usrData.id_shop && !usrData.credential && this.state.isLogin) {
+			this.setState({
+				isLogin: false,
+				isCreateAccount: false
+			})
+		}
+		if(usrData.passUpdated) {
+			setTimeout(function(){store.dispatch(store.dispatchArticle('RESET_PASS_MSG'));},2000);
 		}
 	}
 
@@ -264,20 +276,99 @@ class adminModal extends React.Component {
 		return { dt: firstEntry, tl: title };
 	}
 
+	submitPass(){
+		const data = {
+			oldPass: this.refs.oldPass.getValue(),
+			newPass: this.refs.newPass.getValue(),
+			credential: store.getState().user.credential
+		}
+		if(!data.oldPass || !data.newPass) {
+			this.setState({
+				pass_error: 'You have to enter the previous and new password'
+			})
+		}
+		else {
+			console.log('SEND DATA',data);
+			store.dispatch(store.dispatchArticle('CHANGE_PASS', {data}));
+		}
+	}
+
+	changePassrender(){
+		const usrData = store.getState().user;
+		const err_txt = () => {
+			if(this.state.pass_error)
+				return (<h5 style={{color:'red', textAlign: 'center'}}>{this.state.pass_error}</h5>)
+			return null;
+		}
+		if(usrData.passUpdated) {
+			return (
+				<h4 className="text-center">Your password has been updated!</h4>
+			)
+		}
+		return (
+			<div>
+				{err_txt()}
+				<TextField
+					hintText="Enter your current password"
+					floatingLabelText="Current password:"
+					type="password"
+					ref="oldPass"
+					/>
+				<TextField
+					hintText="Enter your new password"
+					floatingLabelText="New password:"
+					type="password"
+					ref="newPass"
+					/>
+				<br/><br/>
+				<RaisedButton
+					label="Submit"
+					backgroundColor="#00BCD4"
+                    labelStyle={{ color: 'white', width: '100%' }}
+					fullWidth={true}
+					onClick={() => this.submitPass()}
+					/>
+				<br/><br/>
+				<RaisedButton
+					label="Cancel"
+					backgroundColor="#dd127b"
+                    labelStyle={{ color: 'white', width: '100%' }}
+					fullWidth={true}
+					onClick={() => $('#settingConnect').modal('hide')}
+					/>
+			</div>
+		)
+	}
+
 	render() {
 		const dataToRend = this.dataJsx();
 		const classModal = this.state.isCreateAccount ? "modal-dialog modal-lm" : "modal-dialog modal-sm";
 		
 		return (
-			<div className="modal fade" tabIndex="-1" role="dialog" aria-labelledby="myModal" id="adminConnect">
-				<div className={classModal} role="document">
-					<div className="modal-content">
-						<div className="modal-header">
-							<button type="button" className="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">×</span></button>
-							<h4 className="modal-title">{dataToRend.tl}</h4>
+			<div>
+				<div className="modal fade" tabIndex="-1" role="dialog" aria-labelledby="myModal" id="adminConnect">
+					<div className={classModal} role="document">
+						<div className="modal-content">
+							<div className="modal-header">
+								<button type="button" className="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">×</span></button>
+								<h4 className="modal-title">{dataToRend.tl}</h4>
+							</div>
+							<div className="modal-body">
+								{dataToRend.dt}
+							</div>
 						</div>
-						<div className="modal-body">
-							{dataToRend.dt}
+					</div>
+				</div>
+				<div className="modal fade" tabIndex="-1" role="dialog" id="settingConnect">
+					<div className="modal-dialog modal-sm" role="document">
+						<div className="modal-content">
+							<div className="modal-header">
+								<button type="button" className="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">×</span></button>
+								<h4 className="modal-title">Change password</h4>
+							</div>
+							<div className="modal-body">
+								{this.changePassrender()}
+							</div>
 						</div>
 					</div>
 				</div>

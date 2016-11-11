@@ -32,11 +32,13 @@ class ProductForm extends React.Component {
 			product: {
 				cat: 1,
 				gender: 1,
+				idSize: 0,
 				name: null,
 				price: null,
 				brand: null,
 				desc: null,
-				img: null
+				img: null,
+				shoes: {who:0, size: 0}
 			},
 			finished: false,
 			stepIndex: 0,
@@ -55,10 +57,14 @@ class ProductForm extends React.Component {
 		this.handleZip = this.handleZip.bind(this);
 		this.createAd = this.createAd.bind(this);
 		this.showLog = this.showLog.bind(this);
+		this.noUploadFile = this.noUploadFile.bind(this);
 
 		this.catValue = 1;
 		this.gendValue = 1;
+		this.sizeValue = 0;
 		this.addShop = 1;
+		this.whoShoesValue = 0;
+		this.shoesValue = 0;
 		this.id_connect = null;
 		this._id = null;
 		this.mainStore = null;
@@ -77,8 +83,14 @@ class ProductForm extends React.Component {
 			shpnme: this.state.inMyShop ? this.mainStore.user.shpnme : null,
 			img: null
 		}
+		if(this.state.product.cat === 1) {
+			product.idSize = Number(this.state.product.idSize);
+		}
+		else if(this.state.product.cat === 2) {
+			product.idShoes = this.state.product.shoes;
+		}
 		const that = this;
-		setTimeout(function () { that.props.handleCreate(product) }, 2000);
+		setTimeout(function () { that.props.handleCreate(product) }, 1000);
 		return product;
 	}
 
@@ -122,7 +134,7 @@ class ProductForm extends React.Component {
 		})
 		let that = this;
 		$.ajax({
-			url: 'http://138.68.31.97:8080/api/addImg',
+			url: 'http://192.168.2.8:8080/api/addImg',
 			data: formdata,
 			processData: false,
 			contentType: false,
@@ -137,6 +149,13 @@ class ProductForm extends React.Component {
 
 			}
 		});
+	}
+
+	noUploadFile(){
+		this.setState({
+			stepIndex: 2,
+			stateCreate: 3
+		})
 	}
 
 	checkEmail(e) {
@@ -187,20 +206,111 @@ class ProductForm extends React.Component {
 			const nwPrd = Object.assign({}, this.state.product, { cat: value });
 			this.setState({ product: nwPrd });
 		}
+		const handleChangeSize = (event, index, value) => {
+			this.sizeValue = value;
+			const nwPrd = Object.assign({}, this.state.product, { idSize: value });
+			this.setState({ product: nwPrd });
+		}
+		const handleChangeWhoShoes = (event, index, value) => {
+			this.whoShoesValue = value;
+			const nwPrd = Object.assign({}, this.state.product, { shoes: {who:value, size: 0} });
+			this.setState({ product: nwPrd });
+		}
+		const handleChangeSizeShoes = (event, index, value) => {
+			this.shoesValue = value;
+			const nwPrd = Object.assign({}, this.state.product, { shoes: {who:this.whoShoesValue, size: value} });
+			this.setState({ product: nwPrd });
+			console.log('CHANGE SHOES SIZE');
+			const that = this;
+			setTimeout(function(){console.log(that.state.product.shoes)},200);
+		}
+
+		const idSz = ['Divers','0-3M', '3M', '3-6M', '6M', '6-12M', '12M', '12-18M', '18M', '18-24M', '2T', '3T', '4T', '5T', '6T', '7', '8', '9', '10', '11', '12', '14', '16', '18', '20'];
+		
+		const whoShoes = ['Infant (0-9M)','Toddler (9M-4Y)','Little kid (5-7Y)', 'Big kid (7-12Y)', 'Men', 'Women'];
+
+		const sizeShoes = {
+			'0': ['0','1','1.5','2','2.5','3'], // infant
+			'1': ['3.5','4','4.5','5','5.5','6','6.5','7','7.5','8','8.5','9','9.5','10'], // toddler
+			'2': ['10.5','11','11.5','12','12.5','13','13.5','1','1.5','2','2.5','3'], // Little kid
+			'3': ['3.5','4','4.5','5','5.5','6','6.5','7','7.5'], // Big kid
+			'4': ['6','6.5','7','7.5','8','8.5','9','9.5','10','10.5','11','11.5','12','13','14','15','16'], // Men
+			'5': ['4','4.5','5','5.5','6','6.5','7','7.5','8','8.5','9','9.5','10','10.5','11','11.5','12']  // Women
+		};
+		
+		const idSize = () => {
+			if(this.catValue === 1) {
+				const rendSz = idSz.map( (s, i) => {
+					return <MenuItem key={i} value={i} primaryText={s} />
+				});
+
+				return (
+					<div>
+					<br/>
+					<SelectField
+						floatingLabelText="Size"
+						value={this.sizeValue}
+						onChange={handleChangeSize}
+						>
+						{rendSz}
+					</SelectField>
+					</div>
+				)
+			}
+			else if(this.catValue === 2) {
+				const rendST = whoShoes.map( (s, i) => {
+					return <MenuItem key={i} value={i} primaryText={s} />
+				});
+				const rendSizeSHoes = () => {
+					if(typeof this.whoShoesValue === 'number') {
+						const dt = sizeShoes[this.whoShoesValue].map( (s,i) => {
+							return <MenuItem key={i} value={i} primaryText={s} />
+						})
+						return dt;
+					}
+				}
+
+				return (
+					<div>
+						<br/>
+						<SelectField
+							floatingLabelText="For who"
+							value={this.whoShoesValue}
+							onChange={handleChangeWhoShoes}
+							>
+							{rendST}
+						</SelectField>
+
+						<SelectField
+							floatingLabelText="Shoes size"
+							value={this.shoesValue}
+							onChange={handleChangeSizeShoes}
+							>
+							{rendSizeSHoes()}
+						</SelectField>
+					</div>
+				)
+			}
+			return null;
+		}
 		return (
-			<SelectField
-				floatingLabelText="Category"
-				value={this.catValue}
-				onChange={handleChangeS}
-				>
-				<MenuItem value={1} primaryText="Clothes" />
-				<MenuItem value={2} primaryText="Shoes" />
-				<MenuItem value={3} primaryText="Childcare" />
-				<MenuItem value={4} primaryText="Child furnitures" />
-				<MenuItem value={5} primaryText="Toys" />
-				<MenuItem value={6} primaryText="Outdoor" />
-				<MenuItem value={7} primaryText="Other" />
-			</SelectField>
+			<div>
+				<SelectField
+					floatingLabelText="Category"
+					value={this.catValue}
+					onChange={handleChangeS}
+					>
+					<MenuItem value={1} primaryText="Clothes" />
+					<MenuItem value={2} primaryText="Shoes" />
+					<MenuItem value={3} primaryText="Childcare" />
+					<MenuItem value={4} primaryText="Child furnitures" />
+					<MenuItem value={5} primaryText="Toys" />
+					<MenuItem value={6} primaryText="Outdoor" />
+					<MenuItem value={7} primaryText="Other" />
+				</SelectField>
+				{idSize()}
+			</div>
+			
 		)
 	}
 
@@ -284,10 +394,10 @@ class ProductForm extends React.Component {
 	}
 
 	toggleStep() {
-		this.setState({
-			stepIndex: 0,
-			stateCreate: 0
-		})
+		//this.setState({
+		//	stepIndex: (0+1)%2,
+		//	stateCreate: (0+1)%2
+		//})
 	}
 
 	stepperRend() {
@@ -372,7 +482,7 @@ class ProductForm extends React.Component {
 		const data = e.target.value;
 		const that = this;
 		$.ajax({
-			url: 'http://138.68.31.97:8080/api/zipCode',
+			url: 'http://192.168.2.8:8080/api/zipCode',
 			data: { type: 'GET_ZIPCODE', _id: data },
 			type: 'GET',
 			success: function (data) {
@@ -484,7 +594,7 @@ class ProductForm extends React.Component {
 				return (
 					<div className="eachDiv">
 						{this.stepperRend()}
-						<Addimg handleCreate={this.props.handleCreate} prevData={this.state.product} uploadFile={this.uploadFile} />
+						<Addimg handleCreate={this.props.handleCreate} prevData={this.state.product} noUploadFile={this.noUploadFile} uploadFile={this.uploadFile} />
 					</div>
 				)
 			}

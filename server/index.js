@@ -80,7 +80,6 @@ router.route('/all')
         Schema.articles.find(function (err, art) {
             if (err)
                 res.send(err);
-            console.log(art);
             res.json(art);
         });
     })
@@ -95,20 +94,8 @@ router.route('/page')
             res.json({ message: 'error' });
             return;
         }
-        console.log('req.query', req.query);
 
-        const point = {
-            $near:
-            {
-
-                $geometry: {
-                    type: "Point",
-                    coordinates: [-84.27326978424058, 30.443902444762696]
-                },
-                $maxDistance: 1
-            }
-        }
-
+        // Generate mongo geo position with max radius in meter
         const loc = {
             "$near": {
                 "$geometry": {
@@ -119,7 +106,18 @@ router.route('/page')
             }
         }
         
-        const sortFind = req.query._id ? { _id: { $lt: req.query._id }, cat: req.query.catId, activ: true, loc: loc } : { cat: req.query.catId, activ: true, loc: loc };
+        let sortFind = req.query._id ? { _id: { $lt: req.query._id }, cat: req.query.catId, activ: true, loc: loc } : { cat: req.query.catId, activ: true, loc: loc };
+        if(req.query.idSize) {
+            sortFind.idSize = req.query.idSize;
+        }
+        if(req.query.gender) {
+            sortFind.gender = req.query.gender;
+        }
+        if(req.query.shoes) {
+            sortFind.idShoes = JSON.parse(req.query.shoes);
+            console.log('req.query.shoes',req.query.shoes);
+            console.log('sortFind.idShoes',sortFind.idShoes);
+        }
         const nbrArticle = req.query.nbr || 9;
         
         const lastNineCmd = Schema.articles.find(sortFind).sort({ _id: -1 }).limit(nbrArticle);
@@ -129,11 +127,30 @@ router.route('/page')
                 res.send(err);
             }
 
-            console.log(art);
-            console.log('length art', art);
-
             Schema.articles.count({ cat: req.query.catId, activ: true, loc: loc }, function (err, ar) {
-                res.json({ article: art, length: ar });
+                // SIZE ['Divers','0-3M', '3M', '3-6M', '6M', '6-12M', '12M', '12-18M', '18M', '18-24M', '2T', '3T', '4T', '5T', '6T', '7', '8', '9', '10', '11', '12', '14', '16', '18', '20'];
+		
+                const listArticle = art.filter( (a) => {
+                    if(a.activ) {
+                        return {
+                            _id: a._id,
+                            brand: a.brand,
+                            cat: a.cat,
+                            desc: a.desc,
+                            gender: a.gender,
+                            idSize: a.idSize,
+                            idShoes: a.idShoes,
+                            img: a.img,
+                            name: a.name,
+                            price: a.price,
+                            shopName: a.shopName,
+                            updatedAt: a.updatedAt,
+                            zip: a.zip
+                        }
+                    }
+                })
+
+                res.json({ article: listArticle, length: ar });
                 console.log('count', ar);
             })
         });
@@ -167,13 +184,12 @@ router.route('/myShop')
             Schema.articles.count(sortFind, (err, ar) => {
                 console.log('COUNT',ar);
                 
-                
                 Schema.users.findOne({ shopName: req.query.shopName}, (errp, resp) => {
                     console.log('USER SHOP', resp);
                     let shopResp = null;
                     let article_list = null;
                     if(resp && resp.shopName) {
-                        console.log('SHOP FOUND !!!');
+                        
                         shopResp = {
                             shopName: resp.shopName,
                             createdAt: resp.createdAt,
@@ -181,12 +197,12 @@ router.route('/myShop')
                             desc: resp.desc,
                             avatar: resp.avatar
                         }
+
                         if(req.query.adminMode && req.query.adminMode === 'true') {
-                            console.log('SEND ID CONENCT ADMIN MODE');
                             shopResp.id_connect = resp.id_connect;
                         }
-                        article_list = art.map((ar) => {
-                            
+                        
+                        article_list = art.map((ar) => {    
                             let a = Object.assign({},ar._doc);
                             if(!req.query.adminMode || req.query.adminMode && req.query.adminMode !== 'true') {
                                 delete a.id_connect;
@@ -204,10 +220,9 @@ router.route('/myShop')
 
 // ADD img to a new article
 router.route('/addImg')
-    // Create a new article (accessed at POST http://localhost:8080/api/add)
     .post(function (req, res) {
         let fullPath = __dirname + '/../../../var/www/kidndeals/img/adImg/';
-        //fullPath = __dirname + '/../img/adImg/'; //DEV server
+        fullPath = __dirname + '/../img/adImg/'; //DEV server
         let currentId = null;
         let finished = false;
         let fileCnt = 0;
@@ -222,7 +237,9 @@ router.route('/addImg')
         req.busboy.on('file', function (fieldname, file, filename) {
             fileCnt++;
             console.log("Uploading: " + filename, ' count:', fileCnt);
-            var newNameImg = (Math.floor(Math.random() * 100000) + Date.now()) + '.' + filename.split('.')[1];
+            let extensionImg = filename.split('.')[1];
+            extensionImg =  extensionImg ? extensionImg : 'jpeg';
+            var newNameImg = (Math.floor(Math.random() * 100000) + Date.now()) + '.' + extensionImg;
 
             gm(file)
                 .resize(600, 600, '>') // Resize only if w or h is taller than 600
@@ -239,7 +256,7 @@ router.route('/addImg')
                             { _id: currentId },
                             { $push: { img: newNameImg } },
                             { new: true },
-                            (err, doc) => {
+                            ( err, doc) => {
                                 if (err) {
                                     console.log("Something wrong when updating data!", err);
                                 }
@@ -338,7 +355,7 @@ router.route('/add')
     // Create a new article (accessed at POST http://localhost:8080/api/add)
     .post(function (req, res) {
         const data = req.body;
-        
+        console.log('receive data',data);
         const id_connect = randomId();
         const shopNme = data.shpnme != 'false' ? data.shpnme.split(' ').join('').toLowerCase() : null;
         const Article = new Schema.articles({
@@ -353,6 +370,8 @@ router.route('/add')
             img: [],
             gender: data.gender,
             cat: data.cat,
+            idSize: data.idSize,
+            idShoes: data.idShoes,
             activ: true,
             qty: data.qty,
             zip: data.zip,
@@ -360,15 +379,16 @@ router.route('/add')
             qa: []
         });
 
+        
+
         Article.save((err, arti) => {
             if (err) {
                 res.send(err);
                 return console.error(err);
             }
-            console.log('ADD ARTICLE', arti);
 
             const linkManage = conf.PARAM_DOMAIN + '/manageProd?id=' + id_connect;
-            const msg = '<h3>Congrats ! The ad has been created.</h3>' +
+            const msg = '<h3>Congrats ! Your ads has been created and is online.</h3>' +
                 '<br/>' +
                 '<h4>' +
                 'The link to manage your ad: <a href="' + linkManage + '">' + linkManage + '</a>' +
@@ -544,7 +564,6 @@ router.route('/zipCode')
                 cmd = { nm: finalNameCity }
             }
         }
-        console.log('CMD', cmd, ' reqs', reqs);
 
         Schema.zipCode[reqs](cmd, (art, existindb) => {
             if (existindb) {
@@ -561,12 +580,10 @@ router.route('/zipCode')
                         existindb.push(savedCity[key]);
 
                 }
-                console.log('CITY EXIST', existindb);
+                
                 res.json({ message: 'zip_exist', city: existindb });
                 return art;
             }
-            console.log('art', art);
-            console.log('existindb', existindb);
 
             res.json({ message: 'zip_doesnt_exist' });
             res.end("");
@@ -578,7 +595,17 @@ router.route('/addUsr')
     .post(function (req, res) {
         const data = req.body;
         usr.addUsr(data, res); 
-    });
+    })
+    .put( function(req, res) {
+        const data = req.body;
+        usr.upUsr(data, res);
+    })
+    .get( function(req, res) {
+        const data = req.query;
+        if(data.type && data.type === 'GET_SHOP_NAME') {
+            usr.checkShopName(data, res);
+        }
+    })
 
 
 //Get usr information
@@ -602,4 +629,15 @@ router.route('/usrLog')
             res.send({ message: 'error_usr' });
         }
 
+    })
+    .put(function(req, res){
+        const data = req.body;
+        if (data.oldPass && data.credential) {
+            console.log(' usr query check');
+            //Check credential timeout
+            usr.changePass(data, res);
+        }
+        else {
+            res.end('');
+        }
     })

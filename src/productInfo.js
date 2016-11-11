@@ -1,3 +1,5 @@
+"use strict"
+
 import React from 'react';
 import store from './reduce/store';
 import QuestionProduct from './questionProduct';

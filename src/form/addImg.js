@@ -18,7 +18,7 @@ class addImg extends React.Component{
         
         return(
             <div className="row">
-                <ImgUpload addImg={this.addImge} uploadFile={this.props.uploadFile}/>
+                <ImgUpload addImg={this.addImge} noUploadFile={this.props.noUploadFile} uploadFile={this.props.uploadFile}/>
             </div>
         )
     }

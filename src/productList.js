@@ -2,6 +2,8 @@ import React from 'react';
 import Slider from 'nuka-carousel';
 import store from './reduce/store';
 import { Link } from 'react-router';
+import SelectField from 'material-ui/SelectField';
+import MenuItem from 'material-ui/MenuItem';
 
 class RendCol extends React.Component {
     constructor(props) {
@@ -114,7 +116,28 @@ class RendCol extends React.Component {
         const f = new Date(this.props.r.updatedAt).toString().split(' ');
         const dateP = [f[1], f[2]].join(' ');
         const imgRendSrc = this.rendCarousel();
+        const idSz = ['Divers','0-3M', '3M', '3-6M', '6M', '6-12M', '12M', '12-18M', '18M', '18-24M', '2T', '3T', '4T', '5T', '6T', '7', '8', '9', '10', '11', '12', '14', '16', '18', '20'];
+		
+        const whoShoes = ['Infant','Toddler','Little kid','Big kid', 'Men', 'Women'];
 
+		const sizeShoes = {
+			'0': ['0','1','1.5','2','2.5','3'], // infant
+			'1': ['3.5','4','4.5','5','5.5','6','6.5','7','7.5','8','8.5','9','9.5','10'], // toddler
+			'2': ['10.5','11','11.5','12','12.5','13','13.5','1','1.5','2','2.5','3'], // Little kid
+			'3': ['3.5','4','4.5','5','5.5','6','6.5','7','7.5'], // Big kid
+			'4': ['6','6.5','7','7.5','8','8.5','9','9.5','10','10.5','11','11.5','12','13','14','15','16'], // Men
+			'5': ['4','4.5','5','5.5','6','6.5','7','7.5','8','8.5','9','9.5','10','10.5','11','11.5','12']  // Women
+		};
+
+        const idSizerd = () => {
+            if(typeof this.props.r.idSize === 'number') {
+                return <span className="sizeMenu">| Size: {idSz[this.props.r.idSize]}</span>
+            }
+            else if(this.props.r.idShoes && typeof this.props.r.idShoes.who === 'number') {
+                const sizeShoe = sizeShoes[this.props.r.idShoes.who][this.props.r.idShoes.size];
+                return <span className="shoesMenu">| Size: {sizeShoe} - {whoShoes[this.props.r.idShoes.who]}</span>
+            }
+        }
         //<button className="btn btn-primary infobutton cartadd" onClick={this.addProductInCart}>Add to cart <span className="glyphicon glyphicon-shopping-cart" aria-hidden="true"></span></button>
         return (
             <div className="col-md-4" ref="col" >
@@ -122,6 +145,7 @@ class RendCol extends React.Component {
                     <p className="priceAndCity" onClick={this.clickProd}>
                         <span className="priceMenu" >${this.props.r.price}</span>
                         <span className="cityMenu">{this.props.r.zip.cty}</span>
+                        {idSizerd()}
                     </p>
 
                     {imgRendSrc}
@@ -141,9 +165,7 @@ class ColProducts extends React.Component {
     render() {
         let handleInf = this.props.handleInfo;
         let dt = this.props.dataRow.map(function (r, i) {
-            var rd;
-            if (r.qty > 0) rd = <RendCol key={i} r={r} handleInfo={handleInf} />;
-            return rd;
+            return <RendCol key={i} r={r} handleInfo={handleInf} />;
         });
         return <div>{dt}</div>;
     }
@@ -158,15 +180,38 @@ class ProductList extends React.Component {
         this.productState = [];
         this.numberArticlePerPage = 9;
         this.currentPage = 0;
+        this.selectSize = this.selectSize.bind(this);
+        this.updateList = this.updateList.bind(this);
         this.state = {
             currentPage: this.currentPage,
             _id: null,
-            catId: null
+            catId: null,
+            idSize: 0,
+            gendValue: 1,
+			shoes: {who:6, size: 0}
         }
         this.geo = {
             geoPos: null,
             dist: null
         }
+    }
+
+    updateList(value) {
+        store.dispatch(store.dispatchArticle('RESET_PAGE_ARTICLE'));
+        let cmd = {  
+            catId: this.props.catId, 
+            dist: this.geo.dist, 
+            geo: this.geo.geoPos 
+        };
+        if(this.props.catId === '1') {
+            if(this.state.idSize > 0) cmd.idSize = this.state.idSize;
+            if(this.state.gendValue > 1) cmd.gender = this.state.gendValue;
+        }
+        else if(this.props.catId === '2') {
+            if(this.state.shoes && this.state.shoes.who < 6) cmd.shoes = this.state.shoes;
+            if(this.state.gendValue > 1) cmd.gender = this.state.gendValue;
+        }
+        store.dispatch(store.dispatchArticle('GET_LIST_ARTICLE', cmd));
     }
 
     chunks(arr, size) {
@@ -177,13 +222,10 @@ class ProductList extends React.Component {
         if (typeof size !== 'number') {
             throw new TypeError('Size should be a Number');
         }
-        let validArray = arr.filter((ar) => {
-            return ar.qty > 0;
-        })
 
         let result = [];
-        for (let i = 0; i < validArray.length; i += size) {
-            result.push(validArray.slice(i, size + i));
+        for (let i = 0; i < arr.length; i += size) {
+            result.push(arr.slice(i, size + i));
         }
         return result;
     }
@@ -215,19 +257,24 @@ class ProductList extends React.Component {
     }
 
     changePage(updown) {
-        console.log('CLICK CHANGE PAGE');
         if (updown == 1) {
             this.currentPage = this.currentPage + 1;
-
-            store.dispatch(store.dispatchArticle('GET_LIST_ARTICLE', { 
+            let cmd = { 
                 _id: this.productState[this.productState.length - 1]._id, 
                 catId: this.props.catId, 
                 dist: this.geo.dist, 
                 geo: this.geo.geoPos 
-            }));
+            };
+            if(this.props.catId === '1') {
+                if(this.state.idSize > 0) cmd.idSize = this.state.idSize;
+                if(this.state.gendValue > 1) cmd.gender = this.state.gendValue;
+            }
+            else if(this.props.catId === '2') {
+                if(this.state.shoes && this.state.shoes.who < 6) cmd.shoes = this.state.shoes;
+            }
+            store.dispatch(store.dispatchArticle('GET_LIST_ARTICLE', cmd));
         }
         else if (this.currentPage - 1 > -1) {
-            console.log('PREVIOUS');
             this.currentPage = this.currentPage - 1;
             this.haveToPopulateList();
         }
@@ -246,7 +293,6 @@ class ProductList extends React.Component {
                 this.changePage(1);
         }
         const changeDown = () => {
-            console.log('CHANGE DOWN', this.state.currentPage);
             if(this.state.currentPage > 0)
                 this.changePage(0);
         }
@@ -292,6 +338,156 @@ class ProductList extends React.Component {
         return true;
     }
 
+    selectSize() {
+        const handleChangeS = (event, index, value) => {
+            if (value === this.state.idSize) return;
+            this.setState({ idSize: value });
+            const that = this;
+            setTimeout(function () { that.updateList({ idSize: value }) }, 10);
+        }
+        const idSz = ['Divers','0-3M', '3M', '3-6M', '6M', '6-12M', '12M', '12-18M', '18M', '18-24M', '2T', '3T', '4T', '5T', '6T', '7', '8', '9', '10', '11', '12', '14', '16', '18', '20'];
+		
+        const rendSz = idSz.map( (s, i) => {
+			return <MenuItem key={i} value={i} primaryText={s} />
+		});
+        
+        return (
+            <SelectField
+                floatingLabelText="Size:"
+                value={this.state.idSize}
+                onChange={handleChangeS}
+                style={{left:'50%', transform:'translateX(-50%)'}}
+                >
+                {rendSz}
+            </SelectField>
+        )
+    }
+
+    selectShoesSize() {
+        const whoShoes = ['Infant (0-9M)','Toddler (9M-4Y)','Little kid (5-7Y)', 'Big kid (7-12Y)', 'Men', 'Women', 'All'];
+
+		const sizeShoes = {
+			'0': ['0','1','1.5','2','2.5','3'], // infant
+			'1': ['3.5','4','4.5','5','5.5','6','6.5','7','7.5','8','8.5','9','9.5','10'], // toddler
+			'2': ['10.5','11','11.5','12','12.5','13','13.5','1','1.5','2','2.5','3'], // Little kid
+			'3': ['3.5','4','4.5','5','5.5','6','6.5','7','7.5'], // Big kid
+			'4': ['6','6.5','7','7.5','8','8.5','9','9.5','10','10.5','11','11.5','12','13','14','15','16'], // Men
+			'5': ['4','4.5','5','5.5','6','6.5','7','7.5','8','8.5','9','9.5','10','10.5','11','11.5','12']  // Women
+		};
+        const rendST = whoShoes.map( (s, i) => {
+			return <MenuItem key={i} value={i} primaryText={s} />
+		});
+		const rendSizeSHoes = () => {
+			if(typeof this.state.shoes.who === 'number') {
+				const dt = sizeShoes[this.state.shoes.who].map( (s,i) => {
+					return <MenuItem key={i} value={i} primaryText={s} />
+				})
+				return dt;
+			}
+		}
+        const handleChangeWhoShoes = (event, index, value) => {
+			this.setState({ shoes: {who:value, size: 0}});
+            const that = this;
+            setTimeout(function () { that.updateList() }, 10);
+		}
+		const handleChangeSizeShoes = (event, index, value) => {
+			this.setState({ shoes: {who:this.state.shoes.who, size: value} });
+            const that = this;
+            setTimeout(function () { that.updateList() }, 10);
+		}
+        const rendSize = () => {
+            if(this.state.shoes.who < 6) {
+                return (
+                    <SelectField
+                        floatingLabelText="Shoes size"
+                        value={this.state.shoes.size}
+                        onChange={handleChangeSizeShoes}
+                        style={{left:'50%', transform:'translateX(-50%)'}}
+                        >
+                        {rendSizeSHoes()}
+                    </SelectField>
+                )
+            }
+        }
+        return (
+            <div>
+                <SelectField
+                    floatingLabelText="For who"
+                    value={this.state.shoes.who}
+                    onChange={handleChangeWhoShoes}
+                    style={{left:'50%', transform:'translateX(-50%)'}}
+                    >
+                    {rendST}
+                </SelectField>
+                {rendSize()}
+                
+            </div>
+        )
+    }
+
+    selectGender() {
+        const handleChangeS = (event, index, value) => {
+            if (value === this.state.gendValue) return;
+            this.setState({ gendValue: value });
+            const that = this;
+            setTimeout(function () { that.updateList({ gendValue: value }) }, 10);
+        }
+        return (
+            <SelectField
+                floatingLabelText="Gender"
+                value={this.state.gendValue}
+                onChange={handleChangeS}
+                style={{left:'50%', transform:'translateX(-50%)'}}
+                >
+                <MenuItem value={1} primaryText="Unisex" />
+                <MenuItem value={2} primaryText="Boy" />
+                <MenuItem value={3} primaryText="Girl" />
+            </SelectField>
+        )
+    }
+
+    rendFilter(){
+        console.log('this.props.catId',this.props.catId);
+        if(this.props.catId === '1') {
+            console.log('REND SIZE');
+            const handleChangeS = (event, index, value) => {
+                if (value === this.state.gendValue) return;
+                this.setState({ gendValue: value });
+                const that = this;
+                setTimeout(function () { that.updateList({ gendValue: value }) }, 10);
+            }
+            return (
+                <div className="row infoProd">
+                    <div className="col-sm-6">
+                        {this.selectSize()}
+                    </div>
+                    <div className="col-sm-6">
+                        {this.selectGender()}                        
+                    </div>
+                </div>
+            )
+        }
+        else if(this.props.catId === '2') {
+            console.log('REND SIZE');
+            const handleChangeS = (event, index, value) => {
+                if (value === this.state.gendValue) return;
+                this.setState({ gendValue: value });
+                const that = this;
+                setTimeout(function () { that.updateList({ gendValue: value }) }, 10);
+            }
+            return (
+                <div className="row infoProd">
+                    <div className="col-sm-6">
+                        {this.selectShoesSize()}
+                    </div>
+                    <div className="col-sm-6">
+                        {this.selectGender()}                        
+                    </div>
+                </div>
+            )
+        }
+    }
+
     render() {
         this.haveToPopulateList();
 
@@ -306,13 +502,19 @@ class ProductList extends React.Component {
                 marginTop: '100px'
             }
             return (
-                <div className="text-center">
-                    <h3 style={stl}>Empty list...</h3>
+                <div>
+                    {this.rendFilter()}
+
+                    <div className="text-center">
+                        <h3 style={stl}>Empty list...</h3>
+                    </div>
                 </div>
+                
             )
         }
 
         let c = rows.map(function (row, i) {
+            console.log('ROWS',row);
             return (
                 <div className="row" key={i}>
                     <ColProducts key={i} dataRow={row} handleInfo={handleInf} />
@@ -322,6 +524,7 @@ class ProductList extends React.Component {
 
         return (
             <div>
+                {this.rendFilter()}
                 {this.butNxtPrv(true)}
                 <div className="eachDiv">{c}</div>
                 {this.butNxtPrv()}

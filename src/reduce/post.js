@@ -16,7 +16,7 @@ export const CREATE_POST = 'CREATE_POST';
 export const INIT_ARTICLE = 'INIT_ARTICLE';
 export const ADD_ARTICLE_SUCCESS = 'ADD_ARTICLE_SUCCESS';
 
-const ROOT_URL = 'http://138.68.31.97:8080/api';
+const ROOT_URL = 'http://192.168.2.8:8080/api';
 
 // Get all articles from DB
 export function fetchDB() {
@@ -131,6 +131,45 @@ export function fetchPushUser(prev) {
                     }
                     store.dispatch(store.dispatchArticle('DUPLICATE_VALUE',{duplicate_key:keyDuplicate}));
                 }
+            }
+        }
+    });
+
+    return {
+      type: CREATE_POST
+    };
+}
+
+//Change passwrd
+export function fetchChangePass(prev) {
+    console.log('PUT NEW PASSWORD',prev);
+    $.ajax({
+        type: "PUT",
+        url: `${ROOT_URL}/usrLog`,
+        data: prev,
+        success: function(s){
+            console.log('PUT USR SUCCESS',s);
+            if(s.message && s.message === 'pass_updated'){
+                store.dispatch(store.dispatchArticle('UPDATE_PASS_SUCESS')); 
+            }
+        }
+    });
+}
+
+//Update user shop
+export function updateShop(prev) {
+    $.ajax({
+        type: "PUT",
+        url: `${ROOT_URL}/addUsr`,
+        data: prev,
+        success: function(s){
+            console.log('PUT USR SUCCESS',s);
+            if(s.message && s.message === 'shop_updated'){
+                console.log('USR SHOP UDPATED CORRECTLY',s);
+                store.dispatch(store.dispatchArticle('UPDATE_SHOP_DATA_SUCESS',s)); 
+            }
+            else {
+                
             }
         }
     });

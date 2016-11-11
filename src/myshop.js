@@ -3,22 +3,26 @@ import Slider from 'nuka-carousel';
 import store from './reduce/store';
 import SelectField from 'material-ui/SelectField';
 import MenuItem from 'material-ui/MenuItem';
+import TextField from 'material-ui/TextField';
 import RaisedButton from 'material-ui/RaisedButton';
 import FontIcon from 'material-ui/FontIcon';
 import { browserHistory } from 'react-router';
 
 class myshop extends React.Component {
-    constructor() {
-        super();
+    constructor(props) {
+        super(props);
         this.state = {
             product: [],
             gendValue: 1,
             catValue: 0,
             avt: 'data:image/jpeg;base64,/9j/4QAYRXhpZgAASUkqAAgAAAAAAAAAAAAAAP/sABFEdWNreQABAAQAAAAKAAD/4QMtaHR0cDovL25zLmFkb2JlLmNvbS94YXAvMS4wLwA8P3hwYWNrZXQgYmVnaW49Iu+7vyIgaWQ9Ilc1TTBNcENlaGlIenJlU3pOVGN6a2M5ZCI/PiA8eDp4bXBtZXRhIHhtbG5zOng9ImFkb2JlOm5zOm1ldGEvIiB4OnhtcHRrPSJBZG9iZSBYTVAgQ29yZSA1LjMtYzAxMSA2Ni4xNDU2NjEsIDIwMTIvMDIvMDYtMTQ6NTY6MjcgICAgICAgICI+IDxyZGY6UkRGIHhtbG5zOnJkZj0iaHR0cDovL3d3dy53My5vcmcvMTk5OS8wMi8yMi1yZGYtc3ludGF4LW5zIyI+IDxyZGY6RGVzY3JpcHRpb24gcmRmOmFib3V0PSIiIHhtbG5zOnhtcD0iaHR0cDovL25zLmFkb2JlLmNvbS94YXAvMS4wLyIgeG1sbnM6eG1wTU09Imh0dHA6Ly9ucy5hZG9iZS5jb20veGFwLzEuMC9tbS8iIHhtbG5zOnN0UmVmPSJodHRwOi8vbnMuYWRvYmUuY29tL3hhcC8xLjAvc1R5cGUvUmVzb3VyY2VSZWYjIiB4bXA6Q3JlYXRvclRvb2w9IkFkb2JlIFBob3Rvc2hvcCBDUzYgKE1hY2ludG9zaCkiIHhtcE1NOkluc3RhbmNlSUQ9InhtcC5paWQ6ODU4RDJDNUE5QUYwMTFFNjlENTU5NEQwMTM0OUQ4OTUiIHhtcE1NOkRvY3VtZW50SUQ9InhtcC5kaWQ6ODU4RDJDNUI5QUYwMTFFNjlENTU5NEQwMTM0OUQ4OTUiPiA8eG1wTU06RGVyaXZlZEZyb20gc3RSZWY6aW5zdGFuY2VJRD0ieG1wLmlpZDo4NThEMkM1ODlBRjAxMUU2OUQ1NTk0RDAxMzQ5RDg5NSIgc3RSZWY6ZG9jdW1lbnRJRD0ieG1wLmRpZDo4NThEMkM1OTlBRjAxMUU2OUQ1NTk0RDAxMzQ5RDg5NSIvPiA8L3JkZjpEZXNjcmlwdGlvbj4gPC9yZGY6UkRGPiA8L3g6eG1wbWV0YT4gPD94cGFja2V0IGVuZD0iciI/Pv/uAA5BZG9iZQBkwAAAAAH/2wCEABQQEBkSGScXFycyJh8mMi4mJiYmLj41NTU1NT5EQUFBQUFBREREREREREREREREREREREREREREREREREREREQBFRkZIBwgJhgYJjYmICY2RDYrKzZERERCNUJERERERERERERERERERERERERERERERERERERERERERERERERERP/AABEIACsAKwMBIgACEQEDEQH/xACBAAEBAQADAQAAAAAAAAAAAAAGBQEAAgQDAQACAwEAAAAAAAAAAAAAAAACAwAEBQEQAAEDAQUFBgcAAAAAAAAAAAEAAgMEESExEgVBUYEyE2Fx0XIUNMHhImKyMwYRAAIBAgYBBQEAAAAAAAAAAAECABEDITFBURIEE2FxMkJSFP/aAAwDAQACEQMRAD8AYKVqurekPSiAMhvNuDfmqyHyQurq17G4l7r9wCJRvLXXRWYtc+Kis6nVqtxt6h4AeCr6Tq7qh3RnszHldv7FShooYY+kxoykWHee9HJ9Pk06dkltrM4ynbxRYGWA1q8GQKFP1itcWrEuZs1HNIIFfKDj9f5JGh0lQ6jrXyMxD3XbwSiXWXOupYXEGZWMF4tR6WVgkvJcGsH3E48AvvSVLaqISstAO9HqysfUVzGuGVsbw0N448VAMYuzbJc6cM4oWLViGV55q6rFHCZTecGjeUNfM6SQyuvcTmKQ/wBF+lnm+CNJi0mp0+HE/vX2junkbLG17LmkAhG9emDqgMbiwXnbafBV9D9o3HF2Pfs7EZrvcSW28x5sVxc4nrBfKcd+PrLOi6m+R3p5jaTyOOPcryF6b7qLzBNFMKwj4v6FpTjrtWf/2Q==',
             desc: null,
-            editMode: false
+            editMode: false,
+            shopName: props.params.shopname,
+            shop_error_text: ''
         }
         this.updateList = this.updateList.bind(this);
+        this.checkExistName = this.checkExistName.bind(this);
         this.shopName = '';
         this.adminMode = null;
     }
@@ -26,7 +30,7 @@ class myshop extends React.Component {
     updateList(value) {
         if (this.props.params && this.props.params.shopname) {
             this.shopName = this.props.params.shopname;
-            
+
             //CHeck if this shop exist and return all articles
             let cmd = {
                 shopName: this.props.params.shopname,
@@ -38,14 +42,16 @@ class myshop extends React.Component {
             if (value && value.gendValue && value.gendValue > 1) {
                 cmd.gender = value.gendValue;
             }
-            
+
             store.dispatch(store.dispatchArticle('GET_SHOP_ARTICLE', cmd));
         }
     }
 
     componentDidMount() {
         const shpLocal = JSON.parse(localStorage.getItem("usrData"));
-        this.adminMode = shpLocal && (shpLocal.shpnme.toLowerCase() === this.props.params.shopname.toLowerCase());
+        console.log('shpLocal', shpLocal);
+
+        this.adminMode = shpLocal && shpLocal.shpnme && (shpLocal.shpnme.toLowerCase() === this.props.params.shopname.toLowerCase());
         this.updateList();
     }
 
@@ -61,13 +67,13 @@ class myshop extends React.Component {
         if (this.state.product.length !== listProduct.length || this.state.desc !== stFlux.currentShop.desc) {
             this.setState({
                 product: listProduct,
-                avt: '/'+stFlux.currentShop.avatar,
+                avt: stFlux.currentShop.avatar,
                 desc: stFlux.currentShop.desc
             })
         }
 
         const shpLocal = JSON.parse(localStorage.getItem("usrData"));
-        if(shpLocal && this.adminMode != !!(shpLocal && (shpLocal.shpnme.toLowerCase() === this.props.params.shopname.toLowerCase()))){
+        if (shpLocal && this.adminMode != !!(shpLocal && (shpLocal.shpnme.toLowerCase() === this.props.params.shopname.toLowerCase()))) {
             this.adminMode = shpLocal && (shpLocal.shpnme.toLowerCase() === this.props.params.shopname.toLowerCase());
             this.updateList();
         }
@@ -101,12 +107,12 @@ class myshop extends React.Component {
                     border: '1px solid rgba(' + brd + ')',
                     paddingBottom: '4px'
                 }
-                
+
                 const categ = [null, "Clothes", "Shoes", "Childcare", "Child furnitures", "Toys", "Outdoor", "Other"];
                 const deleteArt = () => {
-                    if(!p.id_connect) return;
-                     store.dispatch(store.dispatchArticle('DELETE_ARTICLE', { 
-                        id_connect: p.id_connect, 
+                    if (!p.id_connect) return;
+                    store.dispatch(store.dispatchArticle('DELETE_ARTICLE', {
+                        id_connect: p.id_connect,
                         _id: p._id
                     }));
                 }
@@ -114,23 +120,23 @@ class myshop extends React.Component {
                     if (p.id_connect) {
                         return (
                             <div className="col-md-2">
-                                <br/>
+                                <br />
                                 <RaisedButton
                                     label="delete"
                                     backgroundColor="#dd127b"
                                     labelStyle={{ color: 'white', width: '100%' }}
                                     onClick={(e) => { deleteArt() } }
                                     style={{ marginRight: '10px' }}
-                                    fullWidth= {true}
+                                    fullWidth={true}
                                     >
                                 </RaisedButton>
-                                <br/><br/>
+                                <br /><br />
                                 <RaisedButton
                                     label="edit / See details"
                                     backgroundColor="#00BCD4"
                                     labelStyle={{ color: 'white', width: '100%' }}
                                     onClick={(e) => { showAds() } }
-                                    fullWidth= {true}
+                                    fullWidth={true}
                                     >
                                 </RaisedButton>
                             </div>
@@ -139,14 +145,14 @@ class myshop extends React.Component {
                     else {
                         return (
                             <div className="col-md-2">
-                                <br/>
+                                <br />
                                 <RaisedButton
                                     label="See details"
                                     backgroundColor="#00BCD4"
                                     labelStyle={{ color: 'white', width: '100%' }}
-                                    onClick={(e) => { showAds } }
+                                    onClick={(e) => { showAds() } }
                                     style={{ marginRight: '10px' }}
-                                    fullWidth= {true}
+                                    fullWidth={true}
                                     >
                                 </RaisedButton>
                             </div>
@@ -187,10 +193,10 @@ class myshop extends React.Component {
     }
 
     selectGender() {
+        const that = this;
         const handleChangeS = (event, index, value) => {
             if (value === this.state.gendValue) return;
             this.setState({ gendValue: value });
-            const that = this;
             setTimeout(function () { that.updateList({ gendValue: value }) }, 10);
         }
         return (
@@ -211,7 +217,6 @@ class myshop extends React.Component {
         const handleChangeS = (event, index, value) => {
             if (value === this.state.catValue) return;
             this.setState({ catValue: value });
-            const that = this;
             setTimeout(function () { that.updateList({ catValue: value }) }, 10);
         }
         return (
@@ -232,11 +237,53 @@ class myshop extends React.Component {
         )
     }
 
+    checkExistName(value) {
+        const that = this;
+        $.ajax({
+            url: 'http://192.168.2.8:8080/api/addUsr',
+            data: { type: 'GET_SHOP_NAME', shopName: value },
+            type: 'GET',
+            success: function (data) {
+                that.setState({
+                    shop_error_text: data.shopName ? 'This name already exists' : ''
+                });
+            }
+        });
+    }
+
     rendDesc() {
         const editMd = () => {
             this.setState({
                 editMode: !this.state.editMode
             })
+        }
+
+        const checkShopName = (e) => {
+            this.setState({ 
+                shopName: e.target.value,
+                shop_error_text: ''
+             });
+            
+            if (e.target.value !== this.props.params.shopname) {
+                this.checkExistName(e.target.value);
+            }
+
+        }
+
+        const saveEdit = () => {
+            const descName = {
+                shopName: this.props.params.shopname,
+                desc: this.refs.shopDesc.value,
+                nShpNme: this.refs.shopNm.getValue(),
+                credential: store.getState().user.credential
+            }
+            store.dispatch(store.dispatchArticle('UPDATE_SHOP_DATA', descName));
+            this.setState({
+                editMode: !this.state.editMode
+            })
+            if (this.props.params.shopname !== descName.nShpNme) {
+                setTimeout(function () { window.location = '/myshop/' + descName.nShpNme }, 1000);
+            }
         }
 
         if (!this.adminMode) {
@@ -251,13 +298,20 @@ class myshop extends React.Component {
                 height: '30px',
                 border: '1px solid rgba(0,0,0,0.1)'
             }
+            const disableSave = !!this.state.shop_error_text;
             return (
                 <div className="descShop descShop-edit text-left">
                     <h5>Description:</h5>
-                    <textarea className="opTxtdesc" placeholder="Enter a description about your shop" ref='descOp' defaultValue={this.state.desc} />
+                    <textarea className="opTxtdesc" placeholder="Enter a description about your shop" ref='shopDesc' defaultValue={this.state.desc} />
                     <br />
-                    <h5>Shop name: </h5>
-                    <textarea placeholder="Enter a shop name" ref='shopNm' style={styleName} defaultValue={this.props.params.shopname} />
+                    <TextField
+                        hintText="Enter a shop name"
+                        floatingLabelText="Shop name:"
+                        errorText={this.state.shop_error_text}
+                        onChange={e => checkShopName(e)}
+                        value={this.state.shopName}
+                        ref='shopNm'
+                        />
                     <hr />
                     <RaisedButton
                         label="Cancel"
@@ -269,9 +323,10 @@ class myshop extends React.Component {
                     </RaisedButton>
                     <RaisedButton
                         label="Save"
+                        disabled = {disableSave}
                         backgroundColor="#00BCD4"
                         labelStyle={{ color: 'white', width: '100%' }}
-                        onClick={(e) => { editMd() } }
+                        onClick={(e) => { saveEdit() } }
                         >
                     </RaisedButton>
                 </div>

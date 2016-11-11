@@ -68,6 +68,17 @@ a {
     border-radius: 0px !important;
 }
 
+.navbar-default .navbar-nav>.open>a, .navbar-default .navbar-nav>.open>a:focus, .navbar-default .navbar-nav>.open>a:hover {
+    background: #b2055e !important;
+}
+
+.nav-mob {
+    display: none !important;
+}
+.nav-reg{
+    display: block;
+}
+
 .city-nav{
     float: left;
     margin-top: 1.15em;
@@ -161,7 +172,7 @@ a {
     background-repeat: no-repeat;
     background-size: contain;
     background-position: center;
-    height: 225px;
+    height: 225px !important;
 }
 .bg-gray-dark{
     background: white;
@@ -363,7 +374,26 @@ a {
     position: relative;
     top: -2px;
 }
-
+.sizeMenu {
+    margin: 0px 0px 0px 0px;
+    background: rgba(0,0,0,0.6);
+    color: white;
+    padding: 8.5px 8.5px 8.5px 0px;
+    font-size: 1.2em;
+    font-weight: 200;
+    position: relative;
+    top: -2px;
+}
+.shoesMenu {
+    margin: 0px 0px 0px 0px;
+    background: rgba(0,0,0,0.6);
+    color: white;
+    padding: 12.5px 8.5px 9.5px 0px;
+    font-size: 0.9em;
+    font-weight: 200;
+    position: relative;
+    top: -2px;
+}
 .infobutton{
     float: right;
     margin-right: 5px;
@@ -486,8 +516,8 @@ a {
 
 .imgPreview {
     height: 300px;
-    width: 100%;
-    margin-top: 21px;
+    width: auto;
+    margin: 21px auto 0 auto;
     text-align: center;
 }
 .imgPreview img {
@@ -803,6 +833,15 @@ a {
         margin-top: -2.7em;
         margin-left: 10em;
         font-size: 0.9em;
+    }
+    .nav-mob {
+        display: block !important;
+    }
+    .nav-reg{
+        display: none !important;
+    }
+    .nav > li > a{
+        color: white;
     }
 }
 

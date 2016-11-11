@@ -5,6 +5,7 @@ import AutoCompletion from './autoCompletion';
 import TextField from 'material-ui/TextField';
 import ActionSave from 'material-ui/svg-icons/action/done';
 import RaisedButton from 'material-ui/RaisedButton';
+import MenuItem from 'material-ui/MenuItem';
 import { Link, browserHistory } from 'react-router';
 
 class navBar extends React.Component {
@@ -61,8 +62,13 @@ class navBar extends React.Component {
 		$('#adminConnect').modal('show');
 	}
 
+	logOut(e){
+		store.dispatch(store.dispatchArticle('LOG_OUT'));
+	}
+
 	logginMenu() {
 		const usrData = store.getState().user;
+
 		if (!usrData.id_shop && !usrData.credential) {
 			return (
 				<li>
@@ -72,11 +78,32 @@ class navBar extends React.Component {
 		}
 		else {
 			return (
-				<li>
-					<a href="#" onClick={(e) => this.login(e)}>My settings</a>
+				<li className="nav-reg">
+					<a href="#" className="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false">
+						Settings <span className="caret"></span>
+					</a>
+					<ul className="dropdown-menu">
+						<li><a href="#" onClick={(e) => $('#settingConnect').modal('show')}>Change password</a></li>
+						<li role="separator" className="divider"></li>
+						<li><a href="#" onClick={this.logOut}>Log out</a></li>
+					</ul>
 				</li>
+				
 			)
 		}
+	}
+
+	mobileLoginMenu(){
+		const usrData = store.getState().user;
+		if (!usrData.id_shop && !usrData.credential) return null;
+		return (
+			<li className="nav-mob">
+				<ul className="nav">
+					<li><a href="#" onClick={(e) => $('#settingConnect').modal('show')}>Change password</a></li>
+					<li><a href="#" onClick={this.logOut}>Log out</a></li>
+				</ul>
+			</li>
+		)
 	}
 
 	//<Cart cart={this.props.cart} product={this.props.product}/>
@@ -119,6 +146,7 @@ class navBar extends React.Component {
 								<li><Link to="/addproduct" >Create an ad</Link></li>
 								<li><Link to="/personalShop" >My shop</Link></li>
 								{this.logginMenu()}
+								{this.mobileLoginMenu()}
 							</ul>
 						</div>
 					</div>
@@ -132,6 +160,7 @@ class navBar extends React.Component {
 						</div>
 						<br/>
 						<div className="long_line"></div>
+						<br/><br/>
 						<AutoCompletion handleZip={this.handleZip} zipData={zipData} />
 						<TextField
 							hintText="Enter max distance"
@@ -139,6 +168,7 @@ class navBar extends React.Component {
 							defaultValue={stFlux.zip ? stFlux.zip.dist : undefined}
 							ref='dist'
 							/>
+						<br/><br/>
 						<RaisedButton
 							label="Submit"
 							secondary={true}

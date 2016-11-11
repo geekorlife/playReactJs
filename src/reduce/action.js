@@ -162,6 +162,25 @@ action.addArticleDB = (state, newProductList) => {
     return updateObject(state, {post_state:newPostState, product: product, count:newProductList.length, createdAdId: null, currentShop: currentShop});
 }
 
+action.updateShop = (state, prev) => {
+    post.updateShop(prev);
+    return postIsLoading(state, true);
+}
+
+action.updateShopSuccess = (state, newProductList) => {
+    // update localStore shpname
+    console.log('UPDATE SHOP newProductList',newProductList);
+    if(newProductList.newName) {
+        const localUsr = JSON.parse(localStorage.getItem("usrData"));
+        console.log('localUsr before',localUsr);
+        localUsr.shpnme = newProductList.shop.shopName;
+        console.log('localUsr after',localUsr);
+        localStorage.setItem("usrData", JSON.stringify(localUsr));
+    }
+    var newPostState = { posts: [], error: null, loading: false, db: true};
+    return updateObject(state, {post_state:newPostState, currentShop: newProductList.shop});
+}
+
 action.deleteShopArticle = (state, prev) => {
     console.log('prev',prev);
     post.deleteShopArticle(prev);
@@ -212,12 +231,33 @@ action.logUsrSuccess = (state, data) => {
     const newPostState = { posts: [], error: null, loading: false, db: false, createdAdId: null};
 
     if(!data.message || data.message =='error_usr' || !data.id_shop) {
-        resetUsrkey();
+        action.resetUsrkey();
         return updateObject(state, {user: {id_shop: null, credential: null}}, {post_state:newPostState});
     }
     else {
         return action.setLocalUsr(state, data);
     }
+}
+
+action.logOut = (state) => {
+    action.resetUsrkey();
+    return updateObject(state, {user: {id_shop: null, credential: null, shpnme: null}});
+}
+
+action.resetPassMsg = (state) => {
+    return updateObject(state, {user: {id_shop: state.user.id_shop, credential: state.user.credential, shpnme: state.user.shpnme}});
+}
+
+action.changePass = (state, data) => {
+    console.log('data action',data);
+    post.fetchChangePass({credential: data.data.credential, oldPass: data.data.oldPass, newPass:data.data.newPass});
+    return postIsLoading(state, true);
+}
+
+action.changePassSuccess = (state) => {
+    var newPostState = { posts: [], error: null, loading: false, db: false, createdAdId: null};
+    var user = {id_shop: state.user.id_shop, credential: state.user.credential, shpnme: state.user.shpnme, passUpdated: true};
+    return updateObject(state, {post_state: newPostState, user: user});
 }
 
 action.getUsrData = (state) => {
@@ -240,13 +280,13 @@ action.getUsrSuccess = (state, data) => {
     switch(data.message){
         case 'usr_exist':
             if(data.timeout) {
-                resetUsrkey();
+                action.resetUsrkey();
                 return updateObject(state, {user: {id_shop: null, credential: null, email: null}}, {post_state:newPostState});
             }
             const user = JSON.parse(localStorage.getItem("usrData"));
             return Object.assign(state, {post_state:newPostState}, {user});
         case 'error_usr':
-            resetUsrkey();
+            action.resetUsrkey();
             return updateObject(state, {user: {id_shop: null, credential: null, email: null}}, {post_state:newPostState});
         default:
             return updateObject(state, {user: {id_shop: null, credential: null, email: null}}, {post_state:newPostState});

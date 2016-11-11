@@ -18,7 +18,7 @@ module.exports = {
 
     DOMAIN_NAME: 'CutiDeals',
 
-    MONGO: PROD_MONGO,
+    MONGO: DEV_MONGO,
 
     PORT: '8080',
 
@@ -29,7 +29,7 @@ module.exports = {
 
         // intercept OPTIONS method
         if ('OPTIONS' == req.method) {
-            res.send(200);
+            res.sendStatus(200);
         }
         else {
             next();

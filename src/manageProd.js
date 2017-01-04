@@ -8,15 +8,17 @@ import MenuItem from 'material-ui/MenuItem';
 import RaisedButton from 'material-ui/RaisedButton';
 import CircularProgress from 'material-ui/CircularProgress';
 import TextField from 'material-ui/TextField';
-import {fullWhite} from 'material-ui/styles/colors';
+import { fullWhite } from 'material-ui/styles/colors';
 import ActionDelete from 'material-ui/svg-icons/action/delete';
 import ActionEdit from 'material-ui/svg-icons/action/subject';
 import ActionSave from 'material-ui/svg-icons/action/done';
 
-class manageProd extends React.Component{
-    constructor(){
-        super();
+import Size from './setting/size';
 
+class manageProd extends React.Component {
+    constructor() {
+        super();
+        console.log('Size', Size);
         this.loadPage = this.loadPage.bind(this);
         this.imgAddedRend = this.imgAddedRend.bind(this);
         this.submitQa = this.submitQa.bind(this);
@@ -29,15 +31,16 @@ class manageProd extends React.Component{
         this.deleteArticle = this.deleteArticle.bind(this);
 
         this._id = null;
-        this.categ = [null,'Clothes','Shoes','Childcare','Child furnitures','Toys','Outdoor','Other'];
-        this.gend = [null,'Unisex','Boy','Girl'];
+        this.categ = [null, 'Clothes', 'Shoes', 'Childcare', 'Child furnitures', 'Toys', 'Outdoor', 'Other'];
+        this.gend = [null, 'Unisex', 'Boy', 'Girl'];
         this.gendValue = null;
         this.catValue = null;
-        this.defaultCategorie = {gender:null, cat:null};
+        this.defaultCategorie = { gender: null, cat: null };
         this.state = {
             editProd: false,
-            product: {gende:null, cat:null},
-            deleted: false
+            product: { gende: null, cat: null },
+            deleted: false,
+            sizeValue : null
         }
     }
 
@@ -60,7 +63,7 @@ class manageProd extends React.Component{
             var divStyle = {
                 backgroundImage: 'url("/img/adImg/' + m + '")'
             };
-            
+
             return (
                 <div key={i} className="imgPrevAdded" style={divStyle} onClick={remImg}>
                 </div>
@@ -69,14 +72,28 @@ class manageProd extends React.Component{
         return im;
     }
 
-    toggleEdit(){
-        this.setState({editProd: !this.state.editProd});
-
+    toggleEdit() {
+        this.setState({ editProd: !this.state.editProd });
+        
         // Reset default selected value
-        if(!this.state.editProd) {
+        if (!this.state.editProd) {
             this.gendValue = null;
             this.catValue = null;
-            this.setState({product:{gender:this.defaultCategorie.gender, cat:this.defaultCategorie.cat}});
+            let saveState = { product: { gender: this.defaultCategorie.gender, cat: this.defaultCategorie.cat }};
+            if(this.defaultCategorie.cat === 1 || this.defaultCategorie.cat === 2){
+                const product = store.getState().product[0];
+                const sizeArt = this.defaultCategorie.cat === 1 ? {sizeValue: product.idSize} : {whoShoesValue: product.idShoes.who, shoesValue: product.idShoes.size};
+                saveState = Object.assign({}, saveState, sizeArt);
+                this.setState(saveState);
+            }
+            
+        }
+        else if(this.defaultCategorie.cat === 1 || this.defaultCategorie.cat === 2){
+            this.setState({ 
+                sizeValue: null,
+                whoShoesValue: null,
+                shoesValue: null
+            });
         }
     };
 
@@ -87,7 +104,7 @@ class manageProd extends React.Component{
             const nwPrd = Object.assign({}, this.state.product, { cat: value });
             this.setState({ product: nwPrd });
         }
-        
+
         return (
             <SelectField
                 floatingLabelText="Category"
@@ -111,7 +128,7 @@ class manageProd extends React.Component{
             this.gendValue = value;
             const nwPrd = Object.assign({}, this.state.product, { gender: value });
             this.setState({ product: nwPrd });
-            
+
         }
         return (
             <SelectField
@@ -135,31 +152,122 @@ class manageProd extends React.Component{
      * 
      * @memberOf productInfo
      */
-    getData(product,fn){
+    getData(product, fn) {
         var desc, editProd = false;
-        
-        if(product && product.img){
-            const addProduct = function(){
+
+        if (product && product.img) {
+            const that = this;
+            const addProduct = function () {
                 fn(product.id);
             }
             const editTxt = this.state.editProd ? 'Cancel' : 'Edit';
+            
             const saveProd = () => {
-                if(this.state.editProd) {
+                if (this.state.editProd) {
                     return (
                         <FlatButton
-                                    label="Save"
-                                    backgroundColor="#dd127b"
-                                    labelPosition="before"
-                                    labelStyle={{ color: 'white', width: '100%' }}
-                                    style={{ float: 'right', marginTop: '-20px',}}
-                                    onClick={this.toggleEdit}
-                                    >
+                            label="Save"
+                            backgroundColor="#dd127b"
+                            labelPosition="before"
+                            labelStyle={{ color: 'white', width: '100%' }}
+                            style={{ float: 'right', marginTop: '-20px', }}
+                            onClick={this.toggleEdit}
+                            >
                         </FlatButton>
                     )
                 }
-            }
+            };
+
+            const idSize = () => {
+                if (product.cat === 1) {
+                    const rendSz = Size.idSz.map((s, i) => {
+                        return <MenuItem key={i} value={i} primaryText={s} />
+                    });
+
+                    const handleChangeSize = (event, index, value) => {
+                        that.setState({ sizeValue: value });
+                    };
+                    
+                    return (
+                            <div>
+                            <SelectField
+                                floatingLabelText="Size"
+                                value={typeof that.state.sizeValue === 'number' ? that.state.sizeValue : product.idSize}
+                                onChange={handleChangeSize}
+                                >
+                                {rendSz}
+                            </SelectField>
+                            <br />
+                            </div>
+                    )
+                }
+                else if (product.cat === 2) {
+                    const rendST = Size.whoShoes.map((s, i) => {
+                        return <MenuItem key={i} value={i} primaryText={s} />
+                    });
+                     
+                    const handleChangeWhoShoes = (event, index, value) => {
+                        this.setState({ whoShoesValue: value, shoesValue:0 });
+                    };
+
+                    const handleChangeSizeShoes = (event, index, value) => {
+                        this.setState({ shoesValue: value });
+                    };
+                    const rendSizeSHoes = () => {
+                        if (typeof product.idShoes.who === 'number') {
+                            const whoShoesValue = typeof that.state.whoShoesValue === 'number' ? that.state.whoShoesValue : product.idShoes.who;
+                            const dt = Size.sizeShoes[whoShoesValue].map((s, i) => {
+                                return <MenuItem key={i} value={i} primaryText={s} />
+                            })
+                            return dt;
+                        }
+                    }
+
+                    return (
+                        <div>
+                            <SelectField
+                                floatingLabelText="For who"
+                                value={typeof that.state.whoShoesValue ==='number' ? that.state.whoShoesValue : product.idShoes.who}
+                                onChange={handleChangeWhoShoes}
+                                >
+                                {rendST}
+                            </SelectField>
+                            <br/>
+                            <SelectField
+                                floatingLabelText="Shoes size"
+                                value={typeof that.state.shoesValue === 'number' ? that.state.shoesValue : product.idShoes.size}
+                                onChange={handleChangeSizeShoes}
+                                >
+                                {rendSizeSHoes()}
+                            </SelectField>
+                        </div>
+                    )
+                }
+                return null;
+            };
             const inputProduct = () => {
-                if(!this.state.editProd){
+                const sizeClothe = () => {
+                    if (typeof product.idSize === 'number') {
+                        return (
+                            <div>
+                                <h4>Size:</h4>
+                                <p>{Size.idSz[product.idSize]}</p>
+                            </div>
+                        )
+                    }
+                    else if (product.idShoes && typeof product.idShoes.who === 'number') {
+                        return (
+                            <div>
+                                <h4>For who:</h4>
+                                <p>{Size.whoShoes[product.idShoes.who]}</p>
+
+                                <h4>Size:</h4>
+                                <p>{Size.sizeShoes[product.idShoes.who][product.idShoes.size]}</p>
+                            </div>
+                        )
+                    }
+                }
+                if (!this.state.editProd) {
                     return (
                         <div>
                             <h4>Category:</h4>
@@ -168,13 +276,15 @@ class manageProd extends React.Component{
                             <h4>Gender:</h4>
                             <p>{this.gend[product.gender]}</p>
 
+                            {sizeClothe()}
+
                             <h4>Product name:</h4>
                             <p>{product.name}</p>
 
                             <h4>Description:</h4>
                             <p>{product.desc}</p>
-                                    
-                            <h4>Maker:</h4>
+
+                            <h4>Brand:</h4>
                             <p>{product.brand}</p>
 
                             <h4>Price:</h4>
@@ -189,33 +299,35 @@ class manageProd extends React.Component{
                     return (
                         <div>
                             {this.selectCategory(product.cat)}
-                            <br/>
+                            <br />
                             {this.selectGender(product.gender)}
-                            <br/>
+                            <br />
+                            {idSize()}
+                            
                             <TextField
                                 hintText="Enter the product name"
                                 floatingLabelText="Product name:"
                                 defaultValue={product.name}
                                 ref='name'
-                            />
-                            <br/>
+                                />
+                            <br />
 
                             <h4>Description:</h4>
                             <textarea className="desc" placeholder="Enter a description" ref='desc' defaultValue={product.desc} />
-                                    
+
                             <TextField
-                                hintText="Enter the maker"
-                                floatingLabelText="Maker:"
+                                hintText="Enter the brand"
+                                floatingLabelText="Brand:"
                                 defaultValue={product.brand}
                                 ref='brand'
-                            />
-                            <br/>
+                                />
+                            <br />
                             <TextField
                                 hintText="Enter the price"
                                 floatingLabelText="Price:"
                                 defaultValue={product.price}
                                 ref='price'
-                            />
+                                />
 
                             <h4>Gender:</h4>
                             <p>{genderAttrib[product.gender]}</p>
@@ -223,14 +335,14 @@ class manageProd extends React.Component{
                     )
                 }
             }
-            var genderAttrib = [null,'Unisex', 'Boy', 'Girl'];
+            var genderAttrib = [null, 'Unisex', 'Boy', 'Girl'];
             desc = (
                 <div className="row">
                     <div className="col-md-4">
                         <div className="imgPreview">
-                            <img src={this.state.img ? '/img/adImg/'+this.state.img : '/img/default.jpg'}/>
+                            <img src={this.state.img ? '/img/adImg/' + this.state.img : '/img/default.jpg'} />
                         </div>
-                        <hr/>
+                        <hr />
                         <div className="wrapper">
                             <div className="wrapper-info">
                                 {this.imgAddedRend(product)}
@@ -239,10 +351,10 @@ class manageProd extends React.Component{
                     </div>
                     <div className="col-md-8">
                         {saveProd}
-                        
+
                         {inputProduct()}
                     </div>
-                </div>  
+                </div>
             )
         }
         return desc;
@@ -255,28 +367,28 @@ class manageProd extends React.Component{
      * @memberOf productInfo
      */
     loadPage() {
-        
+
         let id_connect = null;
-        if(this.props.location && this.props.location.query){
+        if (this.props.location && this.props.location.query) {
             id_connect = this.props.location.query.id;
         }
-        
+
         store.dispatch(store.dispatchArticle('GET_ARTICLE_ADMIN', { id_connect }));
     }
 
-    componentWillMount(){
+    componentWillMount() {
         store.dispatch(store.dispatchArticle('RESET_PAGE_ARTICLE'));
     }
 
-    componentDidUpdate(){
+    componentDidUpdate() {
         var product = store.getState().product[0];
-        if(!this.state.img && product && product.img.length > 0) this.setState({img:product.img[0]});
-        
-        if(product){
-            if(product._id) this._id = product._id;
-            this.defaultCategorie = {gender:product.gender, cat:product.cat};
+        if (!this.state.img && product && product.img.length > 0) this.setState({ img: product.img[0] });
+
+        if (product) {
+            if (product._id) this._id = product._id;
+            this.defaultCategorie = { gender: product.gender, cat: product.cat };
         }
-        
+
     }
 
     componentDidMount() {
@@ -288,14 +400,14 @@ class manageProd extends React.Component{
      * 
      * @memberOf productInfo
      */
-    submitQa(){
-        var dataQa =  {qa:this.refs.qaAsk.value};
-        store.dispatch(store.dispatchArticle('ADD_QA',{_id: this._id, qa:dataQa}));
+    submitQa() {
+        var dataQa = { qa: this.refs.qaAsk.value };
+        store.dispatch(store.dispatchArticle('ADD_QA', { _id: this._id, qa: dataQa }));
         this.refs.qaAsk.value = '';
-        $( "div.qq" ).toggleClass( "qa-noshow" );
+        $("div.qq").toggleClass("qa-noshow");
     }
 
-    updateData(){
+    updateData() {
         const cate = this.state.product.cat ? this.state.product.cat : this.defaultCategorie.cat;
         const gend = this.state.product.gender ? this.state.product.gender : this.defaultCategorie.gender;
         let product = {
@@ -307,7 +419,12 @@ class manageProd extends React.Component{
             brand: this.refs.brand.getValue(),
             desc: this.refs.desc.value
         }
-
+        if(cate === 1) {
+            product.idSize = this.state.sizeValue;
+        }
+        else if(cate === 2) {
+            product.idShoes =  {who: this.state.whoShoesValue, size: this.state.shoesValue};
+        }
         this.setState({
             stateCreate: 1,
             stepIndex: 1,
@@ -319,18 +436,18 @@ class manageProd extends React.Component{
         store.dispatch(store.dispatchArticle('UPDATE_ARTICLE', { product }));
     }
 
-    deleteArticle(){
+    deleteArticle() {
         this.setState({
             deleted: true
         })
 
-        store.dispatch(store.dispatchArticle('DELETE_ARTICLE', { 
-            id_connect: this.props.location.query.id, 
+        store.dispatch(store.dispatchArticle('DELETE_ARTICLE', {
+            id_connect: this.props.location.query.id,
             _id: this._id
         }));
     }
-    
-    respondQa(id,response){
+
+    respondQa(id, response) {
         let product = {
             id_connect: this.props.location.query.id,
             idQa: id,
@@ -339,78 +456,78 @@ class manageProd extends React.Component{
         store.dispatch(store.dispatchArticle('UPDATE_ARTICLE', { product }));
     }
 
-    render(){
+    render() {
         // Get the product info form REDUX store
         var product = store.getState().product[0];
 
         const hstl = {
             marginTop: '10px'
         }
-        if(this.state.deleted) {
+        if (this.state.deleted) {
             return (
-                <div className="infoProd text-center" style={{marginTop: '90px'}}>
+                <div className="infoProd text-center" style={{ marginTop: '90px' }}>
                     <h3 style={hstl}>YOUR AD HAS BEEN DELETED</h3>
                 </div>
             )
         }
-        else if(!product) {
+        else if (!product) {
             // Load in the store
             return (
-                <div className="infoProd text-center" style={{marginTop: '90px'}}>
+                <div className="infoProd text-center" style={{ marginTop: '90px' }}>
                     <h3 style={hstl}>LOADING YOUR AD</h3>
                 </div>
             )
         }
-        else if(product == 'no_exist'){
+        else if (product == 'no_exist') {
             // No product in the store
             return (
-                <div className="infoProd text-center" style={{marginTop: '90px'}}>
+                <div className="infoProd text-center" style={{ marginTop: '90px' }}>
                     <h3 style={hstl}>404. No product available</h3>
                 </div>
             )
         }
 
-        var desc = this.getData(product,this.props.addProductInCart);
+        var desc = this.getData(product, this.props.addProductInCart);
         var stlq = {
-            marginTop:'20px',
+            marginTop: '20px',
             width: '100%',
             backgroundColor: '#dd127b',
             color: 'white'
         }
         var descstl = {
-          color: '#888',
-          fontWeight: '500',
-          fontSize: '0.95em'
+            color: '#888',
+            fontWeight: '500',
+            fontSize: '0.95em'
         }
         var iconStl = {
-            marginTop:'-5px',
+            marginTop: '-5px',
             color: '#ffffff'
         }
         var qatest = product.qa;
 
         let tg = () => {
-            $( "div.qq" ).toggleClass( "qa-noshow" );
+            $("div.qq").toggleClass("qa-noshow");
         };
         let tgp = () => {
-            $( "div.qqp" ).toggleClass( "qap-noshow" );
-            $( "div.qqps" ).addClass( "qaps-noshow" );
+            $("div.qqp").toggleClass("qap-noshow");
+            $("div.qqps").addClass("qaps-noshow");
         };
 
         const editTxt = this.state.editProd ? 'Cancel' : 'Edit';
 
         const saveEdit = this.state.editProd ? (
-            <RaisedButton 
-                label="Save" 
-                secondary={true} 
-                icon= {<ActionSave style={iconStl}/>}
-                style={{ transform: 'translateY(50%)'}}
+            <RaisedButton
+                label="Save"
+                secondary={true}
+                icon={<ActionSave style={iconStl} />}
+                style={{ transform: 'translateY(50%)' }}
                 onClick={this.updateData}
                 fullWidth={true}
-            />
+                />
         ) : '';
 
         return (
-            <div className="infoProd" style={{marginTop: '90px'}}>
+            <div className="infoProd" style={{ marginTop: '90px' }}>
                 <div className="navEdit">
                     <div className="row">
                         <div className="col-md-3">
@@ -419,39 +536,39 @@ class manageProd extends React.Component{
                             {saveEdit}
                         </div>
                         <div className="col-md-3">
-                            <RaisedButton 
-                                label={editTxt} 
-                                secondary={true} 
-                                icon= {<ActionEdit style={iconStl}/>}
-                                style={{ transform: 'translateY(50%)'}}
+                            <RaisedButton
+                                label={editTxt}
+                                secondary={true}
+                                icon={<ActionEdit style={iconStl} />}
+                                style={{ transform: 'translateY(50%)' }}
                                 onClick={this.toggleEdit}
                                 fullWidth={true}
-                            />
+                                />
                         </div>
                         <div className="col-md-3">
-                            <RaisedButton 
-                                label="Delete" 
+                            <RaisedButton
+                                label="Delete"
                                 backgroundColor="#ef381c"
                                 color={fullWhite}
                                 className="raised-button--white"
-                                icon= {<ActionDelete style={iconStl} color={fullWhite}/>}
-                                style={{ transform: 'translateY(50%)'}}
+                                icon={<ActionDelete style={iconStl} color={fullWhite} />}
+                                style={{ transform: 'translateY(50%)' }}
                                 onClick={this.deleteArticle}
                                 fullWidth={true}
-                            />
+                                />
                         </div>
                     </div>
                 </div>
                 {desc}
-                
+
                 <div style={stlq}>
-                    
+
                     <div className="row qa-row">
                         <div className="col-md-4">
-                            <h3 style={{float:'left', paddingLeft:'1em'}}>Questions:</h3>
+                            <h3 style={{ float: 'left', paddingLeft: '1em' }}>Questions:</h3>
                         </div>
                     </div>
-                    
+
                 </div>
                 <div>
                     <QuestionProduct admin={true} respondQa={this.respondQa} />

@@ -14,6 +14,7 @@ import FontIcon from 'material-ui/FontIcon';
 import CircularProgress from 'material-ui/CircularProgress';
 import AutoCompletion from '../autoCompletion';
 import Checkbox from 'material-ui/Checkbox';
+import Size from '../setting/size';
 
 import injectTapEventPlugin from 'react-tap-event-plugin';
 injectTapEventPlugin();
@@ -129,12 +130,13 @@ class ProductForm extends React.Component {
 
 	uploadFile(formdata) {
 		formdata.append("_id", this._id);
+		
 		this.setState({
 			stateCreate: 2
 		})
 		let that = this;
 		$.ajax({
-			url: 'http://192.168.2.8:8080/api/addImg',
+			url: 'http://138.68.31.97:8080/api/addImg',
 			data: formdata,
 			processData: false,
 			contentType: false,
@@ -205,17 +207,20 @@ class ProductForm extends React.Component {
 			this.catValue = value;
 			const nwPrd = Object.assign({}, this.state.product, { cat: value });
 			this.setState({ product: nwPrd });
-		}
+		};
+
 		const handleChangeSize = (event, index, value) => {
 			this.sizeValue = value;
 			const nwPrd = Object.assign({}, this.state.product, { idSize: value });
 			this.setState({ product: nwPrd });
-		}
+		};
+
 		const handleChangeWhoShoes = (event, index, value) => {
 			this.whoShoesValue = value;
 			const nwPrd = Object.assign({}, this.state.product, { shoes: {who:value, size: 0} });
 			this.setState({ product: nwPrd });
-		}
+		};
+
 		const handleChangeSizeShoes = (event, index, value) => {
 			this.shoesValue = value;
 			const nwPrd = Object.assign({}, this.state.product, { shoes: {who:this.whoShoesValue, size: value} });
@@ -223,24 +228,11 @@ class ProductForm extends React.Component {
 			console.log('CHANGE SHOES SIZE');
 			const that = this;
 			setTimeout(function(){console.log(that.state.product.shoes)},200);
-		}
-
-		const idSz = ['Divers','0-3M', '3M', '3-6M', '6M', '6-12M', '12M', '12-18M', '18M', '18-24M', '2T', '3T', '4T', '5T', '6T', '7', '8', '9', '10', '11', '12', '14', '16', '18', '20'];
-		
-		const whoShoes = ['Infant (0-9M)','Toddler (9M-4Y)','Little kid (5-7Y)', 'Big kid (7-12Y)', 'Men', 'Women'];
-
-		const sizeShoes = {
-			'0': ['0','1','1.5','2','2.5','3'], // infant
-			'1': ['3.5','4','4.5','5','5.5','6','6.5','7','7.5','8','8.5','9','9.5','10'], // toddler
-			'2': ['10.5','11','11.5','12','12.5','13','13.5','1','1.5','2','2.5','3'], // Little kid
-			'3': ['3.5','4','4.5','5','5.5','6','6.5','7','7.5'], // Big kid
-			'4': ['6','6.5','7','7.5','8','8.5','9','9.5','10','10.5','11','11.5','12','13','14','15','16'], // Men
-			'5': ['4','4.5','5','5.5','6','6.5','7','7.5','8','8.5','9','9.5','10','10.5','11','11.5','12']  // Women
 		};
 		
 		const idSize = () => {
 			if(this.catValue === 1) {
-				const rendSz = idSz.map( (s, i) => {
+				const rendSz = Size.idSz.map( (s, i) => {
 					return <MenuItem key={i} value={i} primaryText={s} />
 				});
 
@@ -258,12 +250,12 @@ class ProductForm extends React.Component {
 				)
 			}
 			else if(this.catValue === 2) {
-				const rendST = whoShoes.map( (s, i) => {
+				const rendST = Size.whoShoes.map( (s, i) => {
 					return <MenuItem key={i} value={i} primaryText={s} />
 				});
 				const rendSizeSHoes = () => {
 					if(typeof this.whoShoesValue === 'number') {
-						const dt = sizeShoes[this.whoShoesValue].map( (s,i) => {
+						const dt = Size.sizeShoes[this.whoShoesValue].map( (s,i) => {
 							return <MenuItem key={i} value={i} primaryText={s} />
 						})
 						return dt;
@@ -292,7 +284,8 @@ class ProductForm extends React.Component {
 				)
 			}
 			return null;
-		}
+		};
+
 		return (
 			<div>
 				<SelectField
@@ -366,8 +359,8 @@ class ProductForm extends React.Component {
 				</div>
 				<div className="col-md-4" style={stl}>
 					<TextField
-						hintText="Enter maker"
-						floatingLabelText="Maker"
+						hintText="Enter the brand"
+						floatingLabelText="Brand"
 						ref='brand'
 						/>
 				</div>
@@ -482,7 +475,7 @@ class ProductForm extends React.Component {
 		const data = e.target.value;
 		const that = this;
 		$.ajax({
-			url: 'http://192.168.2.8:8080/api/zipCode',
+			url: 'http://138.68.31.97:8080/api/zipCode',
 			data: { type: 'GET_ZIPCODE', _id: data },
 			type: 'GET',
 			success: function (data) {

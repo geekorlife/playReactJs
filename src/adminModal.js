@@ -160,7 +160,7 @@ class adminModal extends React.Component {
 					const classW = "avt avt-women"+selectedAv.wom;
 					const classM = "avt avt-men"+selectedAv.men;
 					return (
-						<div>
+						<div style={{height:'140px', marginTop: '20px'}}>
 							<h6>Choose an avatar</h6>
 							<div className={classW} onClick={() => this.selectAv(0)}></div>
 							<div className={classM} onClick={() => this.selectAv(1)}></div>

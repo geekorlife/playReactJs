@@ -1,9 +1,8 @@
-"use strict"
+"use strict";
 
 import React from 'react';
 import Nav from './nav';
 import store from './reduce/store';
-import AdminModal from './adminModal';
 import ProducInfo from './productInfo';         // Page info
 import ManageProd from './manageProd';          // Product Admin
 import HomeCategory from './homeCat';           // Home cat
@@ -12,10 +11,9 @@ import Home from './home';                      // Home
 import PersonalShop from './personalShop';      // Personal shop page
 import Myshop from './myshop';      // Personal shop page
 import { Router, Route, browserHistory, IndexRoute } from 'react-router';
-import AddProduct from './form/AddProduct';		
-import AdminBar from './adminBar';
+import AddProduct from './form/AddProduct';	
 import AppRoute from './route';
-
+import Terms from './terms';
 
 const NotFound = () => (<h1>404.. This page is not found!</h1>);
 
@@ -23,16 +21,10 @@ class MainProduct extends React.Component {
 	constructor(props) {
 		super(props);
 		this.state = {
-			showAdmin: true, // Admin is connected or not
 			currentView: 0,
-			currentCart: [],
 			zipCode: null
 		};
 		this.createProduct = this.createProduct.bind(this);
-		this.removeProduct = this.removeProduct.bind(this);
-		this.activeAdmin = this.activeAdmin.bind(this);
-		this.rendAdmin = this.rendAdmin.bind(this);
-		this.addProductInCart = this.addProductInCart.bind(this);
 		this.showProductInfo = this.showProductInfo.bind(this);
 		this.homeCategory = this.homeCategory.bind(this);
 		this.homeCategoryProd = this.homeCategoryProd.bind(this);
@@ -41,13 +33,14 @@ class MainProduct extends React.Component {
 		this.rte = (
 			<Route path="/" component={AppRoute}>
 				<IndexRoute component={this.homeCategory} />
-				<Route path='productid' name="InfoProduct" component={ProducInfo} />
+				<Route path='productid' name="Info Product" component={ProducInfo} />
 				<Route path='about' name="About us" component={Aboutus} />
-				<Route path='personalShop' name="My shop" component={PersonalShop} />
+				<Route path='terms' name="Terms of service" component={Terms} />
+				<Route path='personalShop' name="Personal shop" component={PersonalShop} />
 				<Route path='myShop(/:shopname)' name="My shop" component={Myshop} />
 				<Route path='manageProd' name="Manage Product" component={ManageProd} />
-				<Route path='productlist' name="Productlist" component={this.homeCategoryProd} />
-				<Route path='addProduct' name="addProduct" component={this.addAnAd} />
+				<Route path='productlist' name="Product list" component={this.homeCategoryProd} />
+				<Route path='addProduct' name="add Product" component={this.addAnAd} />
 				<Route path='/:zip' name="Homezip" component={this.homeCategory} />
 				<Route path='*' name="404" component={NotFound} />
 			</Route>
@@ -55,10 +48,17 @@ class MainProduct extends React.Component {
 	}
 
 	componentWillMount() {
+		// On mount, get the local storage zip code saved
 		store.dispatch(store.dispatchArticle('GET_LOCAL_ZIP'));
-
 	}
 
+	/**
+	 * Main create new product function
+	 * 
+	 * @param {any} product
+	 * 
+	 * @memberOf MainProduct
+	 */
 	createProduct(product) {
 		let id = store.getState().count;
 
@@ -88,52 +88,52 @@ class MainProduct extends React.Component {
 
 	}
 
-	removeProduct(id) {
-		this.props.remArt(id);
-	}
-
-	activeAdmin(idps) {
-		$('#adminConnect').modal('show');
-		this.setState({ showAdmin: idps && idps === adminpass });
-	}
-
-	rendAdmin() {
-		return (this.state.showAdmin) ? <AdminBar handleCreate={this.createProduct} /> : undefined;
-	}
-
+	/**
+	 * Load product route 
+	 * 
+	 * @param {any} id
+	 * 
+	 * @memberOf MainProduct
+	 */
 	showProductInfo(id) {
 		this.setState({ currentView: id });
 		browserHistory.push('/productid?_id=' + id);
 	}
 
-	addProductInCart(id) {
-		let cart = [{ id: id }];
-		this.setState({
-			currentCart: this.state.currentCart.concat(cart)
-		});
-		// Remove article
-		this.removeProduct(id);
-		$('#prodInf').modal('hide');
-	}
-
-	listProductHome() {
-		return (
-			<ProductList handleInfo={this.showProductInfo} addProductInCart={this.addProductInCart} />
-		)
-	}
-
+	/**
+	 * Main home category page
+	 * 
+	 * @returns
+	 * 
+	 * @memberOf MainProduct
+	 */
 	homeCategory() {
 		return (
-			<HomeCategory handleInfo={this.showProductInfo} addProductInCart={this.addProductInCart} />
+			<HomeCategory handleInfo={this.showProductInfo} />
 		)
 	}
 
+	/**
+	 * Main Home product list
+	 * 
+	 * @param {any} props
+	 * @returns
+	 * 
+	 * @memberOf MainProduct
+	 */
 	homeCategoryProd(props) {
 		return (
-			<HomeCategory {...props} handleInfo={this.showProductInfo} addProductInCart={this.addProductInCart} prodList={true} />
+			<HomeCategory {...props} handleInfo={this.showProductInfo} prodList={true} />
 		)
 	}
 
+	/**
+	 * Parent function to pass add product function as props to the child
+	 * 
+	 * @returns
+	 * 
+	 * @memberOf MainProduct
+	 */
 	addAnAd() {
 		return (
 			<AddProduct handleCreate={this.createProduct} />
@@ -164,6 +164,5 @@ class MainProduct extends React.Component {
 		);
 	}
 };
-
 
 export default MainProduct;

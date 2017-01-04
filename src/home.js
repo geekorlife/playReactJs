@@ -1,3 +1,5 @@
+"use strict";
+
 import React from 'react';
 import store from './reduce/store';
 import RaisedButton from 'material-ui/RaisedButton';
@@ -13,10 +15,11 @@ class home extends React.Component {
         super();
         this.sendZip = this.sendZip.bind(this);
         this.handleZip = this.handleZip.bind(this);
+        this.rendForm = this.rendForm.bind(this);
         this.state = {
             zip: null,
             error_msg: ''
-        }
+        };
     }
 
     sendZip() {
@@ -50,33 +53,55 @@ class home extends React.Component {
             });
         }
     }
-    
-    render() {
+
+    rendForm(){
         const classError = this.state.error_msg ? 'showError' : '';
-        return (
-            <div style={{width:'85%', margin:'80px auto 0px auto'}}>
-                <h4 className="text-center">
-                    Post and see ads about Kid stuff.
-                </h4>
-                <div className="selectZip">
-                    <h5 className={classError}>{this.state.error_msg}</h5>
-                    <AutoCompletion handleZip={this.handleZip} />
-                    <br/>
-                    <TextField
+        return(
+            <div className="selectZip">
+                <h5 className={classError}>{this.state.error_msg}</h5>
+                <AutoCompletion handleZip={this.handleZip} />
+                <br/>
+                <TextField
                         hintText="Enter max distance (miles)"
                         floatingLabelText="Max distance:"
                         type="number"
                         ref='dist'
                     />
-                    <br/>
-                    <RaisedButton
+                <br/>
+                <RaisedButton
                         label="Submit"
                         secondary={true}
                         icon={<ActionSave />}
                         style={{ transform: 'translateY(0%)' }}
                         onClick={this.sendZip}
                     />
-                </div>
+            </div>
+        )
+    }
+
+    renderLoading(){
+        console.log('loading...');
+        
+        return(
+            <div style={{paddingTop: '130px', textAlign:'center'}}>
+                <CircularProgress size={60} thickness={5} />
+                <br/>
+                <span style={{color: '#777'}}>LOADING</span>
+            </div>
+        )
+    }
+    
+    render() {
+        const str = store.getState();
+        console.log('str',str);
+        const mainRender = str.post_state.loading ? this.renderLoading() : this.rendForm();
+        
+        return (
+            <div className="zipEnter">
+                <h4 className="text-center titleHome">
+                    THE BEST PLACE TO SELL AND BUY KID STUFFS.
+                </h4>
+                {mainRender}
             </div>
         )
     }

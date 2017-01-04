@@ -134,7 +134,7 @@ class navBar extends React.Component {
 								<span className="icon-bar"></span>
 								<span className="icon-bar"></span>
 							</button>
-							<Link className="navbar-brand" to="/">CutiDeals</Link>
+							<Link className="navbar-brand" to="/"><img src="/img/ico.png" className="logoHome"/></Link>
 						</div>
 						{editCities()}
 						<div className="collapse navbar-collapse" id="bs-example-navbar-collapse-1">
@@ -142,6 +142,9 @@ class navBar extends React.Component {
 								<li><Link to="/">Home</Link></li>
 								<li>
 									<Link to="/about">About</Link>
+								</li>
+								<li className="nav-li-hide">
+									<Link to="/terms">Terms of Service</Link>
 								</li>
 								<li><Link to="/addproduct" >Create an ad</Link></li>
 								<li><Link to="/personalShop" >My shop</Link></li>

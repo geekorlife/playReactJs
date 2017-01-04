@@ -16,7 +16,34 @@ export const CREATE_POST = 'CREATE_POST';
 export const INIT_ARTICLE = 'INIT_ARTICLE';
 export const ADD_ARTICLE_SUCCESS = 'ADD_ARTICLE_SUCCESS';
 
-const ROOT_URL = 'http://192.168.2.8:8080/api';
+const ROOT_URL = 'http://138.68.31.97:8080/api';
+
+//Get IP Location
+export function tryGetLocation(){
+    //Get ip localization thought ip-api.com 
+    $.getJSON('//ip-api.com/json?callback=?', function(data) {
+        
+        if(data && data.status == 'success' && data.zip && data.city && data.region && data.lat && data.lon) {
+            const zip = {
+                code: {
+                    "_id": data.zip,
+                    "nm": data.city,
+                    "st": data.region,
+                    "cty": null,
+                    "pos": [data.lat, data.lon]
+                },
+                dist: 10
+            };
+                
+            store.dispatch(store.dispatchArticle('SET_LOCAL_ZIP', zip));
+            
+        }
+        else {
+            store.dispatch(store.dispatchArticle('ASK_LOCAL_ZIP'));
+        }
+    });    
+}
+
 
 // Get all articles from DB
 export function fetchDB() {
@@ -44,6 +71,7 @@ export function fetchOneArticle(fromPage){
     
     axios.get(`${ROOT_URL}/getOne`, {params: fromPage}, configUpload)
     .then(function (response) {
+        console.log('RESPONSE',response.data);
         store.dispatch(store.dispatchArticle('GET_ARTICLE_SUCCESS',{art:response.data}));      //   UPDATE STATE AND DOM
     })
     .catch(function (error) {

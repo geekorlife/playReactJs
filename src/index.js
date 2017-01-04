@@ -1,8 +1,8 @@
-import React from 'react'
-import { render } from 'react-dom'
-import Product from './Product'
+import React from 'react';
+import { render } from 'react-dom';
+import Product from './Product';
 import { Provider } from 'react-redux';
-import store from './reduce/store';;
+import store from './reduce/store';
 import MuiThemeProvider from 'material-ui/styles/MuiThemeProvider';
 
 const addArt = (addProd) => {

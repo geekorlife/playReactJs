@@ -4,6 +4,10 @@ import store from './reduce/store';
 import { Link } from 'react-router';
 import SelectField from 'material-ui/SelectField';
 import MenuItem from 'material-ui/MenuItem';
+import TextField from 'material-ui/TextField';
+import IconButton from 'material-ui/IconButton';
+import ActionSearch from 'material-ui/svg-icons/action/search';
+import Size from './setting/size';
 
 class RendCol extends React.Component {
     constructor(props) {
@@ -116,26 +120,14 @@ class RendCol extends React.Component {
         const f = new Date(this.props.r.updatedAt).toString().split(' ');
         const dateP = [f[1], f[2]].join(' ');
         const imgRendSrc = this.rendCarousel();
-        const idSz = ['Divers','0-3M', '3M', '3-6M', '6M', '6-12M', '12M', '12-18M', '18M', '18-24M', '2T', '3T', '4T', '5T', '6T', '7', '8', '9', '10', '11', '12', '14', '16', '18', '20'];
-		
-        const whoShoes = ['Infant','Toddler','Little kid','Big kid', 'Men', 'Women'];
-
-		const sizeShoes = {
-			'0': ['0','1','1.5','2','2.5','3'], // infant
-			'1': ['3.5','4','4.5','5','5.5','6','6.5','7','7.5','8','8.5','9','9.5','10'], // toddler
-			'2': ['10.5','11','11.5','12','12.5','13','13.5','1','1.5','2','2.5','3'], // Little kid
-			'3': ['3.5','4','4.5','5','5.5','6','6.5','7','7.5'], // Big kid
-			'4': ['6','6.5','7','7.5','8','8.5','9','9.5','10','10.5','11','11.5','12','13','14','15','16'], // Men
-			'5': ['4','4.5','5','5.5','6','6.5','7','7.5','8','8.5','9','9.5','10','10.5','11','11.5','12']  // Women
-		};
 
         const idSizerd = () => {
             if(typeof this.props.r.idSize === 'number') {
-                return <span className="sizeMenu">| Size: {idSz[this.props.r.idSize]}</span>
+                return <span className="sizeMenu">| Size: {Size.idSz[this.props.r.idSize]}</span>
             }
             else if(this.props.r.idShoes && typeof this.props.r.idShoes.who === 'number') {
-                const sizeShoe = sizeShoes[this.props.r.idShoes.who][this.props.r.idShoes.size];
-                return <span className="shoesMenu">| Size: {sizeShoe} - {whoShoes[this.props.r.idShoes.who]}</span>
+                const sizeShoe = Size.sizeShoes[this.props.r.idShoes.who][this.props.r.idShoes.size];
+                return <span className="shoesMenu">| Size: {sizeShoe} - {Size.whoShoes[this.props.r.idShoes.who]}</span>
             }
         }
         //<button className="btn btn-primary infobutton cartadd" onClick={this.addProductInCart}>Add to cart <span className="glyphicon glyphicon-shopping-cart" aria-hidden="true"></span></button>
@@ -144,7 +136,7 @@ class RendCol extends React.Component {
                 <div className="bg-gray-dark bg-gray-dark-list">
                     <p className="priceAndCity" onClick={this.clickProd}>
                         <span className="priceMenu" >${this.props.r.price}</span>
-                        <span className="cityMenu">{this.props.r.zip.cty}</span>
+                        <span className="cityMenu">{this.props.r.zip.nm}</span>
                         {idSizerd()}
                     </p>
 
@@ -196,7 +188,7 @@ class ProductList extends React.Component {
         }
     }
 
-    updateList(value) {
+    updateList() {
         store.dispatch(store.dispatchArticle('RESET_PAGE_ARTICLE'));
         let cmd = {  
             catId: this.props.catId, 
@@ -210,6 +202,10 @@ class ProductList extends React.Component {
         else if(this.props.catId === '2') {
             if(this.state.shoes && this.state.shoes.who < 6) cmd.shoes = this.state.shoes;
             if(this.state.gendValue > 1) cmd.gender = this.state.gendValue;
+        }
+        const stringTxt = this.refs.stringTxt.getValue();
+        if(stringTxt) {
+            cmd.string = stringTxt;
         }
         store.dispatch(store.dispatchArticle('GET_LIST_ARTICLE', cmd));
     }
@@ -237,7 +233,7 @@ class ProductList extends React.Component {
     componentDidMount() {
         const stFlux = store.getState();
         if(!this.geo.geoPos || !this.geo.dist) {
-            console.log('UPDATE ZIP LIST');
+            
             this.geo = {
                 geoPos: stFlux.zip && stFlux.zip.code ? stFlux.zip.code.pos : null,
                 dist: stFlux.zip && stFlux.zip.dist ? stFlux.zip.dist : null
@@ -296,7 +292,7 @@ class ProductList extends React.Component {
             if(this.state.currentPage > 0)
                 this.changePage(0);
         }
-        console.log(this.state.currentPage+'* 9 + 9 <'+  store.getState().count);
+        
         const stl = st ? { paddingTop: '20px' } : {};
         const pad = { paddingTop: '1px' };
         const classPrev = this.state.currentPage === 0 ? 'btn btn-primary noPrev' : 'btn btn-primary nextPrev';
@@ -345,9 +341,8 @@ class ProductList extends React.Component {
             const that = this;
             setTimeout(function () { that.updateList({ idSize: value }) }, 10);
         }
-        const idSz = ['Divers','0-3M', '3M', '3-6M', '6M', '6-12M', '12M', '12-18M', '18M', '18-24M', '2T', '3T', '4T', '5T', '6T', '7', '8', '9', '10', '11', '12', '14', '16', '18', '20'];
-		
-        const rendSz = idSz.map( (s, i) => {
+        
+        const rendSz = Size.idSz.map( (s, i) => {
 			return <MenuItem key={i} value={i} primaryText={s} />
 		});
         
@@ -356,7 +351,7 @@ class ProductList extends React.Component {
                 floatingLabelText="Size:"
                 value={this.state.idSize}
                 onChange={handleChangeS}
-                style={{left:'50%', transform:'translateX(-50%)'}}
+                className="colText"
                 >
                 {rendSz}
             </SelectField>
@@ -364,22 +359,14 @@ class ProductList extends React.Component {
     }
 
     selectShoesSize() {
-        const whoShoes = ['Infant (0-9M)','Toddler (9M-4Y)','Little kid (5-7Y)', 'Big kid (7-12Y)', 'Men', 'Women', 'All'];
+        const whoShoes = [...Size.whoShoes,'All'];
 
-		const sizeShoes = {
-			'0': ['0','1','1.5','2','2.5','3'], // infant
-			'1': ['3.5','4','4.5','5','5.5','6','6.5','7','7.5','8','8.5','9','9.5','10'], // toddler
-			'2': ['10.5','11','11.5','12','12.5','13','13.5','1','1.5','2','2.5','3'], // Little kid
-			'3': ['3.5','4','4.5','5','5.5','6','6.5','7','7.5'], // Big kid
-			'4': ['6','6.5','7','7.5','8','8.5','9','9.5','10','10.5','11','11.5','12','13','14','15','16'], // Men
-			'5': ['4','4.5','5','5.5','6','6.5','7','7.5','8','8.5','9','9.5','10','10.5','11','11.5','12']  // Women
-		};
         const rendST = whoShoes.map( (s, i) => {
 			return <MenuItem key={i} value={i} primaryText={s} />
 		});
 		const rendSizeSHoes = () => {
 			if(typeof this.state.shoes.who === 'number') {
-				const dt = sizeShoes[this.state.shoes.who].map( (s,i) => {
+				const dt = Size.sizeShoes[this.state.shoes.who].map( (s,i) => {
 					return <MenuItem key={i} value={i} primaryText={s} />
 				})
 				return dt;
@@ -415,7 +402,7 @@ class ProductList extends React.Component {
                     floatingLabelText="For who"
                     value={this.state.shoes.who}
                     onChange={handleChangeWhoShoes}
-                    style={{left:'50%', transform:'translateX(-50%)'}}
+                    className="colText"
                     >
                     {rendST}
                 </SelectField>
@@ -437,7 +424,7 @@ class ProductList extends React.Component {
                 floatingLabelText="Gender"
                 value={this.state.gendValue}
                 onChange={handleChangeS}
-                style={{left:'50%', transform:'translateX(-50%)'}}
+                className="colText"
                 >
                 <MenuItem value={1} primaryText="Unisex" />
                 <MenuItem value={2} primaryText="Boy" />
@@ -447,42 +434,97 @@ class ProductList extends React.Component {
     }
 
     rendFilter(){
-        console.log('this.props.catId',this.props.catId);
+        const rendGender = () => {
+                return (
+                    <div className="col-sm-4">
+                        {this.selectGender()}                        
+                    </div>
+                )
+            }
         if(this.props.catId === '1') {
-            console.log('REND SIZE');
+            
             const handleChangeS = (event, index, value) => {
                 if (value === this.state.gendValue) return;
                 this.setState({ gendValue: value });
                 const that = this;
                 setTimeout(function () { that.updateList({ gendValue: value }) }, 10);
             }
+            
+
             return (
                 <div className="row infoProd">
-                    <div className="col-sm-6">
+                    <div className="col-sm-4">
                         {this.selectSize()}
                     </div>
-                    <div className="col-sm-6">
-                        {this.selectGender()}                        
+                    {rendGender()}
+                    <div className="col-sm-4" style={{paddingTop: '17px'}}>
+                        <TextField
+                            hintText="Search..."
+                            ref='stringTxt'
+                            className="colText"
+                            style={{marginTop: '7px'}}
+                            />
+                        <IconButton 
+                            onClick={(e) => {this.updateList()}} style={{width:'10%'}}
+                            style={{position:'absolute',top: '20%', right: '5%', transform:'translateX(20%)', marginTop: '7px'}}
+                            >
+                            <ActionSearch />
+                        </IconButton>
                     </div>
                 </div>
             )
         }
         else if(this.props.catId === '2') {
-            console.log('REND SIZE');
+            
             const handleChangeS = (event, index, value) => {
                 if (value === this.state.gendValue) return;
                 this.setState({ gendValue: value });
                 const that = this;
                 setTimeout(function () { that.updateList({ gendValue: value }) }, 10);
             }
+
             return (
                 <div className="row infoProd">
-                    <div className="col-sm-6">
+                    <div className="col-sm-4">
                         {this.selectShoesSize()}
                     </div>
-                    <div className="col-sm-6">
-                        {this.selectGender()}                        
+                    {rendGender()}
+                    <div className="col-sm-4" style={{paddingTop: '17px'}}>
+                        <TextField
+                            hintText="Search..."
+                            ref='stringTxt'
+                            className="colText"
+                            style={{marginTop: '7px'}}
+                            />
+                        <IconButton 
+                            onClick={(e) => {this.updateList()}} style={{width:'10%'}}
+                            style={{position:'absolute',top: '20%', right: '5%', transform:'translateX(20%)', marginTop: '7px'}}
+                            >
+                            <ActionSearch />
+                        </IconButton>
                     </div>
+                </div>
+            )
+        }
+        else {
+            return (
+                <div className="row infoProd">
+                    <div className="col-sm-4"></div>
+                    <div className="col-sm-4" style={{paddingTop: '17px'}}>
+                        <TextField
+                            hintText="Search..."
+                            ref='stringTxt'
+                            className="colText"
+                            style={{marginTop: '7px'}}
+                            />
+                        <IconButton 
+                            onClick={(e) => {this.updateList()}} style={{width:'10%'}}
+                            style={{position:'absolute',top: '20%', right: '5%', transform:'translateX(20%)', marginTop: '7px'}}
+                            >
+                            <ActionSearch />
+                        </IconButton>
+                    </div>
+                    <div className="col-sm-4"></div>
                 </div>
             )
         }
@@ -514,7 +556,6 @@ class ProductList extends React.Component {
         }
 
         let c = rows.map(function (row, i) {
-            console.log('ROWS',row);
             return (
                 <div className="row" key={i}>
                     <ColProducts key={i} dataRow={row} handleInfo={handleInf} />

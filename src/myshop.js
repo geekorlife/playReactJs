@@ -240,7 +240,7 @@ class myshop extends React.Component {
     checkExistName(value) {
         const that = this;
         $.ajax({
-            url: 'http://192.168.2.8:8080/api/addUsr',
+            url: 'http://138.68.31.97:8080/api/addUsr',
             data: { type: 'GET_SHOP_NAME', shopName: value },
             type: 'GET',
             success: function (data) {

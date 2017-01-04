@@ -18,7 +18,7 @@ module.exports = {
 
     DOMAIN_NAME: 'CutiDeals',
 
-    MONGO: DEV_MONGO,
+    MONGO: PROD_MONGO,
 
     PORT: '8080',
 

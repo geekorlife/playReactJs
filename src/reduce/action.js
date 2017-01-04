@@ -291,28 +291,39 @@ action.getUsrSuccess = (state, data) => {
         default:
             return updateObject(state, {user: {id_shop: null, credential: null, email: null}}, {post_state:newPostState});
     }
-}
+};
+
+action.askLocalZip = (state) => {
+     let nState = updateObject(state, {post_state:{ posts: [], error: null, loading: false, db: null, createdAdId: null}});
+     return action.getUsrData(nState);
+};
 
 action.getLocalZip = (state) => {
     const zip = localStorage.getItem("zipData");
     let nState = null;
+
     if(!zip) {
-        nState = updateObject(state, {zip: null });
+        let newState = updateObject(state, {zip: null });
+        nState = updateObject(newState, {post_state:{ posts: [], error: null, loading: true, db: null, createdAdId: null}});
+        
+        post.tryGetLocation(); //Get ip localization thought ip-api.com 
     }
     else {
         nState = updateObject(state, {zip: JSON.parse(zip) });
     }
+
     console.log('nState',nState);
+    
     return action.getUsrData(nState);
-}
+};
 
 action.resetUsrkey = () => {
     if(localStorage.getItem("usrData"))
         localStorage.removeItem("usrData"); // Reset localsotrage key usrData
-}
+};
 
 action.duplicateKey = (state, data) => {
     return updateObject(state,{post_state:{ posts: [], error: data, loading: false, db: null, createdAdId: null}});
-}
+};
 
 export default action;

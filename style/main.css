@@ -54,20 +54,25 @@ a {
 #home {
     width: 90%;
     margin: 4em auto 0px auto;
+    min-height: 480px;
 }
-
+.logoHome {
+    height: 40px;
+    margin-top: -10px;
+}
 .mainNav {
     position: fixed !important;
     z-index: 10;
     top: 0;
     width: 100%;
     background: #dd127b!important;
-    box-shadow: 0px 1px 14px rgba(0,0,0,0.5) !important;
+    box-shadow: 0px 1px 5px rgba(0,0,0,0.5) !important;
     border: none !important;
-    border-bottom: 4px solid #D0E9E9 !important;
+    border-bottom: 2px solid #af0a60 !important;
     border-radius: 0px !important;
 }
 
+/* Nav bar */
 .navbar-default .navbar-nav>.open>a, .navbar-default .navbar-nav>.open>a:focus, .navbar-default .navbar-nav>.open>a:hover {
     background: #b2055e !important;
 }
@@ -155,6 +160,18 @@ a {
     text-shadow: 1px 1px 1px rgba(0,0,0,0) !important;
 }
 
+.nav-li-hide {
+    display: none !important;
+}
+
+.navbar-default .navbar-toggle:hover {
+    background-color: #f449a1 !important;
+}
+.navbar-default .navbar-toggle .icon-bar {
+    background-color: #fff !important;
+}
+
+/* Home Category */
 .main {
     padding: 0px;
     background: url(../img/kidclothes.jpg) no-repeat;
@@ -163,9 +180,23 @@ a {
     height: 480px;
 }
 
-/* Home Category */
 .cat_main{
     margin-top: 100px;
+}
+.zipEnter{
+    width: 100%;
+    margin: 0px;
+    padding-top: 80px;
+    position: fixed;
+    top: 0;
+    left: 0;
+    height: 100%;
+    background: rgba(255,255,255,0.9);
+}
+.titleHome {
+    color: #DD127B;
+    font-size: 1.2em;
+    font-weight: 600;
 }
 .img-Carousel {
     width: 100% !important;
@@ -173,6 +204,7 @@ a {
     background-size: contain;
     background-position: center;
     height: 225px !important;
+    cursor: pointer;
 }
 .bg-gray-dark{
     background: white;
@@ -265,6 +297,11 @@ a {
 }
 
 /* Product list */
+.colText {
+    left: 50%;
+    transform: translateX(-50%);
+    max-width: 90%;
+}
 .eachDiv {
     padding: 5px;
     margin-top: 15px;
@@ -434,6 +471,24 @@ a {
     background: #aaa !important;
 }
 
+/* Footer */
+.footer > ul{
+    position: relative;
+    left: 50%;
+    transform: translateX(-50%);
+}
+.footer > ul > li > a {
+    color:#dd127b;
+}
+.li-copy {
+    padding: 15px;
+}
+.li-hide {
+    display: block;
+}
+.copyr {
+    color: #333;
+}
 
 /*Modal product*/
 .modal-body table tr {
@@ -718,7 +773,7 @@ a {
     height: 100px;
     margin: 0px 0px 13px 0px;
     transform: translateX(-50%);
-    position: relative;
+    position: absolute;
     border-radius: 50%;
     box-shadow: 0 3px 11px -2px rgba(0,0,0,0.5);
     cursor: pointer;
@@ -729,7 +784,7 @@ a {
 .avt-men {
     background: url('../img/usrAv/men.jpg') no-repeat;
     background-size: cover;
-    left: 36%;
+    left: 66.6%;
 }
 .avt-men:hover{
     border: 2px solid #03b9d2;
@@ -737,7 +792,7 @@ a {
 .avt-women {
     background: url('../img/usrAv/women.jpg') no-repeat;
     background-size: cover;
-    left: 27%;
+    left: 33.3%;
 }
 .avt-women:hover{
     border: 2px solid #dd127b;
@@ -846,10 +901,30 @@ a {
 }
 
 @media screen and (max-width: 600px) {
+    .logoHome {
+        height: 30px;
+    }
+    
     .city-nav {
         margin-top: -1.15em;
         font-size: 0.8em;
         margin-left: 0em;
+    }
+
+    .nav-li-hide {
+        display: block !important;
+    }
+
+    .footer > ul {
+        position: inherit;
+        text-align: center;
+        transform: none;
+        width: 90%;
+        margin: auto;
+    }
+
+    .li-hide {
+        display: none !important;
     }
 
     .bg-gray-dark h3{

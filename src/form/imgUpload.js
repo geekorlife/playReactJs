@@ -48,6 +48,11 @@ class ImageUpload extends React.Component {
 		return { file: f, imagePreviewUrl: im };
 	}
 
+	clearWhitePreview(ctx, w, h){
+		ctx.fillStyle = "#ffffff";
+		ctx.fillRect(0, 0, w, h);
+	}
+
 	_handleImageChange(e) {
 		e.preventDefault();
 		const that = this;
@@ -82,6 +87,7 @@ class ImageUpload extends React.Component {
 					ratio: ratio 
 				});
 
+				that.clearWhitePreview(that.state.context, wImg, hImg);
 				that.state.context.drawImage(that.currentImage,0,0,wImg,hImg);
 
 				setTimeout(function() {
@@ -114,7 +120,7 @@ class ImageUpload extends React.Component {
 		this.formDt = new FormData();
 
 		this.state.img.map((img, i) => {
-			that.formDt.append("imgAd" + i, img.file);
+			that.formDt.append("imgAd" + i, img.file, i+'.jpeg');
 		})
 		
 		this.props.uploadFile(this.formDt);
@@ -165,6 +171,8 @@ class ImageUpload extends React.Component {
 
   		ctx.translate(this.canvas.width/2, this.canvas.height/2);
 		ctx.rotate(this.currentRotate * Math.PI / 180);
+		
+		this.clearWhitePreview(ctx, this.state.originW, this.state.originH);
 		ctx.drawImage(this.currentImage, -(this.state.originW/2),  -(this.state.originH/2), this.state.originW, this.state.originH);
 
 		ctx.restore();
@@ -198,6 +206,8 @@ class ImageUpload extends React.Component {
 		imgDefault.onload = () => { 
 			that.canvas.width = 300;
 			that.canvas.height = 300;
+			
+			that.clearWhitePreview(context, 300, 300);
 			context.drawImage(imgDefault,0,0,300,300);
 		}
 		console.log('COMPO DID MOUNT');

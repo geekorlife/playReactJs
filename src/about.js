@@ -37,7 +37,7 @@ class about extends React.Component {
                 </p>
 
                 <p>
-                Have a question ? Contact us at <a href="mailto:hello@cutideals.com?Subject=Hello" target="_top">hello@cutiedeals.com</a>
+                Have a question ? Contact us at <a href="mailto:hello@cutideals.com?Subject=Hello" target="_top">hello@cutideals.com</a>
                 </p>
             </div>
 

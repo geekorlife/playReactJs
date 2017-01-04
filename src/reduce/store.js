@@ -1,9 +1,7 @@
-import { createStore, combineReducers, applyMiddleware, compose } from 'redux';
-import { Provider } from 'react-redux';
+import { createStore, applyMiddleware, compose } from 'redux';
 import promise from 'redux-promise';
 import reducer from './reducers';
 
-// var mainReducer = combineReducers(article_reducer, rest_reducer);
 const INITIAL_STATE = {
     post_state : { posts: [], error: null, loading: false, id_connect: null },
     product: [],

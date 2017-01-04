@@ -9,6 +9,7 @@ import RaisedButton from 'material-ui/RaisedButton';
 import FontIcon from 'material-ui/FontIcon';
 import CircularProgress from 'material-ui/CircularProgress';
 import TextField from 'material-ui/TextField';
+import Size from './setting/size';
 
 class productInfo extends React.Component {
     constructor() {
@@ -19,7 +20,7 @@ class productInfo extends React.Component {
             img: null,
             genderColor: '1px solid rgba(0,0,0,0.5)',
             gender: 1
-        }
+        };
 
         this.loadPage = this.loadPage.bind(this);
         this.imgAddedRend = this.imgAddedRend.bind(this);
@@ -43,20 +44,27 @@ class productInfo extends React.Component {
                 this.setState({
                     img: m
                 });
-            }
+            };
 
             var divStyle = {
                 backgroundImage: 'url("/img/adImg/' + m + '")'
             };
 
             return (
-                <div key={i} className="imgPrevAdded" style={divStyle} onClick={remImg}>
-                </div>
+                <div key={i} className="imgPrevAdded" style={divStyle} onClick={remImg} ></div>
             )
         })
         return im;
     }
 
+    /**
+     * If the product is linked to a shop, rend a My Shop button
+     * 
+     * @param {any} prodt
+     * @returns
+     * 
+     * @memberOf productInfo
+     */
     myShopButton(prodt) {
         if (prodt.shopName) {
             const myshp = '/myshop/' + prodt.shopName;
@@ -93,6 +101,27 @@ class productInfo extends React.Component {
                 fn(product.id);
             }
             var genderAttrib = [null, 'Unisex', 'Boy', 'Girl'];
+            const sizeClothe = () => {
+                if (typeof product.idSize === 'number') {
+                    return (
+                        <div>
+                            <h4>Size:</h4>
+                            <p>{Size.idSz[product.idSize]}</p>
+                        </div>
+                    )
+                }
+                else if (product.idShoes && typeof product.idShoes.who === 'number') {
+                    return (
+                        <div>
+                            <h4>For who:</h4>
+                            <p>{Size.whoShoes[product.idShoes.who]}</p>
+
+                            <h4>Size:</h4>
+                            <p>{Size.sizeShoes[product.idShoes.who][product.idShoes.size]}</p>
+                        </div>
+                    )
+                }
+            }
             desc = (
                 <div className="row">
                     <div className="col-md-4">
@@ -110,8 +139,10 @@ class productInfo extends React.Component {
                         <h4>Description:</h4>
                         <p>{product.desc}</p>
 
-                        <h4>Maker:</h4>
+                        <h4>Brand:</h4>
                         <p>{product.brand}</p>
+
+                        {sizeClothe()}
 
                         <h4>Price:</h4>
                         <p>${product.price}</p>
@@ -130,7 +161,6 @@ class productInfo extends React.Component {
 
     /**
      * Load article by id from the QUERY param after the component did mount
-     * 
      * 
      * @memberOf productInfo
      */
@@ -232,7 +262,8 @@ class productInfo extends React.Component {
 
         const hstl = {
             marginTop: '10px'
-        }
+        };
+
         if (!product) {
             // Load in the store
             return (
@@ -285,7 +316,7 @@ class productInfo extends React.Component {
                         </div>
                         <div className="col-md-4">
                             <RaisedButton
-                                label="Ask public question to the mom"
+                                label="Ask public question"
                                 backgroundColor="#00BCD4"
                                 labelPosition="before"
                                 labelStyle={{ color: 'white', width: '100%' }}
@@ -298,7 +329,7 @@ class productInfo extends React.Component {
                         </div>
                         <div className="col-md-4">
                             <RaisedButton
-                                label="Ask private question to the mom"
+                                label="Contact the seller"
                                 backgroundColor="#00BCD4"
                                 labelPosition="before"
                                 labelStyle={{ color: 'white', width: '100%' }}

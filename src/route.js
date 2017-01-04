@@ -1,5 +1,8 @@
+"use strict";
+
 import React from 'react';
 import Nav from './nav';
+import Footer from './footer';
 import AdminModal from './adminModal';
 
 /**
@@ -15,6 +18,7 @@ class AppRoute extends React.Component{
 					{this.props.children}
 					<AdminModal />
 				</div>
+				<Footer />
 			</div>
 		)
 	}
